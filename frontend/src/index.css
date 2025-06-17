@@ -1,15 +1,91 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "poppins";
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "poppins";
 }
-.link:hover{
-    color: #ff5252;
+body {
+  background-color: #f5f0f0;
+  overflow-x: hidden;
 }
-.MuiBadge-badge{
+.link:hover {
+  color: #ff5252;
+}
+.MuiBadge-badge {
+  background-color: #ff5252 !important;
+}
+Button {
+  text-transform: capitalize !important;
+  font-family: "lexend" !important;
+}
+.submenu{
+    z-index: 10;
+}
+
+.subnav li .submenu {
+  opacity: 0;
+  visibility: hidden;
+}
+.subnav li:hover .submenu {
+  opacity: 1 !important;
+  visibility: inherit;
+  top: 100%;
+}
+.subnav li .submenu Button:hover {
+    color: #ff5252 !important;
+}
+.subnav li .submenu li .submenu {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  left: 90% !important;
+}
+.subnav li .submenu li:hover .submenu {
+  
+  opacity: 1 !important;
+  visibility: inherit !important;
+}
+.subnav li .submenu li .submenu Button:hover {
+    color: #ff5252 !important;
+}
+.item{
+    border: 1px solid #dadada;
+}
+.sliderHome{
+    overflow: inherit !important;
+}
+.swiper-pagination-bullet{
+    height: 6px !important;
+    width: 25px !important;
+    border-radius: 10px !important;
+    
+}
+.swiper-pagination-bullet.swiper-pagination-bullet-active {
     background-color: #ff5252 !important;
-}
+  }
+
+  .swiper-button-prev,
+  .swiper-button-next {
+    width: 35px !important;
+    height: 35px !important;
+    background-color: #ff5252;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .swiper-button-prev::after,
+  .swiper-button-next::after {
+    color: #fff;
+    font-size: 17px !important;
+  }
+  .homecatslider img:hover{
+    transform: scale(1.1);
+    
+  }
+  .homecatslider img{
+    transition: all 0.3s ease-in-out;
+    
+  }

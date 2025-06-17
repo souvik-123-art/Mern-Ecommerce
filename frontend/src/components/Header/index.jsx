@@ -8,6 +8,7 @@ import { BsCart3 } from "react-icons/bs";
 import { GoGitCompare } from "react-icons/go";
 import { FaRegHeart } from "react-icons/fa";
 import Tooltip from "@mui/material/Tooltip";
+import { Nav } from "./Nav";
 
 const CartBadge = styled(Badge)`
   & .${badgeClasses.badge} {
@@ -117,6 +118,7 @@ const Header = () => {
           </div>
         </div>
       </div>
+      <Nav/>
     </header>
   );
 };
