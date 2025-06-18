@@ -28,6 +28,9 @@ export const CategoryPanel = (props) => {
   };
   const DrawerList = (
     <Box sx={{ width: 250 }} role="presentation" className="catpanel">
+      <div className="img p-4 border-b border-b-[#dadada]">
+        <img src="Images/logo1.png" alt="" />
+      </div>
       <h3 className="p-3 text-[17px] font-[500] border-b-[1px] flex gap-4 items-center justify-between">
         Shop By Categories
         <RxCross1

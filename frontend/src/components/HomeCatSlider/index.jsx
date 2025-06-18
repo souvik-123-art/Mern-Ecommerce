@@ -1,6 +1,5 @@
 import React from 'react'
 import { Swiper, SwiperSlide } from "swiper/react";
-
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/navigation";
@@ -8,11 +7,11 @@ import { Navigation } from "swiper/modules";
 import { Link } from 'react-router-dom';
 export const HomeCatSlider = () => {
   return (
-    <div className="homecatslider">
+    <div className="homecatslider pt-4 pb-12">
       <div className="container mx-auto">
         <Swiper
           navigation={true}
-          slidesPerView={7}
+          slidesPerView={8}
           spaceBetween={20}
           modules={[Navigation]}
           className="mySwiper"

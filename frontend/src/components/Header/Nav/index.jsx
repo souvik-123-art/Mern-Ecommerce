@@ -26,9 +26,14 @@ export const Nav = () => {
           </div>
           <div className="col_2 w-[65%]">
             <ul className="flex gap-5 items-center text-gray-200 font-[500] subnav">
-              <li className="relative">
+              <li>
                 <Link to="/" className="link transition text-[14px]">
                   Home
+                </Link>
+              </li>
+              <li className="relative">
+                <Link to="/" className="link transition text-[14px]">
+                  Fashion
                 </Link>
                 <div className="submenu absolute top-[130%] left-[0%] min-w-[200px] bg-white shadow-md transition-all">
                   <ul>
@@ -264,11 +269,6 @@ export const Nav = () => {
                     </li>
                   </ul>
                 </div>
-              </li>
-              <li>
-                <Link to="/" className="link transition text-[14px]">
-                  Fashion
-                </Link>
               </li>
               <li>
                 <Link to="/" className="link transition text-[14px]">
