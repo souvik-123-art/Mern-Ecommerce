@@ -21,8 +21,8 @@ Button {
   text-transform: capitalize !important;
   font-family: "lexend" !important;
 }
-.submenu{
-    z-index: 10;
+.submenu {
+  z-index: 10;
 }
 
 .subnav li .submenu {
@@ -35,7 +35,7 @@ Button {
   top: 100%;
 }
 .subnav li .submenu Button:hover {
-    color: #ff5252 !important;
+  color: #ff5252 !important;
 }
 .subnav li .submenu li .submenu {
   opacity: 0 !important;
@@ -43,84 +43,109 @@ Button {
   left: 90% !important;
 }
 .subnav li .submenu li:hover .submenu {
-  
   opacity: 1 !important;
   visibility: inherit !important;
 }
 .subnav li .submenu li .submenu Button:hover {
-    color: #ff5252 !important;
+  color: #ff5252 !important;
 }
-.item{
-    border: 1px solid #dadada;
+.item {
+  border: 1px solid #dadada;
 }
-.sliderHome{
-    overflow: inherit !important;
+.sliderHome {
+  overflow: inherit !important;
 }
-.swiper-pagination-bullet{
-    height: 8px !important;
-    width: 8px !important;
-    border-radius: 50% !important;
-    background-color: #f80000 !important;
-    transition: all 0.3s ease-in-out;
+.swiper-pagination-bullet {
+  height: 8px !important;
+  width: 8px !important;
+  border-radius: 50% !important;
+  background-color: #f80000 !important;
+  transition: all 0.3s ease-in-out;
 }
-.swiper-pagination{
+.swiper-pagination {
   display: flex;
   justify-content: center;
   align-items: center;
-  
 }
 .swiper-pagination-bullet.swiper-pagination-bullet-active {
-    background-color: #ff5252 !important;
-    height: 6px !important;
-    width: 25px !important;
-    border-radius: 10px !important;
-    transition: all 0.3s ease-in-out;
-  }
+  background-color: #ff5252 !important;
+  height: 6px !important;
+  width: 25px !important;
+  border-radius: 10px !important;
+  transition: all 0.3s ease-in-out;
+}
 
-  .swiper-button-prev,
-  .swiper-button-next {
-    width: 35px !important;
-    height: 35px !important;
-    background-color: #ff5252;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .swiper-button-prev::after,
-  .swiper-button-next::after {
-    color: #fff;
-    font-size: 17px !important;
-  }
-  .homecatslider img:hover{
-    transform: scale(1.1);
-    
-  }
-  .homecatslider img{
-    transition: all 0.3s ease-in-out;
-    
-  }
-  ::-webkit-scrollbar {
-    width: 5px;
-    height: 7px;
-  }
-  
-  ::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #ff5252, #ff7675);
-    border-radius: 10px;
-    transition: background 0.3s ease;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, #ff3e3e, #ff6b6b);
-  }
-  
-  ::-webkit-scrollbar-track {
-    background: transparent;
-    border-radius: 10px;
-  }
-  .MuiTabs-indicator{
-    background-color: #ff5252 !important;
-  }
-  .Mui-selected{
-    color: #ff5252 !important;
-  }
+.swiper-button-prev,
+.swiper-button-next {
+  width: 35px !important;
+  height: 35px !important;
+  background-color: #ff5252;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.swiper-button-prev::after,
+.swiper-button-next::after {
+  color: #fff;
+  font-size: 17px !important;
+}
+.homecatslider img:hover {
+  transform: scale(1.1);
+}
+.homecatslider img {
+  transition: all 0.3s ease-in-out;
+}
+::-webkit-scrollbar {
+  width: 5px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #ff5252, #ff7675);
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #ff3e3e, #ff6b6b);
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 10px;
+}
+.MuiTabs-indicator {
+  background-color: #ff5252 !important;
+}
+.Mui-selected {
+  color: #ff5252 !important;
+}
+.MuiFormControlLabel-label {
+  font-family: "poppins", sans-serif !important;
+  font-size: 14px !important;
+}
+.MuiCheckbox-colorPrimary {
+  color: #ff5252 !important;
+}
+
+.homeSliderV2 .swiper-slide-active .info {
+  right: 0px !important;
+  opacity: 1;
+}
+.homeSliderV2 .swiper-button-prev {
+  left: -10% !important;
+  transition: all 0.5s ease-in-out;
+}
+.homeSliderV2 .swiper-button-next {
+  right: -10% !important;
+  transition: all 0.5s ease-in-out;
+}
+.homeSliderV2:hover .swiper-button-prev {
+  left: 15px !important;
+}
+.homeSliderV2:hover .swiper-button-next {
+  right: 15px !important;
+}
+.bannerBoxV2{
+  height: 255px;
+}

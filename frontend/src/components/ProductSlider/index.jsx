@@ -6,7 +6,7 @@ import { Navigation } from "swiper/modules";
 import { ProductItem } from '../ProductItem';
 export const ProductSlider = (props) => {
   return (
-    <div className='productSlider py-12'>
+    <div className='productSlider py-8'>
         <Swiper
                 slidesPerView={props.items}
                 spaceBetween={10}

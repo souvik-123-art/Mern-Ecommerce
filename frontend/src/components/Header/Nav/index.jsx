@@ -309,7 +309,7 @@ export const Nav = () => {
           </div>
           <div className="col_3 w-[15%] flex items-center justify-end">
             <p className="text-[13px] font-[500] text-white flex items-center gap-3">
-              <GoRocket className="text-lg" />
+              <GoRocket className="text-lg animate-pulse" />
               Free International Delivery
             </p>
           </div>
