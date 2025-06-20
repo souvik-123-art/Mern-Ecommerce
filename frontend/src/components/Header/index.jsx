@@ -55,7 +55,7 @@ const Header = () => {
         <div className="container mx-auto flex items-center justify-between">
           <div className="col1 w-[25%]">
             <Link to={"/"}>
-              <img src="Images/logo.png" alt="" />
+              <img src="/Images/logo.png" alt="" />
             </Link>
           </div>
           <div className="col2 w-[45%]">

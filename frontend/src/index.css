@@ -149,3 +149,9 @@ Button {
 .bannerBoxV2{
   height: 255px;
 }
+.sidebar .MuiCheckbox-root{
+  padding: 6px !important;
+}
+.sliderproductimage .swiper-slide{
+  height: auto !important;
+}
