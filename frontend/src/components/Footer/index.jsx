@@ -152,7 +152,7 @@ export const Footer = () => {
               </Button>
               <FormGroup className="!mt-6">
                 <FormControlLabel
-                  control={<Checkbox defaultChecked />}
+                  control={<Checkbox />}
                   label="I agree to the terms and conditions and the privacy policy"
                 />
               </FormGroup>

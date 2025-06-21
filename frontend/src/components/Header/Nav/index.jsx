@@ -32,7 +32,7 @@ export const Nav = () => {
                 </Link>
               </li>
               <li className="relative">
-                <Link to="/" className="link transition text-[14px]">
+                <Link to="/product-listing" className="link transition text-[14px]">
                   Fashion
                 </Link>
                 <div className="submenu absolute top-[130%] left-[0%] min-w-[200px] bg-white shadow-md transition-all">

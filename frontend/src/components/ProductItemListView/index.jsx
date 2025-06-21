@@ -7,7 +7,10 @@ import { FaRegHeart } from "react-icons/fa";
 import { GoGitCompare } from "react-icons/go";
 import { MdZoomOutMap } from "react-icons/md";
 import { FaOpencart } from "react-icons/fa";
+import { openProductModal } from "../../redux/Slices/productModalSlice";
+import { useDispatch } from "react-redux";
 export const ProductItemListView = () => {
+  const dispatch = useDispatch()
   return (
     <div className="productItem overflow-hidden border flex p-3 rounded-md">
       <div className="imgWrapper rounded-md w-[20%] group relative overflow-hidden">
@@ -33,7 +36,7 @@ export const ProductItemListView = () => {
           <Button className="!bg-white hover:!bg-primary !min-w-10 h-10 hover:!text-white !text-primary !rounded-full">
             <GoGitCompare className="text-[18px] pointer-events-none " />
           </Button>
-          <Button className="!bg-white hover:!bg-primary !min-w-10 h-10 hover:!text-white !text-primary !rounded-full">
+          <Button onClick={() => dispatch(openProductModal())} className="!bg-white hover:!bg-primary !min-w-10 h-10 hover:!text-white !text-primary !rounded-full">
             <MdZoomOutMap className="text-[18px] pointer-events-none " />
           </Button>
         </div>

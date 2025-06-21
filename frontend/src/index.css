@@ -155,3 +155,12 @@ Button {
 .sliderproductimage .swiper-slide{
   height: auto !important;
 }
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button{
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+textarea{
+  resize: none;
+}

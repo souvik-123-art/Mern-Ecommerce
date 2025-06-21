@@ -4,6 +4,7 @@ import { Home } from "./pages/Home";
 import { ProductListing } from "./pages/ProductListing";
 import { Footer } from "./components/Footer";
 import { ProductDetails } from "./pages/ProductDetails";
+import ProductModal from "./components/ProductModal";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
             element={<ProductDetails />}
           />
         </Routes>
+        <ProductModal/>
         <Footer />
       </BrowserRouter>
     </>
