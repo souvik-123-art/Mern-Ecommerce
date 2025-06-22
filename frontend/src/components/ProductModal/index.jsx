@@ -99,8 +99,6 @@ export default function ProductModal() {
                 <FaOpencart className="text-xl" /> Add To Cart
               </Button>
             </div>
-
-            {/* Wishlist & Compare */}
             <div className="flex flex-wrap items-center gap-6 text-sm text-gray-600">
               <span className="flex items-center gap-2 cursor-pointer hover:text-primary transition">
                 <FaRegHeart className="text-lg" /> Add To Wishlist

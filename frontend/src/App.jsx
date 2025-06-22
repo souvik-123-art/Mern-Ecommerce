@@ -5,6 +5,9 @@ import { ProductListing } from "./pages/ProductListing";
 import { Footer } from "./components/Footer";
 import { ProductDetails } from "./pages/ProductDetails";
 import ProductModal from "./components/ProductModal";
+import { Login } from "./pages/Login";
+import { SignUp } from "./pages/SignUp";
+import { CartPanel } from "./components/CartPanel";
 
 function App() {
   return (
@@ -23,8 +26,11 @@ function App() {
             exact={true}
             element={<ProductDetails />}
           />
+          <Route path="/login" exact={true} element={<Login />} />
+          <Route path="/register" exact={true} element={<SignUp />} />
         </Routes>
-        <ProductModal/>
+        <ProductModal />
+        <CartPanel/>
         <Footer />
       </BrowserRouter>
     </>

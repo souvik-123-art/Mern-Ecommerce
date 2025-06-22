@@ -47,8 +47,8 @@ export const ProductItem = () => {
           </Link>
         </h6>
         <h3 className="text-[15px] mb-2 title font-[500] text-[rgba(0,0,0,0.8)]">
-          {" "}
-          <Link to={"/"} className="link transition">
+          
+          <Link to={"/product-details/1"} className="link transition">
             Men Opaque Casual Shirt...
           </Link>
         </h3>

@@ -9,7 +9,8 @@ import { GoGitCompare } from "react-icons/go";
 import { FaRegHeart } from "react-icons/fa";
 import Tooltip from "@mui/material/Tooltip";
 import { Nav } from "./Nav";
-
+import { useDispatch } from "react-redux";
+import { OpenCartPanel } from "../../redux/Slices/cartPanelSlice";
 const CartBadge = styled(Badge)`
   & .${badgeClasses.badge} {
     top: -12px;
@@ -18,6 +19,7 @@ const CartBadge = styled(Badge)`
 `;
 
 const Header = () => {
+  const dispatch = useDispatch();
   return (
     <header>
       <div className="top-strip py-2 bg-gray-900 text-white">
@@ -65,7 +67,7 @@ const Header = () => {
             <ul className="flex items-center gap-3 w-full justify-end">
               <li>
                 <Link
-                  to="/signup"
+                  to="/register"
                   className="link transition text-[15px] font-[500]"
                 >
                   Sign Up
@@ -104,7 +106,10 @@ const Header = () => {
               </li>
               <li>
                 <Tooltip title="Cart">
-                  <IconButton className="!text-white hover:!text-primary">
+                  <IconButton
+                    className="!text-white hover:!text-primary"
+                    onClick={() => dispatch(OpenCartPanel())}
+                  >
                     <BsCart3 />
                     <CartBadge
                       badgeContent={2}
@@ -118,7 +123,7 @@ const Header = () => {
           </div>
         </div>
       </div>
-      <Nav/>
+      <Nav />
     </header>
   );
 };

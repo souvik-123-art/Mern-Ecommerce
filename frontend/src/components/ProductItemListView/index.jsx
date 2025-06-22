@@ -36,7 +36,10 @@ export const ProductItemListView = () => {
           <Button className="!bg-white hover:!bg-primary !min-w-10 h-10 hover:!text-white !text-primary !rounded-full">
             <GoGitCompare className="text-[18px] pointer-events-none " />
           </Button>
-          <Button onClick={() => dispatch(openProductModal())} className="!bg-white hover:!bg-primary !min-w-10 h-10 hover:!text-white !text-primary !rounded-full">
+          <Button
+            onClick={() => dispatch(openProductModal())}
+            className="!bg-white hover:!bg-primary !min-w-10 h-10 hover:!text-white !text-primary !rounded-full"
+          >
             <MdZoomOutMap className="text-[18px] pointer-events-none " />
           </Button>
         </div>
@@ -48,7 +51,7 @@ export const ProductItemListView = () => {
           </Link>
         </h6>
         <h3 className="text-[18px] mb-2 title font-[500] text-[rgba(0,0,0,0.8)]">
-          <Link to={"/"} className="link transition">
+          <Link to={"/product-details/1"} className="link transition">
             Men Opaque Casual Shirt...
           </Link>
         </h3>
@@ -72,7 +75,7 @@ export const ProductItemListView = () => {
             $58.00
           </span>
           <Button className="!px-4 !py-2 !bg-primary !text-white !transition hover:!bg-gray-900 flex items-center gap-1">
-            <FaOpencart className="text-xl"/> Add To Cart
+            <FaOpencart className="text-xl" /> Add To Cart
           </Button>
         </div>
       </div>

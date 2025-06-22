@@ -8,7 +8,8 @@ export const CategoryPanel = (props) => {
     props.setIsOpenCatPanel(newOpen);
   };
   const DrawerList = (
-    <Box sx={{ width: 250 }} role="presentation" className="catpanel">
+    <Box sx={{ width: 250 }} role="presentation" classNam
+    e="catpanel">
       <div className="img p-4 border-b border-b-[#dadada]">
         <img src="/Images/logo1.png" alt="" />
       </div>
