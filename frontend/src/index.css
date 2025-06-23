@@ -184,3 +184,11 @@ textarea{
   border-color: #ff5252 !important;
   opacity: 65% !important;
 }
+#basic-Size .MuiButtonBase-root{
+  font-size: 13px !important;
+  font-family: 'poppins' !important;
+}
+#basic-Qty .MuiButtonBase-root{
+  font-size: 13px !important;
+  font-family: 'poppins' !important;
+}

@@ -8,6 +8,7 @@ import ProductModal from "./components/ProductModal";
 import { Login } from "./pages/Login";
 import { SignUp } from "./pages/SignUp";
 import { CartPanel } from "./components/CartPanel";
+import { Cart } from "./pages/Cart";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
           />
           <Route path="/login" exact={true} element={<Login />} />
           <Route path="/register" exact={true} element={<SignUp />} />
+          <Route path="/cart" exact={true} element={<Cart />} />
         </Routes>
         <ProductModal />
         <CartPanel/>
