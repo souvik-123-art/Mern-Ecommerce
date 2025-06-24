@@ -4,6 +4,7 @@ import TextField from "@mui/material/TextField";
 import { useState } from "react";
 import { IoMdEye } from "react-icons/io";
 import { IoMdEyeOff } from "react-icons/io";
+import toast from "react-hot-toast";
 export const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   return (
@@ -41,7 +42,7 @@ export const Login = () => {
               </Button>
             </div>
             <Link
-              to="/verify-email"
+              to="/forgot-password"
               className="text-md font-semibold text-black/70 link"
             >
               Forgot Password?

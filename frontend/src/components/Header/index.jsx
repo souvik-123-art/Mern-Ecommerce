@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Search } from "../Search";
 import { styled } from "@mui/material/styles";
@@ -9,8 +9,19 @@ import { GoGitCompare } from "react-icons/go";
 import { FaRegHeart } from "react-icons/fa";
 import Tooltip from "@mui/material/Tooltip";
 import { Nav } from "./Nav";
-import { useDispatch } from "react-redux";
 import { OpenCartPanel } from "../../redux/Slices/cartPanelSlice";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import { FaRegUser } from "react-icons/fa";
+import { setIsLogin } from "../../redux/Slices/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import Button from "@mui/material/Button";
+import Avatar from "@mui/material/Avatar";
+import { FaClipboardCheck } from "react-icons/fa";
+import { FaUser } from "react-icons/fa6";
+import { FaHeart } from "react-icons/fa";
+import { IoLogOut } from "react-icons/io5";
+
 const CartBadge = styled(Badge)`
   & .${badgeClasses.badge} {
     top: -12px;
@@ -19,7 +30,19 @@ const CartBadge = styled(Badge)`
 `;
 
 const Header = () => {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   const dispatch = useDispatch();
+  const isLogin = useSelector((state) => state.auth.isLogin);
+  useEffect(() => {
+    dispatch(setIsLogin(true));
+  }, []);
   return (
     <header>
       <div className="top-strip py-2 bg-gray-900 text-white">
@@ -60,26 +83,112 @@ const Header = () => {
               <img src="/Images/logo.png" alt="" />
             </Link>
           </div>
-          <div className="col2 w-[45%]">
+          <div className="col2 w-[40%]">
             <Search />
           </div>
-          <div className="col3 w-[30%] flex items-center pl-5">
+          <div className="col3 w-[35%] flex items-center pl-5">
             <ul className="flex items-center gap-3 w-full justify-end">
-              <li>
-                <Link
-                  to="/register"
-                  className="link transition text-[15px] font-[500]"
-                >
-                  Sign Up
-                </Link>
-                &nbsp; | &nbsp;
-                <Link
-                  className="link transition text-[15px] font-[500]"
-                  to="/login"
-                >
-                  Log In
-                </Link>
-              </li>
+              {isLogin ? (
+                <>
+                  <Button
+                    onClick={handleClick}
+                    className="!text-white !myAccountWrap !flex !items-center !gap-3"
+                  >
+                    <Button
+                      onClick={handleClick}
+                      className="!w-[35px] !h-[35px] !min-w-[35px] !rounded-full !bg-[#f1f1f1]"
+                    >
+                      <FaRegUser className="text-xl text-black/80" />
+                    </Button>
+                    <div className="info !flex !flex-col !items-start !text-white">
+                      <h4 className="text-sm font-semibold capitalize">
+                        Souvik Sarkar
+                      </h4>
+                      <span className="text-xs capitalize">
+                        example@gmail.com
+                      </span>
+                    </div>
+                  </Button>
+                  <Menu
+                    anchorEl={anchorEl}
+                    id="account-menu"
+                    open={open}
+                    onClose={handleClose}
+                    onClick={handleClose}
+                    slotProps={{
+                      paper: {
+                        elevation: 0,
+                        sx: {
+                          overflow: "visible",
+                          filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                          mt: 1.5,
+                          "& .MuiAvatar-root": {
+                            width: 35,
+                            height: 35,
+                            ml: -0.5,
+                            mr: 1,
+                          },
+                          "&::before": {
+                            content: '""',
+                            display: "block",
+                            position: "absolute",
+                            top: 0,
+                            left: 14,
+                            width: 10,
+                            height: 10,
+                            bgcolor: "background.paper",
+                            transform: "translateY(-50%) rotate(45deg)",
+                            zIndex: 0,
+                          },
+                        },
+                      },
+                    }}
+                    transformOrigin={{ horizontal: "right", vertical: "top" }}
+                    anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                  >
+                    <MenuItem
+                      className="flex gap-3 !font-['lexend']"
+                      onClick={handleClose}
+                    >
+                      <FaUser /> My Account
+                    </MenuItem>
+                    <MenuItem
+                      className="flex gap-3 !font-['lexend']"
+                      onClick={handleClose}
+                    >
+                      <FaClipboardCheck /> Orders
+                    </MenuItem>
+                    <MenuItem
+                      className="flex gap-3 !font-['lexend']"
+                      onClick={handleClose}
+                    >
+                      <FaHeart /> My List
+                    </MenuItem>
+                    <MenuItem
+                      className="flex gap-3 !font-['lexend']"
+                      onClick={handleClose}
+                    >
+                      <IoLogOut className="text-xl" /> Logout
+                    </MenuItem>
+                  </Menu>
+                </>
+              ) : (
+                <li>
+                  <Link
+                    to="/register"
+                    className="link transition text-[15px] font-[500]"
+                  >
+                    Sign Up
+                  </Link>
+                  &nbsp; | &nbsp;
+                  <Link
+                    className="link transition text-[15px] font-[500]"
+                    to="/login"
+                  >
+                    Log In
+                  </Link>
+                </li>
+              )}
               <li>
                 <Tooltip title="Compare">
                   <IconButton className="!text-white hover:!text-primary">

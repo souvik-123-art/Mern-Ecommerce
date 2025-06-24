@@ -100,6 +100,13 @@ Button {
   width: 5px;
   height: 7px;
 }
+.checkoutPage ::-webkit-scrollbar {
+  width: 3px;
+  height: 7px;
+}
+.checkoutPage ::-webkit-scrollbar-thumb{
+  background: #dadada !important;
+}
 
 ::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, #ff5252, #ff7675);
@@ -177,6 +184,12 @@ textarea{
 .MuiInputLabel-outlined {
   opacity: 65% !important;
   font-weight: 500 !important;
+  font-family: 'Poppins', sans-serif !important;
+}
+.col .MuiInputLabel-outlined {
+  opacity: 65% !important;
+  font-weight: 400 !important;
+  font-size: 14px !important;
   font-family: 'Poppins', sans-serif !important;
 }
 

@@ -9,7 +9,11 @@ import { Login } from "./pages/Login";
 import { SignUp } from "./pages/SignUp";
 import { CartPanel } from "./components/CartPanel";
 import { Cart } from "./pages/Cart";
-
+import { ForgotPassword } from "./pages/ForgotPasswordPage";
+import toast, { Toaster } from "react-hot-toast";
+import VerifyOTP from "./pages/VerifyOTP";
+import { ResetPassword } from "./pages/ResetPassword";
+import { Checkout } from "./pages/Checkout";
 function App() {
   return (
     <>
@@ -30,10 +34,31 @@ function App() {
           <Route path="/login" exact={true} element={<Login />} />
           <Route path="/register" exact={true} element={<SignUp />} />
           <Route path="/cart" exact={true} element={<Cart />} />
+          <Route
+            path="/forgot-password"
+            exact={true}
+            element={<ForgotPassword />}
+          />
+          <Route
+            path="/verify-otp"
+            exact={true}
+            element={<VerifyOTP />}
+          />
+          <Route
+            path="/reset-password/:token"
+            exact={true}
+            element={<ResetPassword />}
+          />
+          <Route
+            path="/checkout"
+            exact={true}
+            element={<Checkout />}
+          />
         </Routes>
         <ProductModal />
-        <CartPanel/>
+        <CartPanel />
         <Footer />
+        <Toaster position="top-center" reverseOrder={false} />
       </BrowserRouter>
     </>
   );
