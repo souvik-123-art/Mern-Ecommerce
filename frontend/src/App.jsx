@@ -14,6 +14,9 @@ import toast, { Toaster } from "react-hot-toast";
 import VerifyOTP from "./pages/VerifyOTP";
 import { ResetPassword } from "./pages/ResetPassword";
 import { Checkout } from "./pages/Checkout";
+import { MyAccount } from "./pages/MyAccount";
+import { MyList } from "./pages/MyList";
+import { Orders } from "./pages/Orders";
 function App() {
   return (
     <>
@@ -53,6 +56,21 @@ function App() {
             path="/checkout"
             exact={true}
             element={<Checkout />}
+          />
+          <Route
+            path="/my-account"
+            exact={true}
+            element={<MyAccount />}
+          />
+          <Route
+            path="/my-list"
+            exact={true}
+            element={<MyList />}
+          />
+          <Route
+            path="/my-orders"
+            exact={true}
+            element={<Orders />}
           />
         </Routes>
         <ProductModal />

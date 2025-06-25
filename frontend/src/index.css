@@ -104,7 +104,7 @@ Button {
   width: 3px;
   height: 7px;
 }
-.checkoutPage ::-webkit-scrollbar-thumb{
+.checkoutPage ::-webkit-scrollbar-thumb {
   background: #dadada !important;
 }
 
@@ -153,29 +153,29 @@ Button {
 .homeSliderV2:hover .swiper-button-next {
   right: 15px !important;
 }
-.bannerBoxV2{
+.bannerBoxV2 {
   height: 255px;
 }
-.sidebar .MuiCheckbox-root{
+.sidebar .MuiCheckbox-root {
   padding: 6px !important;
 }
-.sliderproductimage .swiper-slide{
+.sliderproductimage .swiper-slide {
   height: auto !important;
 }
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button{
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
 }
-textarea{
+textarea {
   resize: none;
 }
-.css-16wblaj-MuiInputBase-input-MuiOutlinedInput-input{
-  font-family: 'poppins' !important;
+.css-16wblaj-MuiInputBase-input-MuiOutlinedInput-input {
+  font-family: "poppins" !important;
 }
-.css-19qnlrw-MuiFormLabel-root-MuiInputLabel-root{
-  font-family: 'poppins' !important;
+.css-19qnlrw-MuiFormLabel-root-MuiInputLabel-root {
+  font-family: "poppins" !important;
 }
 .MuiInputLabel-outlined.Mui-focused {
   color: #ff5252 !important;
@@ -184,24 +184,56 @@ textarea{
 .MuiInputLabel-outlined {
   opacity: 65% !important;
   font-weight: 500 !important;
-  font-family: 'Poppins', sans-serif !important;
+  font-family: "Poppins", sans-serif !important;
 }
 .col .MuiInputLabel-outlined {
   opacity: 65% !important;
   font-weight: 400 !important;
   font-size: 14px !important;
-  font-family: 'Poppins', sans-serif !important;
+  font-family: "Poppins", sans-serif !important;
+}
+.myAccountSec .MuiInputLabel-outlined {
+  opacity: 65% !important;
+  font-weight: 400 !important;
+  font-size: 14px !important;
+  font-family: "Poppins", sans-serif !important;
 }
 
 .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
   border-color: #ff5252 !important;
   opacity: 65% !important;
 }
-#basic-Size .MuiButtonBase-root{
+#basic-Size .MuiButtonBase-root {
   font-size: 13px !important;
-  font-family: 'poppins' !important;
+  font-family: "poppins" !important;
 }
-#basic-Qty .MuiButtonBase-root{
+#basic-Qty .MuiButtonBase-root {
   font-size: 13px !important;
-  font-family: 'poppins' !important;
+  font-family: "poppins" !important;
+}
+.myaccountList .MuiPaper-root {
+  width: 200px !important;
+}
+.myAccount li a {
+  position: relative;
+  display: block;
+}
+.myAccount li a::before {
+  content: "";
+  position: absolute;
+  left: 0px;
+  top: 50%;
+  width: 3px;
+  height: 50%;
+  background-color: #ff5252;
+  opacity: 0;
+  transition: all 0.3s ease-in-out;
+}
+.myAccount li a.active::before {
+  top: 0px;
+  height: 100%;
+  opacity: 1;
+}
+.myAccount li a.active button  {
+  color: #ff5252 !important;
 }

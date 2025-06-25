@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Links } from "react-router-dom";
 import { Search } from "../Search";
 import { styled } from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
@@ -94,25 +94,23 @@ const Header = () => {
                     onClick={handleClick}
                     className="!text-white !myAccountWrap !flex !items-center !gap-3"
                   >
-                    <Button
-                      onClick={handleClick}
-                      className="!w-[35px] !h-[35px] !min-w-[35px] !rounded-full !bg-[#f1f1f1]"
+                    <div
+                      className="!w-[35px] !h-[35px] !rounded-full flex justify-center items-center !bg-[#f1f1f1]"
                     >
                       <FaRegUser className="text-xl text-black/80" />
-                    </Button>
+                    </div>
                     <div className="info !flex !flex-col !items-start !text-white">
                       <h4 className="text-sm font-semibold capitalize">
                         Souvik Sarkar
                       </h4>
-                      <span className="text-xs capitalize">
-                        example@gmail.com
-                      </span>
+                      <span className="text-xs">example@gmail.com</span>
                     </div>
                   </Button>
                   <Menu
                     anchorEl={anchorEl}
                     id="account-menu"
                     open={open}
+                    className="myaccountList"
                     onClose={handleClose}
                     onClick={handleClose}
                     slotProps={{
@@ -146,30 +144,41 @@ const Header = () => {
                     transformOrigin={{ horizontal: "right", vertical: "top" }}
                     anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
                   >
-                    <MenuItem
-                      className="flex gap-3 !font-['lexend']"
-                      onClick={handleClose}
-                    >
-                      <FaUser /> My Account
-                    </MenuItem>
-                    <MenuItem
-                      className="flex gap-3 !font-['lexend']"
-                      onClick={handleClose}
-                    >
-                      <FaClipboardCheck /> Orders
-                    </MenuItem>
-                    <MenuItem
-                      className="flex gap-3 !font-['lexend']"
-                      onClick={handleClose}
-                    >
-                      <FaHeart /> My List
-                    </MenuItem>
-                    <MenuItem
-                      className="flex gap-3 !font-['lexend']"
-                      onClick={handleClose}
-                    >
-                      <IoLogOut className="text-xl" /> Logout
-                    </MenuItem>
+                    <Link className="w-full block" to="/my-account">
+                      <MenuItem
+                        className="flex gap-3 !py-3 !font-['lexend']"
+                        onClick={handleClose}
+                      >
+                        <FaUser />{" "}
+                        <span className="text-[14px]">My Account</span>
+                      </MenuItem>
+                    </Link>
+                    <Link className="w-full block" to="/my-orders">
+                      <MenuItem
+                        className="flex gap-3 !py-3 !font-['lexend']"
+                        onClick={handleClose}
+                      >
+                        <FaClipboardCheck />{" "}
+                        <span className="text-[14px]">Orders</span>
+                      </MenuItem>
+                    </Link>
+                    <Link className="w-full block" to="/my-list">
+                      <MenuItem
+                        className="flex gap-3 !py-3 !font-['lexend']"
+                        onClick={handleClose}
+                      >
+                        <FaHeart /> <span className="text-[14px]">My List</span>
+                      </MenuItem>
+                    </Link>
+                    <Link className="w-full block" to="/logout">
+                      <MenuItem
+                        className="flex gap-3 !py-3 !font-['lexend']"
+                        onClick={handleClose}
+                      >
+                        <IoLogOut className="text-xl" />{" "}
+                        <span className="text-[14px]">Logout</span>
+                      </MenuItem>
+                    </Link>
                   </Menu>
                 </>
               ) : (
