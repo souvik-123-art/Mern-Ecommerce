@@ -1,0 +1,15 @@
+*{
+    font-family: 'lexend';
+}
+
+.MuiBadge-badge{
+    background-color: #ff5252 !important;
+}
+.ReactCollapse--collapse {
+    transition: height 300ms;
+  }
+  .slide-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
