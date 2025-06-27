@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Button from "@mui/material/Button";
-import { RiMenu2Fill } from "react-icons/ri";
+import { HiOutlineMenu } from "react-icons/hi";
+import { HiOutlineMenuAlt2 } from "react-icons/hi";
 import Badge from "@mui/material/Badge";
 import { styled } from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
@@ -10,6 +12,8 @@ import MenuItem from "@mui/material/MenuItem";
 import Divider from "@mui/material/Divider";
 import { FaRegUser } from "react-icons/fa6";
 import { IoIosLogOut } from "react-icons/io";
+import { OpenSidePanel } from "../../redux/slices/sidePanelSlice";
+
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
     right: 1,
@@ -19,6 +23,8 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
   },
 }));
 export const Header = () => {
+  const dispatch = useDispatch();
+  const sideBarOpen = useSelector((state) => state.sidePanel.sidePanelOpen);
   const [anchorMyAcc, setAnchorMyAcc] = useState(null);
   const openMyAcc = Boolean(anchorMyAcc);
   const handleClickMyAcc = (event) => {
@@ -28,10 +34,21 @@ export const Header = () => {
     setAnchorMyAcc(null);
   };
   return (
-    <header className="w-full h-[70px] pl-80 bg-[#fff] flex items-center justify-between shadow-md ">
+    <header
+      className={`w-full h-[70px] ${
+        sideBarOpen ? "pl-[18.5rem]" : "pl-7"
+      } bg-[#fff] flex items-center justify-between shadow-md sticky top-0 left-0 z-10 transition-all duration-300`}
+    >
       <div className="part1">
-        <Button className="!w-[40px] !h-[40px] !rounded-full !min-w-[40px] !text-black/80">
-          <RiMenu2Fill className="text-xl" />
+        <Button
+          onClick={() => dispatch(OpenSidePanel(!sideBarOpen))}
+          className="!w-[40px] !h-[40px] !rounded-full !min-w-[40px] !text-black/80"
+        >
+          {sideBarOpen ? (
+            <HiOutlineMenuAlt2 className="text-3xl" />
+          ) : (
+            <HiOutlineMenu className="text-3xl" />
+          )}
         </Button>
       </div>
       <div className="part2 w-[40%] flex items-center justify-end gap-6 pr-7">
@@ -46,7 +63,7 @@ export const Header = () => {
             className="rounded-full w-[35px] h-[35px] overflow-hidden cursor-pointer"
           >
             <img
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwfEzkFf0SaFrcqNWkn75p_Mi1xcn-524sDA&s"
+              src="https://static.wikia.nocookie.net/theloudhousefanon/images/9/96/John_Xina.webp"
               alt=""
               className="w-full h-full object-cover"
             />
@@ -91,7 +108,7 @@ export const Header = () => {
             <div className="flex items-center py-1 mb-2 px-3 gap-3">
               <div className="rounded-full w-[40px] h-[40px] overflow-hidden pointer-events-none">
                 <img
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwfEzkFf0SaFrcqNWkn75p_Mi1xcn-524sDA&s"
+                  src="https://static.wikia.nocookie.net/theloudhousefanon/images/9/96/John_Xina.webp"
                   alt=""
                   className="w-full h-full object-cover"
                 />
@@ -105,7 +122,7 @@ export const Header = () => {
                 </p>
               </div>
             </div>
-            <Divider className="!mb-2"/>
+            <Divider className="!mb-2" />
             <MenuItem
               onClick={handleCloseMyAcc}
               className="flex items-center gap-3"

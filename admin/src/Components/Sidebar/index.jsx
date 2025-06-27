@@ -10,7 +10,10 @@ import { BsBoxSeam } from "react-icons/bs";
 import { RiLogoutCircleRLine } from "react-icons/ri";
 import { FaAngleDown } from "react-icons/fa6";
 import { Collapse } from "react-collapse";
+import { useSelector } from "react-redux";
+
 export const Sidebar = () => {
+  const sideBarOpen = useSelector((state) => state.sidePanel.sidePanelOpen);
   const [subMenuIndex, setSubMenuIndex] = useState(null);
   const isOpenSubMenu = (index) => {
     if (subMenuIndex === index) {
@@ -19,7 +22,11 @@ export const Sidebar = () => {
     setSubMenuIndex(index);
   };
   return (
-    <div className="sidebar fixed top-0 left-0 bg-white h-full w-[15%] py-2 px-4 shadow-xl">
+    <div
+      className={`sidebar overflow-hidden ${
+        sideBarOpen === true ? "w-[15%] py-2 px-4" : "w-0 opacity-0"
+      } fixed top-0 left-0 bg-white h-full  shadow-xl z-20 transition-all duration-300`}
+    >
       <div className="py-2 w-full">
         <Link to="/">
           <img
