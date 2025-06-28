@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+.recharts-default-legend{
+    display: none !important;
+}
+.admin-auth .auth a.active button{
+    background-color: #333 !important;
+    color: white !important;
+}
+textarea{
+    resize: none;
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}

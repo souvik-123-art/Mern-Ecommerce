@@ -1,40 +1,56 @@
-*{
-    font-family: 'lexend' !important;
-    
+* {
+  font-family: "lexend" !important;
 }
-body{
+body {
   background-color: #f1f1f1;
 }
-.MuiBadge-badge{
-    background-color: #ff5252 !important;
+.MuiBadge-badge {
+  background-color: #ff5252 !important;
 }
 .ReactCollapse--collapse {
-    transition: height 300ms;
+  transition: height 300ms;
+}
+.slide-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn {
+  padding: 8px 20px !important;
+}
+.btn-sm {
+  padding: 6px 20px !important;
+}
+.btn-blue {
+  background-color: #3872fa !important;
+  color: #fff !important;
+  &&:hover {
+    background-color: #3067e5 !important;
   }
-  .slide-content {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+}
+.btn-blue-b {
+  border: 1px solid #3872fa !important;
+  transition: all 0.3s ease-in-out;
+  background-color: #fff;
+  color: #3872fa !important;
+  &&:hover {
+    background-color: #f1f1f1 !important;
   }
-  .btn{
-    padding: 8px 20px !important;
-  }
-  .btn-blue{
-    background-color: #3872fa !important; 
-    color: #fff !important;
-    &&:hover{
-      background-color: #3067e5 !important;
-    }
-  }
-  ::-webkit-scrollbar {
-    width: 5px;
-    height: 10px;
-  }
-  ::-webkit-scrollbar-thumb {
-    background-color: #ccc;
-  }
-  .link:hover{
-    color: #3872fa !important;
-    transition: all 0.3s ease-in-out !important;
-  }
-  th.MuiTableCell-root{@apply bg-[#f1f1f1] py-2}
+}
+::-webkit-scrollbar {
+  width: 5px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+}
+.link:hover {
+  color: #3872fa !important;
+  transition: all 0.3s ease-in-out !important;
+}
+th.MuiTableCell-root {
+  @apply bg-[#f1f1f1] py-2;
+}
+.MuiAppBar-colorPrimary{
+  background-color: #e6e6e6 !important;
+}

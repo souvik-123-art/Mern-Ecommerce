@@ -51,7 +51,7 @@ export const Sidebar = () => {
             onClick={() => isOpenSubMenu(1)}
             className="!w-full !justify-start !capitalize !flex !gap-3 !text-lg !text-black/80 !font-semibold !font-['lexend'] !py-2 hover:!bg-[#f1f1f1]"
           >
-            <FaRegImage className="text-xl" />
+            <FaRegImage className="text-xl " />
             Home Slides
             <span className="ml-auto">
               <FaAngleDown

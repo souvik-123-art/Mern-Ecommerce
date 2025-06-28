@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, PureComponent } from "react";
 import DashboardBoxes from "../../Components/DashboardBoxes";
 import { GiHand } from "react-icons/gi";
 import Button from "@mui/material/Button";
@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 import { FiEdit2 } from "react-icons/fi";
 import { FiEye } from "react-icons/fi";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import Tooltip from "@mui/material/Tooltip";
+import TooltipMUI from "@mui/material/Tooltip";
 import Pagination from "@mui/material/Pagination";
 import Progress from "../../Components/ProgressBar";
 import Table from "@mui/material/Table";
@@ -22,8 +22,17 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 const columns = [
   { id: "product", label: "PRODUCT", minWidth: 150 },
@@ -50,16 +59,79 @@ const columns = [
   },
 ];
 
-function createData(name, code, population, size) {
-  const density = population / size;
-  return { name, code, population, size, density };
-}
-
 export const Dashboard = () => {
   const [categoryFilterVal, setCategoryFilterVal] = useState("");
   const handleChangeCatFilter = (event) => {
     setCategoryFilterVal(event.target.value);
   };
+  const [chart1Data, setChart1Data] = useState([
+    {
+      month: "Jan",
+      TotalUsers: 4000,
+      TotalSales: 2400,
+      amt: 2400,
+    },
+    {
+      month: "Feb",
+      TotalUsers: 3000,
+      TotalSales: 1398,
+      amt: 2210,
+    },
+    {
+      month: "Mar",
+      TotalUsers: 2000,
+      TotalSales: 9800,
+      amt: 2290,
+    },
+    {
+      month: "Apr",
+      TotalUsers: 2780,
+      TotalSales: 3908,
+      amt: 2000,
+    },
+    {
+      month: "Jun",
+      TotalUsers: 1890,
+      TotalSales: 4800,
+      amt: 2181,
+    },
+    {
+      month: "Jul",
+      TotalUsers: 2390,
+      TotalSales: 3800,
+      amt: 2500,
+    },
+    {
+      month: "Aug",
+      TotalUsers: 6490,
+      TotalSales: 300,
+      amt: 2100,
+    },
+    {
+      month: "Sep",
+      TotalUsers: 1290,
+      TotalSales: 3300,
+      amt: 2100,
+    },
+    {
+      month: "Oct",
+      TotalUsers: 3490,
+      TotalSales: 1300,
+      amt: 2100,
+    },
+    {
+      month: "Nov",
+      TotalUsers: 2490,
+      TotalSales: 4300,
+      amt: 2100,
+    },
+    {
+      month: "Dec",
+      TotalUsers: 3490,
+      TotalSales: 2300,
+      amt: 2100,
+    },
+  ]);
   const [isOpenOrderProduct, setIsOpenOrderProduct] = useState(null);
   const isShowOrderProduct = (index) => {
     if (isOpenOrderProduct === index) {
@@ -93,7 +165,7 @@ export const Dashboard = () => {
             temporibus!
           </p>
           <Button className="btn-blue !mb-3 !px-4 !flex !gap-3 !py-2 !capitalize">
-            Add Product <FaPlus />
+            <FaPlus /> Add Product
           </Button>
         </div>
         <img src="/shop-illustration.png" className="w-[350px]" alt="" />
@@ -103,7 +175,7 @@ export const Dashboard = () => {
         <div className="flex items-center justify-between p-5">
           <h2 className="text-xl font-bold">Recent Orders</h2>
         </div>
-        <div class="relative overflow-x-auto mt-1 pb-5">
+        <div className="relative overflow-x-auto mt-1 pb-5">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500">
             <thead className="text-xs text-gray-600 uppercase bg-gray-100 border border-gray-100">
               <tr>
@@ -445,14 +517,14 @@ export const Dashboard = () => {
               </Select>
             </FormControl>
           </div>
-          <div className="col w-[25%] ml-auto flex items-center gap-3">
+          <div className="col w-[75%] ml-auto flex justify-end items-center gap-3">
             <Button className="btn !bg-green-600 !text-white hover:!bg-green-400">
               Export
             </Button>
             <Button className="btn-blue btn">Add Product</Button>
           </div>
         </div>
-        <div class="relative overflow-x-auto mt-1 pb-5">
+        <div className="relative overflow-x-auto mt-1 pb-5">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500">
             <thead className="text-xs text-gray-600 uppercase bg-gray-100 border border-gray-100">
               <tr>
@@ -522,21 +594,21 @@ export const Dashboard = () => {
                   <Progress value={50} />
                 </td>
                 <td className="px-6 py-2 whitespace-nowrap">
-                  <Tooltip title="Edit Product" placement="top">
+                  <TooltipMUI title="Edit Product" placement="top">
                     <Button className="!w-8 !bg-green-500 !mr-2 !h-8 !min-w-8 !text-[#f1f1f1] !rounded-full">
                       <FiEdit2 className="text-lg" />
                     </Button>
-                  </Tooltip>
-                  <Tooltip title="View Product Details" placement="top">
+                  </TooltipMUI>
+                  <TooltipMUI title="View Product Details" placement="top">
                     <Button className="!w-8 !bg-blue-500 !mr-2 !h-8 !min-w-8 !text-[#f1f1f1] !rounded-full">
                       <FiEye className="text-lg" />
                     </Button>
-                  </Tooltip>
-                  <Tooltip title="Delete Product" placement="top">
+                  </TooltipMUI>
+                  <TooltipMUI title="Delete Product" placement="top">
                     <Button className="!w-8 !bg-red-500 !text-lg !mr-2 !h-8 !min-w-8 !text-[#f1f1f1] !rounded-full">
                       <RiDeleteBin6Line />
                     </Button>
-                  </Tooltip>
+                  </TooltipMUI>
                 </td>
               </tr>
             </tbody>
@@ -577,14 +649,14 @@ export const Dashboard = () => {
               </Select>
             </FormControl>
           </div>
-          <div className="col w-[25%] ml-auto flex items-center gap-3">
+          <div className="col w-[75%] ml-auto flex justify-end items-center gap-3">
             <Button className="btn !bg-green-600 !text-white hover:!bg-green-400">
               Export
             </Button>
             <Button className="btn-blue btn">Add Product</Button>
           </div>
         </div>
-        
+
         <TableContainer sx={{ maxHeight: 440 }}>
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
@@ -646,21 +718,21 @@ export const Dashboard = () => {
                   <Progress value={50} />
                 </TableCell>
                 <TableCell style={{ minWidth: columns.minWidth }}>
-                  <Tooltip title="Edit Product" placement="top">
+                  <TooltipMUI title="Edit Product" placement="top">
                     <Button className="!w-8 !bg-green-500 !mr-2 !h-8 !min-w-8 !text-[#f1f1f1] !rounded-full">
                       <FiEdit2 className="text-lg" />
                     </Button>
-                  </Tooltip>
-                  <Tooltip title="View Product Details" placement="top">
+                  </TooltipMUI>
+                  <TooltipMUI title="View Product Details" placement="top">
                     <Button className="!w-8 !bg-blue-500 !mr-2 !h-8 !min-w-8 !text-[#f1f1f1] !rounded-full">
                       <FiEye className="text-lg" />
                     </Button>
-                  </Tooltip>
-                  <Tooltip title="Delete Product" placement="top">
+                  </TooltipMUI>
+                  <TooltipMUI title="Delete Product" placement="top">
                     <Button className="!w-8 !bg-red-500 !text-lg !mr-2 !h-8 !min-w-8 !text-[#f1f1f1] !rounded-full">
                       <RiDeleteBin6Line />
                     </Button>
-                  </Tooltip>
+                  </TooltipMUI>
                 </TableCell>
               </TableRow>
             </TableBody>
@@ -669,12 +741,59 @@ export const Dashboard = () => {
         <TablePagination
           rowsPerPageOptions={[10, 25, 100]}
           component="div"
-          // count={rows.length}
+          count={10}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
+      </div>
+      <div className="card my-4 mt-5 shadow-md sm:rounded-lg bg-white p-5">
+        <h2 className="text-2xl font-semibold mb-3">
+          Total Users & Total Sales
+        </h2>
+        <div className="indicator flex items-center gap-5 mb-8">
+          <span className="flex items-center gap-2 text-sm text-green-700">
+            <span className="block w-2 h-2 rounded-full bg-green-500"></span>{" "}
+            Total Users
+          </span>
+          <span className="flex items-center gap-2 text-sm text-blue-700">
+            <span className="block w-2 h-2 rounded-full bg-blue-500"></span>{" "}
+            Total Sales
+          </span>
+        </div>
+        <div className="graph overflow-x-scroll overflow-y-hidden">
+          <LineChart
+            width={1200}
+            height={500}
+            data={chart1Data}
+            margin={{
+              top: 5,
+              right: 30,
+              left: 20,
+              bottom: 5,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" stroke="none" />
+            <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+            <YAxis tick={{ fontSize: 12 }} />
+            <Tooltip />
+            <Legend />
+            <Line
+              type="monotone"
+              dataKey="TotalSales"
+              stroke="#8884d8"
+              activeDot={{ r: 8 }}
+              strokeWidth={3}
+            />
+            <Line
+              type="monotone"
+              dataKey="TotalUsers"
+              stroke="#82ca9d"
+              strokeWidth={3}
+            />
+          </LineChart>
+        </div>
       </div>
     </>
   );
