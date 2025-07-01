@@ -23,6 +23,14 @@ import Slide from "@mui/material/Slide";
 import { setIsOpenFullScreenPanel } from "./redux/slices/fullScreenPanelSlice";
 import Button from "@mui/material/Button";
 import AddProduct from "./Pages/Products/AddProduct";
+import HomeSliderBanners from "./Pages/HomeSliderBanners";
+import AddHomeSlide from "./Pages/HomeSliderBanners/addHomeSlide";
+import AddCategory from "./Pages/Category/AddCategory";
+import CategoryList from "./Pages/Category";
+import SubCategoryList from "./Pages/Category/SubCatList";
+import AddSubCategory from "./Pages/Category/AddSubCategory";
+import Users from "./Pages/Users";
+import Orders from "./Pages/Orders";
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -54,6 +62,141 @@ function App() {
                 }  py-4 px-5 transition-all duration-300`}
               >
                 <Products />
+              </div>
+            </div>
+          </section>
+        </>
+      ),
+    },
+    {
+      path: "/subCategory/list",
+      exact: true,
+      element: (
+        <>
+          <section className="main">
+            <Header />
+            <div className="contentMain flex">
+              <div
+                className={`sidebarWrapper ${
+                  sideBarOpen === true ? "w-[15%]" : "w-0"
+                } transition-all duration-300 overflow-hidden`}
+              >
+                <Sidebar />
+              </div>
+              <div
+                className={`contentRight ${
+                  sideBarOpen === true ? "w-[85%]" : "w-[100%]"
+                }  py-4 px-5 transition-all duration-300`}
+              >
+                <SubCategoryList />
+              </div>
+            </div>
+          </section>
+        </>
+      ),
+    },
+    {
+      path: "/category/list",
+      exact: true,
+      element: (
+        <>
+          <section className="main">
+            <Header />
+            <div className="contentMain flex">
+              <div
+                className={`sidebarWrapper ${
+                  sideBarOpen === true ? "w-[15%]" : "w-0"
+                } transition-all duration-300 overflow-hidden`}
+              >
+                <Sidebar />
+              </div>
+              <div
+                className={`contentRight ${
+                  sideBarOpen === true ? "w-[85%]" : "w-[100%]"
+                }  py-4 px-5 transition-all duration-300`}
+              >
+                <CategoryList />
+              </div>
+            </div>
+          </section>
+        </>
+      ),
+    },
+    {
+      path: "/homeSlider/list",
+      exact: true,
+      element: (
+        <>
+          <section className="main">
+            <Header />
+            <div className="contentMain flex">
+              <div
+                className={`sidebarWrapper ${
+                  sideBarOpen === true ? "w-[15%]" : "w-0"
+                } transition-all duration-300 overflow-hidden`}
+              >
+                <Sidebar />
+              </div>
+              <div
+                className={`contentRight ${
+                  sideBarOpen === true ? "w-[85%]" : "w-[100%]"
+                }  py-4 px-5 transition-all duration-300`}
+              >
+                <HomeSliderBanners />
+              </div>
+            </div>
+          </section>
+        </>
+      ),
+    },
+    {
+      path: "/users",
+      exact: true,
+      element: (
+        <>
+          <section className="main">
+            <Header />
+            <div className="contentMain flex">
+              <div
+                className={`sidebarWrapper ${
+                  sideBarOpen === true ? "w-[15%]" : "w-0"
+                } transition-all duration-300 overflow-hidden`}
+              >
+                <Sidebar />
+              </div>
+              <div
+                className={`contentRight ${
+                  sideBarOpen === true ? "w-[85%]" : "w-[100%]"
+                }  py-4 px-5 transition-all duration-300`}
+              >
+                <Users />
+              </div>
+            </div>
+          </section>
+        </>
+      ),
+    },
+    {
+      path: "/Orders",
+      exact: true,
+      element: (
+        <>
+          <section className="main">
+            <Header />
+            <div className="contentMain flex">
+              <div
+                className={`sidebarWrapper ${
+                  sideBarOpen === true ? "w-[15%]" : "w-0"
+                } transition-all duration-300 overflow-hidden`}
+              >
+                <Sidebar />
+              </div>
+              <div
+                className={`contentRight ${
+                  sideBarOpen === true ? "w-[85%]" : "w-[100%]"
+                }  py-4 px-5 transition-all duration-300`}
+              >
+                <Orders />
               </div>
             </div>
           </section>
@@ -128,7 +271,10 @@ function App() {
             </Typography>
           </Toolbar>
         </AppBar>
-        {isOpenFullScreenPanel?.model === 'Add Product' && <AddProduct/>}
+        {isOpenFullScreenPanel?.model === "Add Product" && <AddProduct />}
+        {isOpenFullScreenPanel?.model === "Add Home Slide" && <AddHomeSlide />}
+        {isOpenFullScreenPanel?.model === "Add Category" && <AddCategory />}
+        {isOpenFullScreenPanel?.model === "Add Sub Category" && <AddSubCategory />}
       </Dialog>
     </>
   );

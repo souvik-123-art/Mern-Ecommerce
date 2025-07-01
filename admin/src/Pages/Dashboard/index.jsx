@@ -23,6 +23,8 @@ import TableRow from "@mui/material/TableRow";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
+import { useDispatch } from "react-redux";
+import { setIsOpenFullScreenPanel } from "../../redux/slices/fullScreenPanelSlice";
 import {
   LineChart,
   Line,
@@ -60,6 +62,7 @@ const columns = [
 ];
 
 export const Dashboard = () => {
+  const dispatch = useDispatch();
   const [categoryFilterVal, setCategoryFilterVal] = useState("");
   const handleChangeCatFilter = (event) => {
     setCategoryFilterVal(event.target.value);
@@ -164,7 +167,17 @@ export const Dashboard = () => {
             Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eaque,
             temporibus!
           </p>
-          <Button className="btn-blue !mb-3 !px-4 !flex !gap-3 !py-2 !capitalize">
+          <Button
+            onClick={() =>
+              dispatch(
+                setIsOpenFullScreenPanel({
+                  open: true,
+                  model: "Add Product",
+                })
+              )
+            }
+            className="btn-blue !mb-3 !px-4 !flex !gap-3 !py-2 !capitalize"
+          >
             <FaPlus /> Add Product
           </Button>
         </div>
@@ -521,7 +534,19 @@ export const Dashboard = () => {
             <Button className="btn !bg-green-600 !text-white hover:!bg-green-400">
               Export
             </Button>
-            <Button className="btn-blue btn">Add Product</Button>
+            <Button
+              className="btn-blue btn"
+              onClick={() =>
+                dispatch(
+                  setIsOpenFullScreenPanel({
+                    open: true,
+                    model: "Add Product",
+                  })
+                )
+              }
+            >
+              Add Product
+            </Button>
           </div>
         </div>
         <div className="relative overflow-x-auto mt-1 pb-5">
@@ -653,7 +678,19 @@ export const Dashboard = () => {
             <Button className="btn !bg-green-600 !text-white hover:!bg-green-400">
               Export
             </Button>
-            <Button className="btn-blue btn">Add Product</Button>
+            <Button
+              className="btn-blue btn"
+              onClick={() =>
+                dispatch(
+                  setIsOpenFullScreenPanel({
+                    open: true,
+                    model: "Add Product",
+                  })
+                )
+              }
+            >
+              Add Product
+            </Button>
           </div>
         </div>
 

@@ -10,9 +10,10 @@ import { BsBoxSeam } from "react-icons/bs";
 import { RiLogoutCircleRLine } from "react-icons/ri";
 import { FaAngleDown } from "react-icons/fa6";
 import { Collapse } from "react-collapse";
-import { useSelector } from "react-redux";
-
+import { useSelector, useDispatch } from "react-redux";
+import { setIsOpenFullScreenPanel } from "../../redux/slices/fullScreenPanelSlice";
 export const Sidebar = () => {
+  const dispatch = useDispatch();
   const sideBarOpen = useSelector((state) => state.sidePanel.sidePanelOpen);
   const [subMenuIndex, setSubMenuIndex] = useState(null);
   const isOpenSubMenu = (index) => {
@@ -64,12 +65,24 @@ export const Sidebar = () => {
           <Collapse isOpened={subMenuIndex === 1 ? true : false}>
             <ul className="ml-3 w-full border-l pr-3">
               <li>
-                <Button className="!text-black/80 !capitalize !justify-start !w-full !text-sm !font-[400] !py-2 hover:!bg-[#f1f1f1] !pl-9 !font-['lexend']">
-                  Home Banners List
-                </Button>
+                <Link to="/homeSlider/list">
+                  <Button className="!text-black/80 !capitalize !justify-start !w-full !text-sm !font-[400] !py-2 hover:!bg-[#f1f1f1] !pl-9 !font-['lexend']">
+                    Home Banners List
+                  </Button>
+                </Link>
               </li>
               <li>
-                <Button className="!text-black/80 !capitalize !justify-start !w-full !text-sm !font-[400] !py-2 hover:!bg-[#f1f1f1] !pl-9 !font-['lexend']">
+                <Button
+                  onClick={() =>
+                    dispatch(
+                      setIsOpenFullScreenPanel({
+                        open: true,
+                        model: "Add Home Slide",
+                      })
+                    )
+                  }
+                  className="!text-black/80 !capitalize !justify-start !w-full !text-sm !font-[400] !py-2 hover:!bg-[#f1f1f1] !pl-9 !font-['lexend']"
+                >
                   Add Home Banner Slide
                 </Button>
               </li>
@@ -109,11 +122,19 @@ export const Sidebar = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/product/upload">
-                  <Button className="!text-black/80 !capitalize !justify-start !w-full !text-sm !font-[400] !py-2 hover:!bg-[#f1f1f1] !pl-9 !font-['lexend']">
-                    Product Upload
-                  </Button>
-                </Link>
+                <Button
+                  className="!text-black/80 !capitalize !justify-start !w-full !text-sm !font-[400] !py-2 hover:!bg-[#f1f1f1] !pl-9 !font-['lexend']"
+                  onClick={() =>
+                    dispatch(
+                      setIsOpenFullScreenPanel({
+                        open: true,
+                        model: "Add Product",
+                      })
+                    )
+                  }
+                >
+                  Product Upload
+                </Button>
               </li>
             </ul>
           </Collapse>
@@ -136,32 +157,48 @@ export const Sidebar = () => {
           <Collapse isOpened={subMenuIndex === 4 ? true : false}>
             <ul className="ml-3 w-full border-l pr-3">
               <li>
-                <Link to="/categories">
+                <Link to="/category/list">
                   <Button className="!text-black/80 !capitalize !justify-start !w-full !text-sm !font-[400] !py-2 hover:!bg-[#f1f1f1] !pl-9 !font-['lexend']">
                     Category List
                   </Button>
                 </Link>
               </li>
               <li>
-                <Link to="/category/add">
-                  <Button className="!text-black/80 !capitalize !justify-start !w-full !text-sm !font-[400] !py-2 hover:!bg-[#f1f1f1] !pl-9 !font-['lexend']">
-                    Add a Category
-                  </Button>
-                </Link>
+                <Button
+                  onClick={() =>
+                    dispatch(
+                      setIsOpenFullScreenPanel({
+                        open: true,
+                        model: "Add Category",
+                      })
+                    )
+                  }
+                  className="!text-black/80 !capitalize !justify-start !w-full !text-sm !font-[400] !py-2 hover:!bg-[#f1f1f1] !pl-9 !font-['lexend']"
+                >
+                  Add a Category
+                </Button>
               </li>
               <li>
-                <Link to="/category/subCat">
+                <Link to="/subCategory/list">
                   <Button className="!text-black/80 !capitalize !justify-start !w-full !text-sm !font-[400] !py-2 hover:!bg-[#f1f1f1] !pl-9 !font-['lexend']">
                     Sub Category List
                   </Button>
                 </Link>
               </li>
               <li>
-                <Link to="/category/subCat/add">
-                  <Button className="!text-black/80 !capitalize !justify-start !w-full !text-sm !font-[400] !py-2 hover:!bg-[#f1f1f1] !pl-9 !font-['lexend']">
-                    Add a Sub Category
-                  </Button>
-                </Link>
+                <Button
+                  onClick={() =>
+                    dispatch(
+                      setIsOpenFullScreenPanel({
+                        open: true,
+                        model: "Add Sub Category",
+                      })
+                    )
+                  }
+                  className="!text-black/80 !capitalize !justify-start !w-full !text-sm !font-[400] !py-2 hover:!bg-[#f1f1f1] !pl-9 !font-['lexend']"
+                >
+                  Add a Sub Category
+                </Button>
               </li>
             </ul>
           </Collapse>
