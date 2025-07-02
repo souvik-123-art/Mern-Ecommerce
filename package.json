@@ -4,6 +4,7 @@
   "main": "backend/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node backend/index.js",
     "dev": "nodemon backend/index.js"
   },
   "repository": {
@@ -20,14 +21,18 @@
   "homepage": "https://github.com/souvik-123-art/Mern-Ecommerce#readme",
   "description": "",
   "dependencies": {
-    "bcrypt": "^6.0.0",
+    "bcryptjs": "^3.0.2",
+    "cloudinary": "^2.7.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.15.2",
+    "morgan": "^1.10.0",
+    "multer": "^2.0.1",
     "nodemailer": "^7.0.3"
   },
   "devDependencies": {

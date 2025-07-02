@@ -31,6 +31,9 @@ import SubCategoryList from "./Pages/Category/SubCatList";
 import AddSubCategory from "./Pages/Category/AddSubCategory";
 import Users from "./Pages/Users";
 import Orders from "./Pages/Orders";
+import { ForgotPassword } from "./Pages/ForgotPasswordPage";
+import VerifyOTP from "./Pages/VerifyOTP";
+import { ResetPassword } from "./Pages/ResetPassword";
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -239,6 +242,21 @@ function App() {
       path: "/signup",
       exact: true,
       element: <SignUp />,
+    },
+    {
+      path: "/forgot-password",
+      exact: true,
+      element: <ForgotPassword />,
+    },
+    {
+      path: "/verify-otp",
+      exact: true,
+      element: <VerifyOTP />,
+    },
+    {
+      path: "/reset-password",
+      exact: true,
+      element: <ResetPassword />,
     },
   ]);
   return (

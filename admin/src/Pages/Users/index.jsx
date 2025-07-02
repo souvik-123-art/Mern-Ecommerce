@@ -28,6 +28,11 @@ const columns = [
     label: "User Mobile No",
     minWidth: 130,
   },
+  {
+    id: "userCreated",
+    label: "Created",
+    minWidth: 130,
+  },
 ];
 const Users = () => {
   const [page, setPage] = React.useState(0);
@@ -78,7 +83,7 @@ const Users = () => {
                 </TableCell>
                 <TableCell style={{ minWidth: columns.minWidth }}>
                   <div className="flex items-center gap-4 w-[70px]">
-                    <div className="img w-[55px] h-[55px] rounded-md overflow-hidden">
+                    <div className="img w-[55px] h-[55px] rounded-full overflow-hidden">
                       <img
                         src="https://mui.com/static/images/avatar/1.jpg"
                         className="w-full"
@@ -105,6 +110,9 @@ const Users = () => {
                     </span>
                     <span>9823456788</span>
                   </span>
+                </TableCell>
+                <TableCell style={{ minWidth: columns.minWidth }}>
+                  20-05-2025
                 </TableCell>
               </TableRow>
             </TableBody>

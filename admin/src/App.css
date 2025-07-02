@@ -54,3 +54,6 @@ th.MuiTableCell-root {
 .MuiAppBar-colorPrimary{
   background-color: #e6e6e6 !important;
 }
+.MuiTableBody-root tr:nth-child(even){
+  background-color: #f1f1f1;
+}
