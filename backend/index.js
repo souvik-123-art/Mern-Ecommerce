@@ -7,6 +7,7 @@ dotenv.config();
 import { connectDB } from "./DB/connectDB.js";
 import morgan from "morgan";
 import helmet from "helmet";
+import userRouter from "./routes/user.route.js";
 app.use(cors());
 // app.options("*", cors());
 app.use(express.json());
@@ -22,10 +23,10 @@ const PORT = process.env.PORT || 7000;
 app.get("/", (req, res) => {
   res.json("hi");
 });
+app.use("/api/user", userRouter);
 
-connectDB().then(()=>{
-  app.listen(PORT, ()=>{
-    console.log('server is running on port', PORT);
-    
-  })
-})
+connectDB().then(() => {
+  app.listen(PORT, () => {
+    console.log("server is running on port", PORT);
+  });
+});
