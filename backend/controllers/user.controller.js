@@ -1,9 +1,12 @@
 import UserModel from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 import dotenv from "dotenv";
 dotenv.config();
 import {
+  resetSuccessEmail,
+  sendPasswordResetEmail,
   sendVerificationEmail,
   sendWelcomeEmail,
 } from "../config/sendEmail.js";
@@ -122,6 +125,14 @@ export const loginUserController = async (req, res) => {
         error: true,
       });
     }
+    if (!user.isVerified) {
+      return res.status(400).json({
+        message:
+          "your email is not verified yet please verify your email first",
+        success: false,
+        error: true,
+      });
+    }
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res
@@ -188,7 +199,7 @@ export const logoutController = async (req, res) => {
 let imagesArr = [];
 export const userAvatarController = async (req, res) => {
   try {
-    let imagesArr = [];
+    imagesArr = [];
     const userId = req.userId;
     const image = req.files;
 
@@ -312,6 +323,144 @@ export const updateUserDetails = async (req, res) => {
       error: false,
       success: true,
       user: updateUser,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+
+//forgot password
+export const forgotPasswordController = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await UserModel.findOne({ email });
+    if (!user)
+      return res
+        .status(400)
+        .json({ success: false, message: "user not found" });
+    // generate reset token
+
+    const resetToken = crypto.randomBytes(20).toString("hex");
+    const resetTokenExpiresAt = Date.now() + 1 * 60 * 60 * 1000;
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpiresAt = resetTokenExpiresAt;
+
+    await user.save();
+
+    await sendPasswordResetEmail(
+      user.email,
+      `${process.env.CLIENT_URL}/reset-password/${resetToken}`
+    );
+    res.status(200).json({
+      success: true,
+      error: false,
+      message: "password reset link sent to your email",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+
+export const resetPassword = async (req, res) => {
+  try {
+    const { token } = req.params;
+    const { password } = req.body;
+
+    const user = await UserModel.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpiresAt: { $gt: Date.now() },
+    });
+    if (!user)
+      return res
+        .status(400)
+        .json({ success: false, message: "invalid or expired reset token" });
+    // update password
+    const hashedPass = await bcrypt.hash(password, 10);
+
+    user.password = hashedPass;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpiresAt = undefined;
+    await user.save();
+    await resetSuccessEmail(user.email);
+    res.status(200).json({
+      success: true,
+      error: false,
+      message: "Password reset succesfully",
+    });
+  } catch (error) {
+    console.log("Error in reset Password ", error);
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+export const refreshToken = async (req, res) => {
+  try {
+    const refreshToken =
+      req.cookies.refreshToken || req?.headers?.authorization?.split(" ")[1];
+    if (!refreshToken) {
+      return res.status(401).json({
+        message: "Invalid Token",
+        error: true,
+        success: false,
+      });
+    }
+    const verifyToken = jwt.verify(
+      refreshToken,
+      process.env.SECRET_KEY_REFRESH_TOKEN
+    );
+    if (!verifyToken) {
+      return res.status(401).json({
+        success: false,
+        error: true,
+        message: "token is expired",
+      });
+    }
+    const userId = verifyToken.id;
+    const newAccessToken = genAccessToken(userId);
+    const cookiesOption = {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+    };
+    res.cookie("accessToken", newAccessToken, cookiesOption);
+
+    return res.json({
+      message: "new access token generated",
+      error: false,
+      success: true,
+      data: {
+        accesstoken: newAccessToken,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+
+export const userDetails = async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    const user = await UserModel.findById(userId).select(
+      "-password -refresh_token"
+    );
+    return res.json({
+      message: "user details",
+      data: user,
+      error: false,
+      success: true,
     });
   } catch (error) {
     return res.status(500).json({

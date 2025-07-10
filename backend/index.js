@@ -8,6 +8,8 @@ import { connectDB } from "./DB/connectDB.js";
 import morgan from "morgan";
 import helmet from "helmet";
 import userRouter from "./routes/user.route.js";
+import categoryRouter from "./routes/category.route.js";
+import productRouter from "./routes/product.route.js";
 app.use(cors());
 // app.options("*", cors());
 app.use(express.json());
@@ -24,6 +26,8 @@ app.get("/", (req, res) => {
   res.json("hi");
 });
 app.use("/api/user", userRouter);
+app.use("/api/category", categoryRouter);
+app.use("/api/product", productRouter);
 
 connectDB().then(() => {
   app.listen(PORT, () => {
