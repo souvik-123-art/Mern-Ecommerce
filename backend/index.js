@@ -10,6 +10,7 @@ import helmet from "helmet";
 import userRouter from "./routes/user.route.js";
 import categoryRouter from "./routes/category.route.js";
 import productRouter from "./routes/product.route.js";
+import cartRouter from "./routes/cart.route.js";
 app.use(cors());
 // app.options("*", cors());
 app.use(express.json());
@@ -28,6 +29,7 @@ app.get("/", (req, res) => {
 app.use("/api/user", userRouter);
 app.use("/api/category", categoryRouter);
 app.use("/api/product", productRouter);
+app.use("/api/cart", cartRouter);
 
 connectDB().then(() => {
   app.listen(PORT, () => {
