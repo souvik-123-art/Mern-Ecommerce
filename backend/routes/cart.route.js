@@ -4,7 +4,7 @@ import { addToCartItemController, deleteCartItemController, getCartItemControlle
 
 const cartRouter = Router();
 
-cartRouter.post("/create", auth, addToCartItemController);
+cartRouter.post("/add", auth, addToCartItemController);
 cartRouter.get("/", auth, getCartItemController);
 cartRouter.put("/update-qty", auth, updateCartItemController);
 cartRouter.delete("/delete-cart-item", auth, deleteCartItemController);
