@@ -17,7 +17,20 @@ import { Checkout } from "./pages/Checkout";
 import { MyAccount } from "./pages/MyAccount";
 import { MyList } from "./pages/MyList";
 import { Orders } from "./pages/Orders";
+import { useDispatch, useSelector } from "react-redux";
+import { setIsLogin } from "./redux/Slices/authSlice";
+import { useEffect } from "react";
 function App() {
+  const dispatch = useDispatch();
+  const isLogin = useSelector((state) => state.auth.isLogin);
+  useEffect(() => {
+    const token = localStorage.getItem("accesstoken");
+    if (token !== undefined && token !== null && token !== "") {
+      dispatch(setIsLogin(true));
+    } else {
+      dispatch(setIsLogin(false));
+    }
+  }, [isLogin]);
   return (
     <>
       <BrowserRouter>
@@ -42,36 +55,16 @@ function App() {
             exact={true}
             element={<ForgotPassword />}
           />
-          <Route
-            path="/verify-otp"
-            exact={true}
-            element={<VerifyOTP />}
-          />
+          <Route path="/verify-email" exact={true} element={<VerifyOTP />} />
           <Route
             path="/reset-password/:token"
             exact={true}
             element={<ResetPassword />}
           />
-          <Route
-            path="/checkout"
-            exact={true}
-            element={<Checkout />}
-          />
-          <Route
-            path="/my-account"
-            exact={true}
-            element={<MyAccount />}
-          />
-          <Route
-            path="/my-list"
-            exact={true}
-            element={<MyList />}
-          />
-          <Route
-            path="/my-orders"
-            exact={true}
-            element={<Orders />}
-          />
+          <Route path="/checkout" exact={true} element={<Checkout />} />
+          <Route path="/my-account" exact={true} element={<MyAccount />} />
+          <Route path="/my-list" exact={true} element={<MyList />} />
+          <Route path="/my-orders" exact={true} element={<Orders />} />
         </Routes>
         <ProductModal />
         <CartPanel />

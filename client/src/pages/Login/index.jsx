@@ -1,12 +1,64 @@
 import Button from "@mui/material/Button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import TextField from "@mui/material/TextField";
 import { useState } from "react";
 import { IoMdEye } from "react-icons/io";
 import { IoMdEyeOff } from "react-icons/io";
 import toast from "react-hot-toast";
+import CircularProgress from "@mui/material/CircularProgress";
+import { postData } from "../../utils/api";
+import { setIsLogin } from "../../redux/Slices/authSlice";
+import { useDispatch } from "react-redux";
 export const Login = () => {
+  const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [formFields, setFormFields] = useState({
+    email: "",
+    password: "",
+  });
+  const navigate = useNavigate();
+  const onChangeInput = (e) => {
+    const { name, value } = e.target;
+    setFormFields(() => {
+      return {
+        ...formFields,
+        [name]: value,
+      };
+    });
+  };
+  const validValue = Object.values(formFields).every((el) => el);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    if (formFields.email === "") {
+      toast.error("enter your email address");
+      setIsLoading(false);
+      return false;
+    }
+    if (formFields.password === "") {
+      toast.error("enter your password");
+      setIsLoading(false);
+      return false;
+    }
+    postData("/api/user/login", formFields).then((res) => {
+      if (!res?.error) {
+        setIsLoading(false);
+        toast.success(res.message);
+        setFormFields({
+          email: "",
+          password: "",
+        });
+        localStorage.setItem("accesstoken", res?.data?.accesstoken);
+        localStorage.setItem("refreshtoken", res?.data?.refreshtoken);
+        dispatch(setIsLogin(true));
+        navigate("/");
+      } else {
+        toast.error(res.message);
+        setIsLoading(false);
+      }
+    });
+  };
   return (
     <section className="login py-10">
       <div className="container mx-auto">
@@ -14,14 +66,18 @@ export const Login = () => {
           <h3 className="text-center text-2xl font-bold text-gray-700">
             Login Your Account
           </h3>
-          <form className="w-full mt-5">
+          <form className="w-full mt-5" onSubmit={handleSubmit}>
             <div className="form-group w-full mb-5">
               <TextField
                 type="email"
                 id="email"
                 label="Email Id *"
+                value={formFields.email}
                 variant="outlined"
                 className="w-full"
+                onChange={onChangeInput}
+                name="email"
+                disabled={isLoading ? true : false}
               />
             </div>
             <div className="form-group w-full mb-3 relative">
@@ -31,6 +87,10 @@ export const Login = () => {
                 label="Password *"
                 variant="outlined"
                 className="w-full"
+                name="password"
+                value={formFields.password}
+                onChange={onChangeInput}
+                disabled={isLoading ? true : false}
               />
               <Button
                 onClick={() => setShowPassword(!showPassword)}
@@ -47,8 +107,19 @@ export const Login = () => {
             >
               Forgot Password?
             </Link>
-            <Button className="!px-6 !mt-5 !w-full !block !py-2 !bg-primary !text-white hover:!bg-gray-900 transition-all">
-              Login
+            <Button
+              type="submit"
+              disabled={!validValue}
+              className="!px-6 !mt-5 !w-full !flex !py-2 !bg-primary !text-white hover:!bg-gray-900 transition-all"
+            >
+              {isLoading ? (
+                <CircularProgress
+                  className="!w-[25px] !h-[25px]"
+                  color="inherit"
+                />
+              ) : (
+                "Login"
+              )}
             </Button>
           </form>
           <p className="mt-6 text-center text-md font-light">

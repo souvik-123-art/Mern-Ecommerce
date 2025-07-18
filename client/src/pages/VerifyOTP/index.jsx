@@ -2,7 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import Button from "@mui/material/Button";
+import { postData } from "../../utils/api";
+import CircularProgress from "@mui/material/CircularProgress";
 const VerifyOTP = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const inputRefs = useRef([]);
   const navigate = useNavigate();
@@ -36,7 +39,19 @@ const VerifyOTP = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const verificationcode = code.join("");
-    alert(verificationcode)
+    setIsLoading(true);
+    postData("/api/user/verify-email", { code: verificationcode }).then(
+      (res) => {
+        if (!res?.error) {
+          setIsLoading(false);
+          toast.success(res.message);
+          navigate('/login')
+        } else {
+          setIsLoading(false);
+          toast.error(res.message);
+        }
+      }
+    );
   };
   // auto submit when all fields are filled
   useEffect(() => {
@@ -64,6 +79,7 @@ const VerifyOTP = () => {
                   key={index}
                   ref={(el) => (inputRefs.current[index] = el)}
                   type="text"
+                  disabled={isLoading ? true : false}
                   maxLength="6"
                   value={digit}
                   onChange={(e) => handleChange(index, e.target.value)}
@@ -84,9 +100,16 @@ rounded-lg focus:border-primary focus:outline-none
             </div>
             <Button
               type="submit"
-              className="!px-6 !mt-5 !w-full !block !py-2 !bg-primary !text-white hover:!bg-gray-900 transition-all"
+              className="!px-6 !mt-5 !w-full !flex !py-2 !bg-primary !text-white hover:!bg-gray-900 transition-all"
             >
-              Verify OTP
+              {isLoading ? (
+                <CircularProgress
+                  className="!w-[25px] !h-[25px]"
+                  color="inherit"
+                />
+              ) : (
+                "Verify OTP"
+              )}
             </Button>
           </form>
         </div>

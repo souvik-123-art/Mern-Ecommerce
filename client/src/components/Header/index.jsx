@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, Links } from "react-router-dom";
 import { Search } from "../Search";
 import { styled } from "@mui/material/styles";
@@ -13,10 +13,8 @@ import { OpenCartPanel } from "../../redux/Slices/cartPanelSlice";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { FaRegUser } from "react-icons/fa";
-import { setIsLogin } from "../../redux/Slices/authSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import Button from "@mui/material/Button";
-import Avatar from "@mui/material/Avatar";
 import { FaClipboardCheck } from "react-icons/fa";
 import { FaUser } from "react-icons/fa6";
 import { FaHeart } from "react-icons/fa";
@@ -38,11 +36,8 @@ const Header = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const dispatch = useDispatch();
   const isLogin = useSelector((state) => state.auth.isLogin);
-  useEffect(() => {
-    dispatch(setIsLogin(true));
-  }, []);
+
   return (
     <header>
       <div className="top-strip py-2 bg-gray-900 text-white">
