@@ -22,8 +22,8 @@ cloudinary.config({
 });
 export const registerUserController = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
-    if (!name || !email || !password) {
+    const { name, email, password, mobile } = req.body;
+    if (!name || !email || !password || !mobile) {
       return res.status(400).json({
         message: "provide email, name, password",
         error: true,
@@ -44,6 +44,7 @@ export const registerUserController = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await UserModel.create({
       email,
+      mobile,
       password: hashedPassword,
       name,
       verifyCode,
@@ -117,7 +118,7 @@ export const loginUserController = async (req, res) => {
     if (!user)
       return res
         .status(400)
-        .json({ success: false, message: "invalid credentials" });
+        .json({ success: false, error: true, message: "invalid credentials" });
     if (user.status !== "Active") {
       return res.status(400).json({
         message: "Contact to Admin",
@@ -137,7 +138,7 @@ export const loginUserController = async (req, res) => {
     if (!isPasswordValid) {
       return res
         .status(400)
-        .json({ success: false, error: true, message: "invalid credentials" });
+        .json({ success: false, error: true, message: "something went wrong" });
     }
     const accesstoken = genAccessToken(user._id);
     const refreshtoken = await genRefreshToken(user._id);

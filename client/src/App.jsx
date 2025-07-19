@@ -20,6 +20,8 @@ import { Orders } from "./pages/Orders";
 import { useDispatch, useSelector } from "react-redux";
 import { setIsLogin } from "./redux/Slices/authSlice";
 import { useEffect } from "react";
+import { fetchDataFromApi } from "./utils/api";
+import { setUserDetails } from "./redux/Slices/userDetailsSlice";
 function App() {
   const dispatch = useDispatch();
   const isLogin = useSelector((state) => state.auth.isLogin);
@@ -27,6 +29,9 @@ function App() {
     const token = localStorage.getItem("accesstoken");
     if (token !== undefined && token !== null && token !== "") {
       dispatch(setIsLogin(true));
+      fetchDataFromApi(`/api/user/user-details?token=${token}`).then((res) => {
+        dispatch(setUserDetails(res.data));
+      });
     } else {
       dispatch(setIsLogin(false));
     }

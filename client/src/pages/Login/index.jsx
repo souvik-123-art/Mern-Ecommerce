@@ -6,9 +6,9 @@ import { IoMdEye } from "react-icons/io";
 import { IoMdEyeOff } from "react-icons/io";
 import toast from "react-hot-toast";
 import CircularProgress from "@mui/material/CircularProgress";
-import { postData } from "../../utils/api";
 import { setIsLogin } from "../../redux/Slices/authSlice";
 import { useDispatch } from "react-redux";
+import { postData } from "../../utils/api";
 export const Login = () => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
@@ -41,23 +41,25 @@ export const Login = () => {
       setIsLoading(false);
       return false;
     }
-    postData("/api/user/login", formFields).then((res) => {
-      if (!res?.error) {
-        setIsLoading(false);
-        toast.success(res.message);
-        setFormFields({
-          email: "",
-          password: "",
-        });
-        localStorage.setItem("accesstoken", res?.data?.accesstoken);
-        localStorage.setItem("refreshtoken", res?.data?.refreshtoken);
-        dispatch(setIsLogin(true));
-        navigate("/");
-      } else {
-        toast.error(res.message);
-        setIsLoading(false);
+    postData("/api/user/login", formFields, { withCredentials: true }).then(
+      (res) => {
+        if (!res?.error) {
+          toast.success(res.message);
+          setFormFields({
+            email: "",
+            password: "",
+          });
+          localStorage.setItem("accesstoken", res.data.accesstoken);
+          localStorage.setItem("refreshtoken", res.data.refreshtoken);
+          setIsLoading(false);
+          dispatch(setIsLogin(true));
+          navigate("/");
+        } else {
+          toast.error(res.message);
+          setIsLoading(false);
+        }
       }
-    });
+    );
   };
   return (
     <section className="login py-10">
@@ -134,16 +136,16 @@ export const Login = () => {
           </p>
           <Button className="!text-red-300 !w-full !bg-gray-700 !font-medium !rounded !transition !text-sm !px-5 !py-2.5 !flex !items-center !mt-3 !justify-center !mb-2 hover:!bg-gray-600">
             <svg
-              class="w-4 h-4 me-2"
+              className="w-4 h-4 me-2"
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               fill="currentColor"
               viewBox="0 0 18 19"
             >
               <path
-                fill-rule="evenodd"
+                fillRule="evenodd"
                 d="M8.842 18.083a8.8 8.8 0 0 1-8.65-8.948 8.841 8.841 0 0 1 8.8-8.652h.153a8.464 8.464 0 0 1 5.7 2.257l-2.193 2.038A5.27 5.27 0 0 0 9.09 3.4a5.882 5.882 0 0 0-.2 11.76h.124a5.091 5.091 0 0 0 5.248-4.057L14.3 11H9V8h8.34c.066.543.095 1.09.088 1.636-.086 5.053-3.463 8.449-8.4 8.449l-.186-.002Z"
-                clip-rule="evenodd"
+                clipRule="evenodd"
               />
             </svg>
             Sign in with Google

@@ -13,13 +13,14 @@ import { OpenCartPanel } from "../../redux/Slices/cartPanelSlice";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { FaRegUser } from "react-icons/fa";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import Button from "@mui/material/Button";
 import { FaClipboardCheck } from "react-icons/fa";
 import { FaUser } from "react-icons/fa6";
 import { FaHeart } from "react-icons/fa";
 import { IoLogOut } from "react-icons/io5";
-
+import { fetchDataFromApi } from "../../utils/api";
+import { setIsLogin } from "../../redux/Slices/authSlice";
 const CartBadge = styled(Badge)`
   & .${badgeClasses.badge} {
     top: -12px;
@@ -29,6 +30,7 @@ const CartBadge = styled(Badge)`
 
 const Header = () => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const dispatch = useDispatch();
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -36,8 +38,23 @@ const Header = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const logout = () => {
+    setAnchorEl(null);
+    fetchDataFromApi(
+      `/api/user/logout?token=${localStorage.getItem("accesstoken")}`,
+      { withCredentials: true }
+    ).then((res) => {
+      console.log(res);
+      if (!res.error) {
+        dispatch(setIsLogin(false));
+        localStorage.removeItem("accesstoken");
+        localStorage.removeItem("refreshtoken");
+      }
+    });
+  };
   const isLogin = useSelector((state) => state.auth.isLogin);
-
+  const userDetails = useSelector((state)=> state.UserDetails.userDetails)
+  
   return (
     <header>
       <div className="top-strip py-2 bg-gray-900 text-white">
@@ -89,16 +106,14 @@ const Header = () => {
                     onClick={handleClick}
                     className="!text-white !myAccountWrap !flex !items-center !gap-3"
                   >
-                    <div
-                      className="!w-[35px] !h-[35px] !rounded-full flex justify-center items-center !bg-[#f1f1f1]"
-                    >
+                    <div className="!w-[35px] !h-[35px] !rounded-full flex justify-center items-center !bg-[#f1f1f1]">
                       <FaRegUser className="text-xl text-black/80" />
                     </div>
                     <div className="info !flex !flex-col !items-start !text-white">
                       <h4 className="text-sm font-semibold capitalize">
-                        Souvik Sarkar
+                        {userDetails?.name}
                       </h4>
-                      <span className="text-xs">example@gmail.com</span>
+                      <span className="text-xs">{userDetails?.email}</span>
                     </div>
                   </Button>
                   <Menu
@@ -165,15 +180,14 @@ const Header = () => {
                         <FaHeart /> <span className="text-[14px]">My List</span>
                       </MenuItem>
                     </Link>
-                    <Link className="w-full block" to="/logout">
-                      <MenuItem
-                        className="flex gap-3 !py-3 !font-['lexend']"
-                        onClick={handleClose}
-                      >
-                        <IoLogOut className="text-xl" />{" "}
-                        <span className="text-[14px]">Logout</span>
-                      </MenuItem>
-                    </Link>
+
+                    <MenuItem
+                      className="flex gap-3 !py-3 !font-['lexend']"
+                      onClick={logout}
+                    >
+                      <IoLogOut className="text-xl" />{" "}
+                      <span className="text-[14px]">Logout</span>
+                    </MenuItem>
                   </Menu>
                 </>
               ) : (
