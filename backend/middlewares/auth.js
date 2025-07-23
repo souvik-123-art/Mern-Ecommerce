@@ -2,12 +2,12 @@ import jwt from "jsonwebtoken";
 
 const auth = (req, res, next) => {
   try {
-    let token =
+    const token =
       req.cookies.accessToken || req?.headers?.authorization?.split(" ")[1];
 
-      if(!token){
-        token = req.query.token
-      }
+      // if(!token){
+      //   token = req.query.token
+      // }
     if (!token) {
       return res.status(401).json({
         message: "user unauthorized",

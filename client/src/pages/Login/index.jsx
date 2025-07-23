@@ -27,6 +27,9 @@ export const Login = () => {
       };
     });
   };
+  const handleForgot = ()=>{
+    localStorage.setItem('userEmail', formFields.email)
+  }
   const validValue = Object.values(formFields).every((el) => el);
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -107,7 +110,7 @@ export const Login = () => {
               to="/forgot-password"
               className="text-md font-semibold text-black/70 link"
             >
-              Forgot Password?
+              <p onClick={handleForgot}>Forgot Password?</p>
             </Link>
             <Button
               type="submit"

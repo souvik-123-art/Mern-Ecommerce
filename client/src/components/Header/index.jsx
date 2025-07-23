@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link, Links } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, Links, useNavigate } from "react-router-dom";
 import { Search } from "../Search";
 import { styled } from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
@@ -29,6 +29,7 @@ const CartBadge = styled(Badge)`
 `;
 
 const Header = () => {
+  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
   const open = Boolean(anchorEl);
@@ -49,12 +50,12 @@ const Header = () => {
         dispatch(setIsLogin(false));
         localStorage.removeItem("accesstoken");
         localStorage.removeItem("refreshtoken");
+        navigate("/");
       }
     });
   };
   const isLogin = useSelector((state) => state.auth.isLogin);
-  const userDetails = useSelector((state)=> state.UserDetails.userDetails)
-  
+  const userDetails = useSelector((state) => state.UserDetails.userDetails);
   return (
     <header>
       <div className="top-strip py-2 bg-gray-900 text-white">
@@ -106,8 +107,21 @@ const Header = () => {
                     onClick={handleClick}
                     className="!text-white !myAccountWrap !flex !items-center !gap-3"
                   >
-                    <div className="!w-[35px] !h-[35px] !rounded-full flex justify-center items-center !bg-[#f1f1f1]">
-                      <FaRegUser className="text-xl text-black/80" />
+                    <div className="!w-[40px] !h-[40px] !rounded-full flex justify-center overflow-hidden items-center !bg-[#f1f1f1]">
+                      {userDetails?.avatar === "" ||
+                      userDetails?.avatar === undefined ? (
+                        <img
+                          src="https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1095249842.jpg"
+                          alt=""
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <img
+                          src={userDetails?.avatar}
+                          className="w-full h-full object-cover"
+                          alt=""
+                        />
+                      )}
                     </div>
                     <div className="info !flex !flex-col !items-start !text-white">
                       <h4 className="text-sm font-semibold capitalize">

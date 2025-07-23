@@ -5,7 +5,7 @@ export const postData = async (url, formData) => {
     const response = await fetch(apiUrl + url, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        Authorization: `Bearer ${localStorage.getItem("accesstoken")}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(formData),
@@ -25,13 +25,27 @@ export const postData = async (url, formData) => {
 
 export const fetchDataFromApi = async (url) => {
   try {
-    const { data } = await axios.get(apiUrl + url, {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-      "Content-Type": "application/json",
-    });
+    const params = {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accesstoken")}`,
+        "Content-Type": "application/json",
+      },
+    };
+    const { data } = await axios.get(apiUrl + url, params);
     return data;
   } catch (error) {
     console.log(error);
     return error;
   }
+};
+
+export const editData = async (url, updatedData) => {
+  const params = {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("accesstoken")}`,
+      "Content-Type": "multipart/form-data",
+    },
+  };
+  const res = await axios.put(apiUrl + url, updatedData, params);
+  return res;
 };

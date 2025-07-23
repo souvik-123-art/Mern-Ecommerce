@@ -1,19 +1,26 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Button from "@mui/material/Button";
 import { FaRegUser } from "react-icons/fa";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import { LuBox } from "react-icons/lu";
 import { FaRegHeart } from "react-icons/fa";
 import { FiLogOut } from "react-icons/fi";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import TextField from "@mui/material/TextField";
 import { AccountSidebar } from "../../components/AccountSidebar";
 export const MyAccount = () => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    const token = localStorage.getItem("accesstoken");
+    if (token === undefined || token === null || token === "") {
+      navigate("/");
+    }
+  }, []);
   return (
     <section className="myAccountSec py-10 w-full">
       <div className="container mx-auto flex gap-5">
         <div className="col1 w-[20%]">
-          <AccountSidebar/>
+          <AccountSidebar />
         </div>
         <div className="col2 w-[50%]">
           <div className="card bg-white p-5 shadow-md rounded-md">

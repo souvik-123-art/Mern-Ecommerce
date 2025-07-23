@@ -28,9 +28,9 @@ function App() {
   useEffect(() => {
     const token = localStorage.getItem("accesstoken");
     if (token !== undefined && token !== null && token !== "") {
-      dispatch(setIsLogin(true));
-      fetchDataFromApi(`/api/user/user-details?token=${token}`).then((res) => {
+      fetchDataFromApi(`/api/user/user-details`).then((res) => {
         dispatch(setUserDetails(res.data));
+        dispatch(setIsLogin(true));
       });
     } else {
       dispatch(setIsLogin(false));
