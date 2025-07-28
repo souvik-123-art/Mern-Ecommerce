@@ -6,6 +6,7 @@ import { postData } from "../../utils/api";
 import CircularProgress from "@mui/material/CircularProgress";
 const VerifyOTP = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const accesstoken = localStorage.getItem("accesstoken");
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const inputRefs = useRef([]);
   const navigate = useNavigate();
@@ -45,7 +46,11 @@ const VerifyOTP = () => {
         if (!res?.error) {
           setIsLoading(false);
           toast.success(res.message);
-          navigate('/login')
+          if (!accesstoken) {
+            navigate("/login");
+          } else {
+            navigate("/my-account");
+          }
         } else {
           setIsLoading(false);
           toast.error(res.message);

@@ -1,5 +1,9 @@
-import React, { useState } from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  useNavigate,
+} from "react-router-dom";
 import { Dashboard } from "./Pages/Dashboard";
 import { Header } from "./Components/Header";
 import "../src/App.css";
@@ -34,21 +38,44 @@ import Orders from "./Pages/Orders";
 import { ForgotPassword } from "./Pages/ForgotPasswordPage";
 import VerifyOTP from "./Pages/VerifyOTP";
 import { ResetPassword } from "./Pages/ResetPassword";
+import { setUserDetails } from "./redux/slices/userDetailsSlice";
+import { setIsLogin } from "./redux/slices/authSlice";
+import { fetchDataFromApi } from "./utils/api";
+import ProtectedRoute from "./utils/protectedRoute.jsx";
+import Profile from "./Pages/Profile/index.jsx";
+import toast from "react-hot-toast";
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 function App() {
+  const isLogin = useSelector((state) => state.auth.isLogin);
   const dispatch = useDispatch();
   const isOpenFullScreenPanel = useSelector(
     (state) => state.fullScreenPanel.isOpenFullScreenPanel
   );
   const sideBarOpen = useSelector((state) => state.sidePanel.sidePanelOpen);
+  useEffect(() => {
+    const token = localStorage.getItem("accesstoken");
+    if (token !== undefined && token !== null && token !== "") {
+      fetchDataFromApi(`/api/user/user-details`).then((res) => {
+        if (res?.response?.data?.message === "jwt expired") {
+          localStorage.removeItem("accesstoken");
+          localStorage.removeItem("removetoken");
+          toast.error("your session is expired. Login again");
+        }
+        dispatch(setUserDetails(res.data));
+        dispatch(setIsLogin(true));
+      });
+    } else {
+      dispatch(setIsLogin(false));
+    }
+  }, [isLogin]);
   const router = createBrowserRouter([
     {
       path: "/products",
       exact: true,
       element: (
-        <>
+        <ProtectedRoute>
           <section className="main">
             <Header />
             <div className="contentMain flex">
@@ -68,14 +95,14 @@ function App() {
               </div>
             </div>
           </section>
-        </>
+        </ProtectedRoute>
       ),
     },
     {
       path: "/subCategory/list",
       exact: true,
       element: (
-        <>
+        <ProtectedRoute>
           <section className="main">
             <Header />
             <div className="contentMain flex">
@@ -95,14 +122,14 @@ function App() {
               </div>
             </div>
           </section>
-        </>
+        </ProtectedRoute>
       ),
     },
     {
       path: "/category/list",
       exact: true,
       element: (
-        <>
+        <ProtectedRoute>
           <section className="main">
             <Header />
             <div className="contentMain flex">
@@ -122,14 +149,14 @@ function App() {
               </div>
             </div>
           </section>
-        </>
+        </ProtectedRoute>
       ),
     },
     {
       path: "/homeSlider/list",
       exact: true,
       element: (
-        <>
+        <ProtectedRoute>
           <section className="main">
             <Header />
             <div className="contentMain flex">
@@ -149,14 +176,14 @@ function App() {
               </div>
             </div>
           </section>
-        </>
+        </ProtectedRoute>
       ),
     },
     {
       path: "/users",
       exact: true,
       element: (
-        <>
+        <ProtectedRoute>
           <section className="main">
             <Header />
             <div className="contentMain flex">
@@ -176,14 +203,41 @@ function App() {
               </div>
             </div>
           </section>
-        </>
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/profile",
+      exact: true,
+      element: (
+        <ProtectedRoute>
+          <section className="main">
+            <Header />
+            <div className="contentMain flex">
+              <div
+                className={`sidebarWrapper ${
+                  sideBarOpen === true ? "w-[15%]" : "w-0"
+                } transition-all duration-300 overflow-hidden`}
+              >
+                <Sidebar />
+              </div>
+              <div
+                className={`contentRight ${
+                  sideBarOpen === true ? "w-[85%]" : "w-[100%]"
+                }  py-4 px-5 transition-all duration-300`}
+              >
+                <Profile />
+              </div>
+            </div>
+          </section>
+        </ProtectedRoute>
       ),
     },
     {
       path: "/Orders",
       exact: true,
       element: (
-        <>
+        <ProtectedRoute>
           <section className="main">
             <Header />
             <div className="contentMain flex">
@@ -203,14 +257,14 @@ function App() {
               </div>
             </div>
           </section>
-        </>
+        </ProtectedRoute>
       ),
     },
     {
       path: "/",
       exact: true,
       element: (
-        <>
+        <ProtectedRoute>
           <section className="main">
             <Header />
             <div className="contentMain flex">
@@ -230,7 +284,7 @@ function App() {
               </div>
             </div>
           </section>
-        </>
+        </ProtectedRoute>
       ),
     },
     {
@@ -249,12 +303,12 @@ function App() {
       element: <ForgotPassword />,
     },
     {
-      path: "/verify-otp",
+      path: "/verify-email",
       exact: true,
       element: <VerifyOTP />,
     },
     {
-      path: "/reset-password",
+      path: "/reset-password/:token",
       exact: true,
       element: <ResetPassword />,
     },
@@ -292,7 +346,9 @@ function App() {
         {isOpenFullScreenPanel?.model === "Add Product" && <AddProduct />}
         {isOpenFullScreenPanel?.model === "Add Home Slide" && <AddHomeSlide />}
         {isOpenFullScreenPanel?.model === "Add Category" && <AddCategory />}
-        {isOpenFullScreenPanel?.model === "Add Sub Category" && <AddSubCategory />}
+        {isOpenFullScreenPanel?.model === "Add Sub Category" && (
+          <AddSubCategory />
+        )}
       </Dialog>
     </>
   );

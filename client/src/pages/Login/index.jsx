@@ -44,25 +44,27 @@ export const Login = () => {
       setIsLoading(false);
       return false;
     }
-    postData("/api/user/login", formFields, { withCredentials: true }).then(
-      (res) => {
-        if (!res?.error) {
-          toast.success(res.message);
-          setFormFields({
-            email: "",
-            password: "",
-          });
-          localStorage.setItem("accesstoken", res.data.accesstoken);
-          localStorage.setItem("refreshtoken", res.data.refreshtoken);
-          setIsLoading(false);
-          dispatch(setIsLogin(true));
-          navigate("/");
-        } else {
-          toast.error(res.message);
-          setIsLoading(false);
-        }
+    postData(
+      "/api/user/login",
+      { ...formFields, panel: "client" },
+      { withCredentials: true }
+    ).then((res) => {
+      if (!res?.error) {
+        toast.success(res.message);
+        setFormFields({
+          email: "",
+          password: "",
+        });
+        localStorage.setItem("accesstoken", res.data.accesstoken);
+        localStorage.setItem("refreshtoken", res.data.refreshtoken);
+        setIsLoading(false);
+        dispatch(setIsLogin(true));
+        navigate("/");
+      } else {
+        toast.error(res.message);
+        setIsLoading(false);
       }
-    );
+    });
   };
   return (
     <section className="login py-10">

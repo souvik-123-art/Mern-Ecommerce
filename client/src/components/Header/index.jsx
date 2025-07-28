@@ -21,6 +21,7 @@ import { FaHeart } from "react-icons/fa";
 import { IoLogOut } from "react-icons/io5";
 import { fetchDataFromApi } from "../../utils/api";
 import { setIsLogin } from "../../redux/Slices/authSlice";
+import { setPreviews } from "../../redux/Slices/userImage";
 const CartBadge = styled(Badge)`
   & .${badgeClasses.badge} {
     top: -12px;
@@ -33,6 +34,9 @@ const Header = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
   const open = Boolean(anchorEl);
+  const isLogin = useSelector((state) => state.auth.isLogin);
+  const userDetails = useSelector((state) => state.UserDetails.userDetails);
+  const previews = useSelector((state) => state.userImage.previews);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -54,8 +58,14 @@ const Header = () => {
       }
     });
   };
-  const isLogin = useSelector((state) => state.auth.isLogin);
-  const userDetails = useSelector((state) => state.UserDetails.userDetails);
+  
+  useEffect(() => {
+    const userAvatar = [];
+    if (userDetails?.avatar !== "" && userDetails?.avatar !== undefined) {
+      userAvatar.push(userDetails?.avatar);
+      dispatch(setPreviews(userAvatar));
+    }
+  }, [userDetails]);
   return (
     <header>
       <div className="top-strip py-2 bg-gray-900 text-white">
@@ -108,18 +118,17 @@ const Header = () => {
                     className="!text-white !myAccountWrap !flex !items-center !gap-3"
                   >
                     <div className="!w-[40px] !h-[40px] !rounded-full flex justify-center overflow-hidden items-center !bg-[#f1f1f1]">
-                      {userDetails?.avatar === "" ||
-                      userDetails?.avatar === undefined ? (
+                      {previews?.length !== 0 ? (
                         <img
-                          src="https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1095249842.jpg"
+                          src={previews}
                           alt=""
                           className="w-full h-full object-cover"
                         />
                       ) : (
                         <img
-                          src={userDetails?.avatar}
-                          className="w-full h-full object-cover"
+                          src="https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1095249842.jpg"
                           alt=""
+                          className="w-full h-full object-cover"
                         />
                       )}
                     </div>

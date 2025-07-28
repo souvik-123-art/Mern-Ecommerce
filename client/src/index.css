@@ -237,3 +237,12 @@ textarea {
 .myAccount li a.active button  {
   color: #ff5252 !important;
 }
+.react-international-phone-input {
+  @apply focus:!border-black/50 !border-black/30 !w-5/6 !text-sm !p-5 !rounded-sm;
+}
+.react-international-phone-country-selector-button {
+  @apply !border-black/30 !p-5 !rounded-sm
+}
+.react-international-phone-input-container {
+  width: 100%;
+}

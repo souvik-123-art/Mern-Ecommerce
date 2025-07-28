@@ -51,9 +51,18 @@ body {
 th.MuiTableCell-root {
   @apply bg-[#f1f1f1] py-2;
 }
-.MuiAppBar-colorPrimary{
+.MuiAppBar-colorPrimary {
   background-color: #e6e6e6 !important;
 }
-.MuiTableBody-root tr:nth-child(even){
+.MuiTableBody-root tr:nth-child(even) {
   background-color: #f1f1f1;
+}
+.react-international-phone-input {
+  @apply focus:!border-black/50 !border-black/30 !w-5/6 !text-sm !p-5 !rounded-sm;
+}
+.react-international-phone-country-selector-button {
+  @apply !border-black/30 !p-5 !rounded-sm
+}
+.react-international-phone-input-container {
+  width: 100%;
 }

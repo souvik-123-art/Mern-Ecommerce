@@ -22,7 +22,7 @@ cloudinary.config({
 });
 export const registerUserController = async (req, res) => {
   try {
-    const { name, email, password, mobile } = req.body;
+    const { name, email, password, mobile, panel } = req.body;
     if (!name || !email || !password || !mobile) {
       return res.status(400).json({
         message: "provide email, name, password",
@@ -49,6 +49,7 @@ export const registerUserController = async (req, res) => {
       name,
       verifyCode,
       verifyCodeExpires: Date.now() + 600000,
+      role: panel === "admin" ? "ADMIN" : "USER",
     });
     await user.save();
     const token = jwt.sign(
@@ -112,13 +113,30 @@ export const verifyEmailController = async (req, res) => {
   }
 };
 export const loginUserController = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, panel } = req.body;
   try {
     const user = await UserModel.findOne({ email });
-    if (!user)
+    if (!user) {
       return res
         .status(400)
         .json({ success: false, error: true, message: "invalid credentials" });
+    }
+    // ✅ Role-based restriction
+    if (panel === "admin" && user.role !== "ADMIN") {
+      return res.status(403).json({
+        success: false,
+        error: true,
+        message: "Admin Not Found! please create account first.",
+      });
+    }
+
+    if (panel === "client" && user.role !== "USER") {
+      return res.status(403).json({
+        success: false,
+        error: true,
+        message: "User Not Found! please create account first.",
+      });
+    }
     if (user.status !== "Active") {
       return res.status(400).json({
         message: "Contact to Admin",
@@ -284,7 +302,7 @@ export const removeImageFromCloudinary = async (req, res) => {
 export const updateUserDetails = async (req, res) => {
   try {
     const userId = req.userId;
-    const { name, email, mobile, password } = req.body;
+    const { name, email, mobile } = req.body;
     const userExist = await UserModel.findById(userId);
     if (!userExist) {
       return res.status(400).json({
@@ -297,12 +315,6 @@ export const updateUserDetails = async (req, res) => {
     if (email !== userExist.email) {
       verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
     }
-    let hashedPassword = "";
-    if (password) {
-      hashedPassword = bcrypt.hash(password, 10);
-    } else {
-      hashedPassword = userExist.password;
-    }
     const updateUser = await UserModel.findByIdAndUpdate(
       userId,
       {
@@ -310,7 +322,6 @@ export const updateUserDetails = async (req, res) => {
         mobile,
         email,
         isVerified: email !== userExist.email ? false : true,
-        password: hashedPassword,
         verifyCode: verifyCode !== "" ? verifyCode : null,
         verifyCodeExpires: verifyCode !== "" ? Date.now() + 600000 : "",
       },
@@ -323,7 +334,68 @@ export const updateUserDetails = async (req, res) => {
       message: "user updated successfully",
       error: false,
       success: true,
-      user: updateUser,
+      user: {
+        name: updateUser?.name,
+        _id: updateUser?._id,
+        email: updateUser?.email,
+        mobile: updateUser?.mobile,
+        avatar: updateUser?.avatar,
+        isVerified: updateUser?.isVerified,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+
+export const changePassword = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { oldPassword, newPassword } = req.body;
+    const userExist = await UserModel.findById(userId);
+    if (!userExist) {
+      return res.status(400).json({
+        message: "you nedd to login",
+        error: true,
+        success: false,
+      });
+    }
+    const isPasswordValid = await bcrypt.compare(
+      oldPassword,
+      userExist.password
+    );
+    if (!isPasswordValid) {
+      return res.status(400).json({
+        success: false,
+        error: true,
+        message: "old password did not matched",
+      });
+    }
+    let hashedPassword = "";
+    hashedPassword = await bcrypt.hash(newPassword, 10);
+    const updateUser = await UserModel.findByIdAndUpdate(
+      userId,
+      {
+        password: hashedPassword,
+      },
+      { new: true }
+    );
+    return res.status(200).json({
+      message: "password changed successfully",
+      error: false,
+      success: true,
+      user: {
+        name: updateUser?.name,
+        _id: updateUser?._id,
+        email: updateUser?.email,
+        mobile: updateUser?.mobile,
+        avatar: updateUser?.avatar,
+        isVerified: updateUser?.isVerified,
+      },
     });
   } catch (error) {
     return res.status(500).json({
@@ -336,7 +408,7 @@ export const updateUserDetails = async (req, res) => {
 
 //forgot password
 export const forgotPasswordController = async (req, res) => {
-  const { email } = req.body;
+  const { email, panel } = req.body;
   try {
     const user = await UserModel.findOne({ email });
     if (!user)
@@ -352,10 +424,16 @@ export const forgotPasswordController = async (req, res) => {
 
     await user.save();
 
-    await sendPasswordResetEmail(
-      user.email,
-      `${process.env.CLIENT_URL}/reset-password/${resetToken}`
-    );
+    let baseUrl;
+    if (panel === "admin") {
+      baseUrl = process.env.ADMIN_URL;
+    } else {
+      baseUrl = process.env.CLIENT_URL;
+    }
+
+    const resetLink = `${baseUrl}/reset-password/${resetToken}`;
+
+    await sendPasswordResetEmail(user.email, resetLink);
     res.status(200).json({
       success: true,
       error: false,

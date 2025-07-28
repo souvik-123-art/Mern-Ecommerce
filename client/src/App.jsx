@@ -29,6 +29,12 @@ function App() {
     const token = localStorage.getItem("accesstoken");
     if (token !== undefined && token !== null && token !== "") {
       fetchDataFromApi(`/api/user/user-details`).then((res) => {
+        if (res?.response?.data?.message === "jwt expired") {
+          localStorage.removeItem("accesstoken");
+          localStorage.removeItem("removetoken");
+          toast.error("your session is expired. Login again");
+          dispatch(setIsLogin(false));
+        }
         dispatch(setUserDetails(res.data));
         dispatch(setIsLogin(true));
       });

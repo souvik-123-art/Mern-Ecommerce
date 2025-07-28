@@ -57,23 +57,25 @@ export const SignUp = () => {
       setIsLoading(false);
       return false;
     }
-    postData("/api/user/register", formFields).then((res) => {
-      if (!res?.error) {
-        setIsLoading(false);
-        toast.success(res.message);
-        setFormFields({
-          name: "",
-          mobile: "",
-          email: "",
-          password: "",
-          conPassword: "",
-        });
-        navigate("/verify-email", );
-      } else {
-        toast.error(res.message);
-        setIsLoading(false);
+    postData("/api/user/register", { ...formFields, panel: "client" }).then(
+      (res) => {
+        if (!res?.error) {
+          setIsLoading(false);
+          toast.success(res.message);
+          setFormFields({
+            name: "",
+            mobile: "",
+            email: "",
+            password: "",
+            conPassword: "",
+          });
+          navigate("/verify-email");
+        } else {
+          toast.error(res.message);
+          setIsLoading(false);
+        }
       }
-    });
+    );
   };
 
   return (

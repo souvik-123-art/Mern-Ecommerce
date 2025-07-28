@@ -42,7 +42,7 @@ export const CartItems = (props) => {
         </Link>
       </div>
       <div className="info w-[90%] relative">
-        <IoMdClose className="absolute right-0 text-xl cursor-pointer link transition" />
+        <IoMdClose className="text-xl link transition" />
         <span className="text-md font-semibold text-gray-400">Levis</span>
         <h3 className="font-semibold text-lg transition link">
           <Link>A-Line Kurti With Sharara & Dupatta</Link>

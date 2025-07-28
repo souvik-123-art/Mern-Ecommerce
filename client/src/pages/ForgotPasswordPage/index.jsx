@@ -13,17 +13,18 @@ export const ForgotPassword = () => {
     e.preventDefault()
     setIsLoading(true)
     postData("/api/user/forgot-password", {
-      email: email
-    }).then((res)=>{
+      email: email,
+      panel: "client",
+    }).then((res) => {
       if (!res.error) {
         setIsLoading(false);
-        toast.success(res.message)
-        localStorage.removeItem('userEmail')
+        toast.success(res.message);
+        localStorage.removeItem("userEmail");
       } else {
         toast.error(res.message);
         setIsLoading(false);
       }
-    })
+    });
   }
   return (
     <section className="login py-10">

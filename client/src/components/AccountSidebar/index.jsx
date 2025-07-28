@@ -7,21 +7,24 @@ import { FiLogOut } from "react-icons/fi";
 import { NavLink, useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import { useDispatch, useSelector } from "react-redux";
-import { editData, fetchDataFromApi } from "../../utils/api";
+import { uploadImage, fetchDataFromApi } from "../../utils/api";
 import { setIsLogin } from "../../redux/Slices/authSlice";
 import CircularProgress from "@mui/material/CircularProgress";
 import toast from "react-hot-toast";
+import { setPreviews } from "../../redux/Slices/userImage";
 export const AccountSidebar = () => {
-  const [previews, setPreviews] = useState([]);
+  // const [previews, setPreviews] = useState([]);
   const [uploading, setUploading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const userDetails = useSelector((state) => state.UserDetails.userDetails);
-
+  const previews = useSelector((state) => state.userImage.previews);
   useEffect(() => {
     const userAvatar = [];
-    userAvatar.push(userDetails?.avatar);
-    setPreviews(userAvatar);
+    if (userDetails?.avatar !== "" && userDetails?.avatar !== undefined) {
+      userAvatar.push(userDetails?.avatar);
+      dispatch(setPreviews(userAvatar));
+    }
   }, [userDetails]);
   let img_arr = [];
   let uniqueArray = [];
@@ -43,12 +46,12 @@ export const AccountSidebar = () => {
           const file = files[i];
           selectedImages.push(file);
           formData.append(`avatar`, file);
-          editData("/api/user/user-avatar", formData).then((res) => {
+          uploadImage(apiEndPoint, formData).then((res) => {
             console.log(res);
             setUploading(false);
             let avatar = [];
             avatar.push(res?.data?.avatar);
-            setPreviews(avatar);
+            dispatch(setPreviews(avatar));
           });
         } else {
           toast.error("please upload JPG, PNG or WEBP image");

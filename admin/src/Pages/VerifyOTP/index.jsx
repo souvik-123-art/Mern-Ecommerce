@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import Button from "@mui/material/Button";
-import { TiUserAddOutline } from "react-icons/ti";
-import { LuLogIn } from "react-icons/lu";
+import { postData } from "../../utils/api";
+import CircularProgress from "@mui/material/CircularProgress";
 const VerifyOTP = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const accesstoken = localStorage.getItem("accesstoken");
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const inputRefs = useRef([]);
   const navigate = useNavigate();
@@ -38,7 +40,23 @@ const VerifyOTP = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const verificationcode = code.join("");
-    alert(verificationcode);
+    setIsLoading(true);
+    postData("/api/user/verify-email", { code: verificationcode }).then(
+      (res) => {
+        if (!res?.error) {
+          setIsLoading(false);
+          toast.success(res.message);
+          if (!accesstoken) {
+            navigate("/signin");
+          } else {
+            navigate("/profile");
+          }
+        } else {
+          setIsLoading(false);
+          toast.error(res.message);
+        }
+      }
+    );
   };
   // auto submit when all fields are filled
   useEffect(() => {
@@ -47,8 +65,8 @@ const VerifyOTP = () => {
     }
   }, [code]);
   return (
-    <section className="verify-otp ">
-      <div className="container mx-auto ">
+    <section className="verifyEmail">
+      <div className="container mx-auto">
         <header className="admin-auth w-full py-4 flex justify-between mb-8">
           <div className="logo w-40">
             <img
@@ -57,30 +75,8 @@ const VerifyOTP = () => {
               alt=""
             />
           </div>
-          <div className="auth flex items-center gap-2">
-            <NavLink
-              className={({ isActive }) => (isActive ? "active" : "")}
-              to="/signin"
-            >
-              {" "}
-              <Button className=" !px-5 !flex !items-center gap-2 !py-2 !bg-[#ddd] !text-black !rounded-full">
-                <LuLogIn className="text-xl" />
-                Sign In
-              </Button>
-            </NavLink>
-            <span className="block h-[20px] w-[1px] bg-gray-300"></span>
-            <NavLink
-              className={({ isActive }) => (isActive ? "active" : "")}
-              to="/signup"
-            >
-              <Button className=" !px-5 !flex !items-center gap-2 !py-2 !bg-[#ddd] !text-black !rounded-full">
-                <TiUserAddOutline className="text-xl" />
-                Sign Up
-              </Button>
-            </NavLink>
-          </div>
         </header>
-        <div className="flex items-center justify-center">
+        <div className="card flex items-center justify-center">
           <div className="w-full max-w-md border rounded-md bg-white">
             <div className="p-8">
               <h2 className="text-3xl font-bold mb-6 text-center text-gray-800 ">
@@ -98,6 +94,7 @@ const VerifyOTP = () => {
                     key={index}
                     ref={(el) => (inputRefs.current[index] = el)}
                     type="text"
+                    disabled={isLoading ? true : false}
                     maxLength="6"
                     value={digit}
                     onChange={(e) => handleChange(index, e.target.value)}
@@ -118,9 +115,16 @@ rounded-lg focus:border-primary focus:outline-none
               </div>
               <Button
                 type="submit"
-                className="!px-6 !mt-5 !w-full !block !py-2 !bg-primary !text-white hover:!bg-gray-900 transition-all"
+                className="!px-6 !mt-5 !w-full !flex !py-2 !bg-primary !text-white hover:!bg-gray-900 transition-all"
               >
-                Verify OTP
+                {isLoading ? (
+                  <CircularProgress
+                    className="!w-[25px] !h-[25px]"
+                    color="inherit"
+                  />
+                ) : (
+                  "Verify OTP"
+                )}
               </Button>
             </form>
           </div>

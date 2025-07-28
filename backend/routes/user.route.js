@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  changePassword,
   forgotPasswordController,
   loginUserController,
   logoutController,
@@ -29,6 +30,7 @@ userRouter.put(
 );
 userRouter.delete("/deleteImage", auth, removeImageFromCloudinary);
 userRouter.put("/:id", auth, updateUserDetails);
+userRouter.put("/changePassword/:id", auth, changePassword);
 userRouter.post("/forgot-password", forgotPasswordController);
 userRouter.post("/reset-password/:token", resetPassword);
 userRouter.post("/refresh-token", refreshToken);

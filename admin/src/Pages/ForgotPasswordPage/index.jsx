@@ -1,14 +1,35 @@
 import Button from "@mui/material/Button";
-import { NavLink } from "react-router-dom";
 import TextField from "@mui/material/TextField";
-import { useState } from "react";
-
-import { LuLogIn } from "react-icons/lu";
+import React, { useState } from "react";
+import { postData } from "../../utils/api";
+import toast from "react-hot-toast";
+import CircularProgress from "@mui/material/CircularProgress";
+import { NavLink, useNavigate } from "react-router-dom";
 import { TiUserAddOutline } from "react-icons/ti";
-
+import { LuLogIn } from "react-icons/lu";
 export const ForgotPassword = () => {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState(localStorage.getItem("userEmail"));
+  const [isLoading, setIsLoading] = useState(false);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    postData("/api/user/forgot-password", {
+      email: email,
+      panel: "admin",
+    }).then((res) => {
+      if (!res.error) {
+        setIsLoading(false);
+        toast.success(res.message);
+        localStorage.removeItem("userEmail");
+      } else {
+        toast.error(res.message);
+        setIsLoading(false);
+      }
+    });
+  };
   return (
-    <section className="forgotPassword">
+    <section className="login">
       <div className="container mx-auto">
         <header className="admin-auth w-full py-4 flex justify-between mb-8">
           <div className="logo w-40">
@@ -42,24 +63,38 @@ export const ForgotPassword = () => {
           </div>
         </header>
         <div className="card shadow-md w-[500px] m-auto rounded-md bg-white p-5 px-10">
-          <h3 className="text-center text-3xl font-bold text-gray-700">
+          <h3 className="text-center text-2xl font-bold text-gray-700">
             Forgot Password
           </h3>
-          <p className="text-sm font-semibold text-center mt-4 text-black/60">Having trouble to sign in? Reset Your Password
+          <p className="text-gray-700 text-sm mt-2 mb-4 text-center">
+            Enter your email address and we'll send you a link to reset your
+            password.
           </p>
-          <form className="w-full mt-5">
-            <div className="form-group w-full mb-5">
+          <form className="w-full mt-5" onSubmit={handleSubmit}>
+            <div className="form-group w-full mb-3">
               <TextField
                 type="email"
                 id="email"
-                label="Enter Your Email"
+                name="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                label="Email Id"
                 variant="outlined"
                 className="w-full"
               />
             </div>
-            <hr className="mt-3" />
-            <Button className="!px-6 !mt-5 !w-full !block !py-2 !bg-primary !text-white hover:!bg-gray-900 transition-all">
-              Send OTP
+            <Button
+              type="submit"
+              className="!px-6 !mt-5 !w-full !flex !py-2 !bg-primary !text-white hover:!bg-gray-900 transition-all"
+            >
+              {isLoading ? (
+                <CircularProgress
+                  className="!w-[25px] !h-[25px]"
+                  color="inherit"
+                />
+              ) : (
+                "Send Reset Password Link"
+              )}
             </Button>
           </form>
         </div>
