@@ -532,9 +532,9 @@ export const userDetails = async (req, res) => {
   try {
     const userId = req.userId;
 
-    const user = await UserModel.findById(userId).select(
-      "-password -refresh_token"
-    );
+    const user = await UserModel.findById(userId)
+      .select("-password -refresh_token")
+      .populate("address_details");
     return res.json({
       message: "user details",
       data: user,

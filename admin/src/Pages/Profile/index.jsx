@@ -14,6 +14,7 @@ import TextField from "@mui/material/TextField";
 import { Collapse } from "react-collapse";
 import "react-international-phone/style.css";
 import toast from "react-hot-toast";
+import { setIsOpenFullScreenPanel } from "../../redux/slices/fullScreenPanelSlice";
 const Profile = () => {
   const dispatch = useDispatch();
   const previews = useSelector((state) => state.userImage.previews);
@@ -296,7 +297,17 @@ const Profile = () => {
             </div>
           </div>
           <br />
-          <div className="flex items-center justify-center p-5 border border-dashed border-black/30 bg-[#f1fafa] hover:bg-[#e1f3f3] cursor-pointer transition duration-200">
+          <div
+            className="flex items-center justify-center p-5 border border-dashed border-black/30 bg-[#f1fafa] hover:bg-[#e1f3f3] cursor-pointer transition duration-200"
+            onClick={() =>
+              dispatch(
+                setIsOpenFullScreenPanel({
+                  open: true,
+                  model: "Add New Address",
+                })
+              )
+            }
+          >
             <span className="text-sm font-semibold flex gap-2 items-center">
               {" "}
               <FaPlus />

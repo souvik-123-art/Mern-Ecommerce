@@ -12,6 +12,7 @@ import categoryRouter from "./routes/category.route.js";
 import productRouter from "./routes/product.route.js";
 import cartRouter from "./routes/cart.route.js";
 import myListRouter from "./routes/myList.route.js";
+import addressRouter from "./routes/address.route.js";
 app.use(cors());
 // app.options("*", cors());
 app.use(express.json());
@@ -28,6 +29,7 @@ app.get("/", (req, res) => {
   res.json("hi");
 });
 app.use("/api/user", userRouter);
+app.use("/api/address", addressRouter);
 app.use("/api/category", categoryRouter);
 app.use("/api/product", productRouter);
 app.use("/api/cart", cartRouter);

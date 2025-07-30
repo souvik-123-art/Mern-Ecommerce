@@ -27,7 +27,7 @@ export const addToCartItemController = async (req, res) => {
       productId: productId,
     });
     const save = await cartItem.save();
-    const updateCartUser = await UserModel.updateOne(
+    const updateAddressUser = await UserModel.updateOne(
       { _id: userId },
       {
         $push: {

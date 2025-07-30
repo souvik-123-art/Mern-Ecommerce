@@ -44,6 +44,7 @@ import { fetchDataFromApi } from "./utils/api";
 import ProtectedRoute from "./utils/protectedRoute.jsx";
 import Profile from "./Pages/Profile/index.jsx";
 import toast from "react-hot-toast";
+import AddAddress from "./Pages/Address/AddAddress.jsx";
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -348,6 +349,9 @@ function App() {
         {isOpenFullScreenPanel?.model === "Add Category" && <AddCategory />}
         {isOpenFullScreenPanel?.model === "Add Sub Category" && (
           <AddSubCategory />
+        )}
+        {isOpenFullScreenPanel?.model === "Add New Address" && (
+          <AddAddress />
         )}
       </Dialog>
     </>
