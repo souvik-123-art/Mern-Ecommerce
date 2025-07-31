@@ -5,7 +5,13 @@ import { PhoneInput } from "react-international-phone";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
 import { setPreviews } from "../../redux/slices/userImage";
-import { editData, fetchDataFromApi, uploadImage } from "../../utils/api";
+import {
+  deleteData,
+  editData,
+  fetchDataFromApi,
+  postData,
+  uploadImage,
+} from "../../utils/api";
 import { FaPlus } from "react-icons/fa6";
 import { setUserDetails } from "../../redux/slices/userDetailsSlice";
 import Button from "@mui/material/Button";
@@ -15,10 +21,15 @@ import { Collapse } from "react-collapse";
 import "react-international-phone/style.css";
 import toast from "react-hot-toast";
 import { setIsOpenFullScreenPanel } from "../../redux/slices/fullScreenPanelSlice";
+import Radio from "@mui/material/Radio";
+import { setAddress } from "../../redux/slices/userAddressSlice";
 const Profile = () => {
   const dispatch = useDispatch();
   const previews = useSelector((state) => state.userImage.previews);
   const userDetails = useSelector((state) => state.UserDetails.userDetails);
+  const label = { inputProps: { "aria-label": "Checkbox demo" } };
+  const address = useSelector((state) => state.userAddress.address);
+  const [selectedValue, setSelectedValue] = useState("");
   const [userId, setUserId] = useState("");
   const [passOpen, setPassOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -32,12 +43,18 @@ const Profile = () => {
     oldPassword: "",
     newPassword: "",
   });
+  const handleChangeAddress = (event) => {
+    setSelectedValue(event.target.value);
+  };
   const navigate = useNavigate();
   useEffect(() => {
     const token = localStorage.getItem("accesstoken");
     if (token === undefined || token === null || token === "") {
-      navigate("/");
+      navigate("/signin");
     }
+    fetchDataFromApi("/api/address").then((res) => {
+      dispatch(setAddress(res?.data));
+    });
   }, []);
   useEffect(() => {
     if (userDetails?._id !== "" && userDetails?._id !== undefined) {
@@ -49,6 +66,31 @@ const Profile = () => {
       });
     }
   }, [userDetails]);
+  useEffect(() => {
+    if (address.length > 0) {
+      setSelectedValue(address[0]._id);
+    }
+  }, [address]);
+
+  const removeAddress = (id) => {
+    deleteData(`/api/address/delete/${id}`, {
+      withCredentials: true,
+    }).then((res) => {
+      try {
+        if (!res?.data.error) {
+          toast.success(res?.data.message);
+          fetchDataFromApi("/api/address").then((res) => {
+            dispatch(setAddress(res?.data));
+          });
+        } else {
+          toast.error(res?.data.message);
+        }
+      } catch (error) {
+        toast.error(error?.message);
+      }
+    });
+  };
+
   const onChangeInput = (e) => {
     const { name, value } = e.target;
     setFormFields(() => {
@@ -194,7 +236,7 @@ const Profile = () => {
   };
   return (
     <>
-      <div className="card my-4 p-5 mt-5 shadow-md sm:rounded-lg bg-white overflow-hidden h-[75vh] w-[75%]">
+      <div className="card my-4 p-5 mt-5 shadow-md sm:rounded-lg bg-white overflow-hidden h-auto w-[75%]">
         <div className="flex items-center pb-0">
           <h2 className="pb-3 text-2xl font-semibold">My Profile</h2>
           <Button
@@ -298,7 +340,7 @@ const Profile = () => {
           </div>
           <br />
           <div
-            className="flex items-center justify-center p-5 border border-dashed border-black/30 bg-[#f1fafa] hover:bg-[#e1f3f3] cursor-pointer transition duration-200"
+            className="flex items-center justify-center p-5 border border-dashed border-black/30 bg-[#f1fafa] hover:bg-[#e1f3f3] cursor-pointer transition duration-200 rounded-md mb-5"
             onClick={() =>
               dispatch(
                 setIsOpenFullScreenPanel({
@@ -314,6 +356,28 @@ const Profile = () => {
               Add Address
             </span>
           </div>
+          {address.map((add) => (
+            <label
+              key={add._id}
+              className="address w-full flex text-gray-600 items-center justify-center cursor-pointer bg-[#f1f1f1] p-3 rounded-md mb-2 relative"
+            >
+              <Radio
+                checked={selectedValue === add._id}
+                onChange={handleChangeAddress}
+                value={add._id}
+                {...label}
+                size="small"
+              />
+              <span>
+                {add.address_line}, {add.city}, {add.state}, {add.country},
+                {add.pincode}
+              </span>
+              <IoMdClose
+                onClick={() => removeAddress(add._id)}
+                className="text-2xl hover:text-red-400 transition absolute z-10 right-3"
+              />
+            </label>
+          ))}
           <div className="flex items-center">
             <Button
               type="submit"

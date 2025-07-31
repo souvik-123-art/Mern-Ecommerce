@@ -41,7 +41,74 @@ export const addAddressController = async (req, res) => {
       error: false,
       success: true,
     });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+export const getAddressController = async (req, res) => {
+  try {
+    const userId = req.userId;
 
+    const allAdress = await AddressModel.find({ userId });
+
+    if (!allAdress) {
+      return res.status(400).json({
+        error: true,
+        success: false,
+        message: "address not found",
+      });
+    }
+    return res.status(200).json({
+      error: false,
+      success: true,
+      data: allAdress,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+export const deleteAddressController = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const addressID = req.params.id;
+
+    const deletedAddress = await AddressModel.findOneAndDelete({
+      _id: addressID,
+      userId: userId,
+    });
+
+    if (!deletedAddress) {
+      return res.status(400).json({
+        error: true,
+        success: false,
+        message: "address can not be deleted",
+      });
+    }
+    const user = await UserModel.findOne({
+      _id: userId,
+    });
+    const allAddress = user?.address_details;
+
+    const updatedAllAddress = [
+      ...allAddress.slice(0, allAddress.indexOf(addressID)),
+      ...allAddress.slice(allAddress.indexOf(addressID) + 1),
+    ];
+    user.address_details = updatedAllAddress;
+
+    await user.save();
+    return res.status(200).json({
+      error: false,
+      success: true,
+      message: "address removed succesfully",
+    });
   } catch (error) {
     return res.status(500).json({
       message: error.message || error,

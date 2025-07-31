@@ -5,13 +5,14 @@ import { BsCloudUpload } from "react-icons/bs";
 import { PhoneInput } from "react-international-phone";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import { postData } from "../../utils/api";
+import { fetchDataFromApi, postData } from "../../utils/api";
 import { useDispatch } from "react-redux";
 import { setIsOpenFullScreenPanel } from "../../redux/slices/fullScreenPanelSlice";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { setAddress } from "../../redux/slices/userAddressSlice";
 const AddAddress = () => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const [status, setStatus] = React.useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [formFields, setFormFields] = useState({
@@ -37,8 +38,8 @@ const AddAddress = () => {
     setStatus(event.target.value);
     setFormFields({
       ...formFields,
-      status: event.target.value
-    })
+      status: event.target.value,
+    });
   };
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -77,7 +78,7 @@ const AddAddress = () => {
       withCredentials: true,
     }).then((res) => {
       if (!res?.error) {
-        toast.success(res.message)
+        toast.success(res.message);
         console.log(res);
         setFormFields({
           address_line: "",
@@ -90,7 +91,10 @@ const AddAddress = () => {
           userId: "",
         });
         setIsLoading(false);
-        dispatch(setIsOpenFullScreenPanel({ open: false }))
+        dispatch(setIsOpenFullScreenPanel({ open: false }));
+        fetchDataFromApi("/api/address").then((res) => {
+          dispatch(setAddress(res?.data));
+        });
       } else {
         toast.error(res.message);
         setIsLoading(false);

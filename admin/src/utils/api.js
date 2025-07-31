@@ -59,6 +59,16 @@ export const editData = async (url, updatedData) => {
   const res = await axios.put(apiUrl + url, updatedData, params);
   return res;
 };
+export const deleteData = async (url) => {
+  const params = {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("accesstoken")}`,
+      "Content-Type": "application/json",
+    },
+  };
+  const res = await axios.delete(apiUrl + url, params);
+  return res;
+};
 export const updatePassword = async (url, updatedData) => {
   const params = {
     headers: {
