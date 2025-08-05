@@ -19,11 +19,27 @@ import { MyList } from "./pages/MyList";
 import { Orders } from "./pages/Orders";
 import { useDispatch, useSelector } from "react-redux";
 import { setIsLogin } from "./redux/Slices/authSlice";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { fetchDataFromApi } from "./utils/api";
 import { setUserDetails } from "./redux/Slices/userDetailsSlice";
+import Address from "./pages/Address";
+import Dialog from "@mui/material/Dialog";
+import AppBar from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
+import IconButton from "@mui/material/IconButton";
+import { IoClose } from "react-icons/io5";
+import Typography from "@mui/material/Typography";
+import { setIsOpenFullScreenPanel } from "./redux/Slices/fullScreenPanelSlice";
+import Slide from "@mui/material/Slide";
+import AddAddress from "./pages/Address/AddAddress";
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 function App() {
   const dispatch = useDispatch();
+  const isOpenFullScreenPanel = useSelector(
+    (state) => state.fullScreenPanel.isOpenFullScreenPanel
+  );
   const isLogin = useSelector((state) => state.auth.isLogin);
   useEffect(() => {
     const token = localStorage.getItem("accesstoken");
@@ -76,10 +92,40 @@ function App() {
           <Route path="/my-account" exact={true} element={<MyAccount />} />
           <Route path="/my-list" exact={true} element={<MyList />} />
           <Route path="/my-orders" exact={true} element={<Orders />} />
+          <Route path="/address" exact={true} element={<Address />} />
         </Routes>
         <ProductModal />
         <CartPanel />
         <Footer />
+        <Dialog
+          fullScreen
+          open={isOpenFullScreenPanel.open}
+          onClose={() => dispatch(setIsOpenFullScreenPanel({ open: false }))}
+          slots={{
+            transition: Transition,
+          }}
+        >
+          <AppBar className="!bg-gray-800 !shadow-md" sx={{ position: "relative" }}>
+            <Toolbar>
+              <IconButton
+                edge="start"
+                color="inherit"
+                onClick={() =>
+                  dispatch(setIsOpenFullScreenPanel({ open: false }))
+                }
+                aria-label="close"
+              >
+                <IoClose className="text-white link" />
+              </IconButton>
+              <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+                <span className="text-white">
+                  {isOpenFullScreenPanel?.model}
+                </span>
+              </Typography>
+            </Toolbar>
+          </AppBar>
+          {isOpenFullScreenPanel?.model === "Add New Address" && <AddAddress />}
+        </Dialog>
         <Toaster position="top-center" reverseOrder={false} />
       </BrowserRouter>
     </>

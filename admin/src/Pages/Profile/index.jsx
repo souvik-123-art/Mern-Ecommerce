@@ -10,7 +10,7 @@ import {
   editData,
   fetchDataFromApi,
   postData,
-  uploadImage,
+  uploadAvatar,
 } from "../../utils/api";
 import { FaPlus } from "react-icons/fa6";
 import { setUserDetails } from "../../redux/slices/userDetailsSlice";
@@ -29,7 +29,7 @@ const Profile = () => {
   const userDetails = useSelector((state) => state.UserDetails.userDetails);
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
   const address = useSelector((state) => state.userAddress.address);
-  const [selectedValue, setSelectedValue] = useState("");
+  // const [selectedValue, setSelectedValue] = useState("");
   const [userId, setUserId] = useState("");
   const [passOpen, setPassOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -43,9 +43,9 @@ const Profile = () => {
     oldPassword: "",
     newPassword: "",
   });
-  const handleChangeAddress = (event) => {
-    setSelectedValue(event.target.value);
-  };
+  // const handleChangeAddress = (event) => {
+  //   setSelectedValue(event.target.value);
+  // };
   const navigate = useNavigate();
   useEffect(() => {
     const token = localStorage.getItem("accesstoken");
@@ -66,11 +66,6 @@ const Profile = () => {
       });
     }
   }, [userDetails]);
-  useEffect(() => {
-    if (address.length > 0) {
-      setSelectedValue(address[0]._id);
-    }
-  }, [address]);
 
   const removeAddress = (id) => {
     deleteData(`/api/address/delete/${id}`, {
@@ -217,19 +212,19 @@ const Profile = () => {
           const file = files[i];
           selectedImages.push(file);
           formData.append(`avatar`, file);
-          uploadImage(apiEndPoint, formData).then((res) => {
-            console.log(res);
-            setUploading(false);
-            let avatar = [];
-            avatar.push(res?.data?.avatar);
-            dispatch(setPreviews(avatar));
-          });
         } else {
           toast.error("please upload JPG, PNG or WEBP image");
           setUploading(false);
           return false;
         }
       }
+      uploadAvatar(apiEndPoint, formData).then((res) => {
+        console.log(res);
+        setUploading(false);
+        let avatar = [];
+        avatar.push(res?.data?.avatar);
+        dispatch(setPreviews(avatar));
+      });
     } catch (error) {
       console.log(error);
     }
@@ -361,13 +356,13 @@ const Profile = () => {
               key={add._id}
               className="address w-full flex text-gray-600 items-center justify-center cursor-pointer bg-[#f1f1f1] p-3 rounded-md mb-2 relative"
             >
-              <Radio
+              {/* <Radio
                 checked={selectedValue === add._id}
                 onChange={handleChangeAddress}
                 value={add._id}
                 {...label}
                 size="small"
-              />
+              /> */}
               <span>
                 {add.address_line}, {add.city}, {add.state}, {add.country},
                 {add.pincode}

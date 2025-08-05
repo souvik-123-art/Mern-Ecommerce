@@ -1,4 +1,5 @@
 import ProductModel from "../models/product.model.js";
+import UserModel from "../models/user.model.js";
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
 cloudinary.config({
@@ -664,7 +665,7 @@ export const updateProduct = async (req, res) => {
     return res.status(200).json({
       error: false,
       success: true,
-      message: 'product successfully updated'
+      message: "product successfully updated",
     });
   } catch (error) {
     return res.status(500).json({

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FaRegUser } from "react-icons/fa";
+import { MdOutlineMapsHomeWork } from "react-icons/md";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import { LuBox } from "react-icons/lu";
 import { FaRegHeart } from "react-icons/fa";
@@ -46,19 +47,19 @@ export const AccountSidebar = () => {
           const file = files[i];
           selectedImages.push(file);
           formData.append(`avatar`, file);
-          uploadImage(apiEndPoint, formData).then((res) => {
-            console.log(res);
-            setUploading(false);
-            let avatar = [];
-            avatar.push(res?.data?.avatar);
-            dispatch(setPreviews(avatar));
-          });
         } else {
           toast.error("please upload JPG, PNG or WEBP image");
           setUploading(false);
           return false;
         }
       }
+      uploadImage(apiEndPoint, formData).then((res) => {
+        console.log(res);
+        setUploading(false);
+        let avatar = [];
+        avatar.push(res?.data?.avatar);
+        dispatch(setPreviews(avatar));
+      });
     } catch (error) {
       console.log(error);
     }
@@ -148,6 +149,16 @@ export const AccountSidebar = () => {
           >
             <Button className="!w-full !py-3 !px-5 !flex !items-center !gap-3 !justify-start !text-md !text-black/80">
               <FaRegHeart className="text-xl" /> My List
+            </Button>
+          </NavLink>
+        </li>
+        <li className="w-full">
+          <NavLink
+            to="/address"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            <Button className="!w-full !py-3 !px-5 !flex !items-center !gap-3 !justify-start !text-md !text-black/80">
+              <MdOutlineMapsHomeWork className="text-[22px]" /> Address
             </Button>
           </NavLink>
         </li>

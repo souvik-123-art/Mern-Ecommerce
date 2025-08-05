@@ -1,50 +1,26 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
-import { FaPlus } from "react-icons/fa6";
-import { Link } from "react-router-dom";
-import Checkbox from "@mui/material/Checkbox";
-import { FiEdit2 } from "react-icons/fi";
-import { FiEye } from "react-icons/fi";
-import { RiDeleteBin6Line } from "react-icons/ri";
-import TooltipMUI from "@mui/material/Tooltip";
-import Progress from "../../Components/ProgressBar";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
-import TableRow from "@mui/material/TableRow";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import SearchBox from "../../Components/SearchBox";
-import Chip from "@mui/material/Chip";
+import { FaAngleDown, FaAngleUp, FaPlus } from "react-icons/fa6";
 import { setIsOpenFullScreenPanel } from "../../redux/slices/fullScreenPanelSlice";
 import { useDispatch, useSelector } from "react-redux";
-const label = { inputProps: { "aria-label": "Checkbox demo" } };
-const columns = [
-  { id: "catImage", label: "Category Image", minWidth: 100 },
-  { id: "catName", label: "Category Name", minWidth: 100 },
-  { id: "subCatName", label: "Sub Category Name", minWidth: 200 },
-  { id: "action", label: "Action", minWidth: 100 },
-];
+import { fetchDataFromApi } from "../../utils/api";
+import { setCatData } from "../../redux/slices/categoryDataSlice";
+import EditSubCat from "./EditSubCat";
 const SubCategoryList = () => {
   const dispatch = useDispatch();
-  const [categoryFilterVal, setCategoryFilterVal] = useState("");
-  const handleChangeCatFilter = (event) => {
-    setCategoryFilterVal(event.target.value);
-  };
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
+  const catData = useSelector((state) => state.catData.catData);
+  const [isOpen, setIsOpen] = useState(0);
+  useEffect(() => {
+    fetchDataFromApi("/api/category").then((res) => {
+      dispatch(setCatData(res?.data));
+    });
+  }, []);
+  const expand = (idx) => {
+    if (isOpen === idx) {
+      setIsOpen(!isOpen);
+    } else {
+      setIsOpen(idx);
+    }
   };
   return (
     <>
@@ -72,75 +48,64 @@ const SubCategoryList = () => {
       </div>
 
       <div className="card my-4 p-5 mt-5 shadow-md sm:rounded-lg bg-white overflow-hidden">
-        <TableContainer sx={{ maxHeight: 440 }}>
-          <Table stickyHeader aria-label="sticky table">
-            <TableHead>
-              <TableRow>
-                <TableCell width={70}>
-                  <Checkbox {...label} size="small" />
-                </TableCell>
-                {columns.map((column) => (
-                  <TableCell
-                    key={column.id}
-                    align={column.align}
-                    width={column.minWidth}
+        {catData?.length !== 0 && (
+          <ul className="w-full">
+            {catData?.map((cat, idx) => (
+              <li className="w-full mb-1" key={cat.name}>
+                <div className="flex items-center w-full p-2 bg-[#f1f1f1] rounded-sm px-4">
+                  <span className="font-[500] flex items-center gap-4 text-lg">
+                    {cat.name}
+                  </span>
+                  <Button
+                    onClick={() => expand(idx)}
+                    className="!min-w-[35px] !w-[35px] !h-[35px] !rounded-full !text-black !text-lg !ml-auto"
                   >
-                    {column.label}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <TableRow>
-                <TableCell>
-                  <Checkbox {...label} size="small" />
-                </TableCell>
-                <TableCell width={100}>
-                  <div className="flex items-center gap-4 w-[70px]">
-                    <div className="img w-full rounded-md overflow-hidden">
-                      <img
-                        src="https://serviceapi.spicezgold.com/download/1741661061379_foot.png"
-                        className="w-full"
-                        alt=""
-                      />
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell width={100}>
-                  <Chip label="Fashion" color="success" />
-                </TableCell>
-                <TableCell width={200}>
-                  <div className="flex items-center gap-3">
-                    <Chip label="Men" color="primary" />
-                    <Chip label="Women" color="primary" />
-                    <Chip label="kids" color="primary" />
-                  </div>
-                </TableCell>
-                <TableCell width={100}>
-                  <TooltipMUI title="Edit Product" placement="top">
-                    <Button className="!w-8 !bg-green-500 !mr-2 !h-8 !min-w-8 !text-[#f1f1f1] !rounded-full">
-                      <FiEdit2 className="text-lg" />
-                    </Button>
-                  </TooltipMUI>
-                  <TooltipMUI title="Delete Product" placement="top">
-                    <Button className="!w-8 !bg-red-500 !text-lg !mr-2 !h-8 !min-w-8 !text-[#f1f1f1] !rounded-full">
-                      <RiDeleteBin6Line />
-                    </Button>
-                  </TooltipMUI>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[10, 25, 100]}
-          component="div"
-          count={10}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
+                    {isOpen === idx ? <FaAngleUp /> : <FaAngleDown />}
+                  </Button>
+                </div>
+                {isOpen === idx && (
+                  <>
+                    {cat?.children?.length !== 0 && (
+                      <ul className="w-full">
+                        {cat?.children?.map((subCat, sIdx) => (
+                          <li key={subCat.name} className="w-full py-1">
+                            <EditSubCat
+                              name={subCat.name}
+                              id={subCat?._id}
+                              catData={catData}
+                              index={sIdx}
+                              selectedCat={subCat?.parentId}
+                              selectedCatName={subCat?.parentCatName}
+                            />
+                            {subCat?.children?.length !== 0 && (
+                              <ul className="pl-4 pr-4">
+                                {subCat?.children?.map((tSubCat, tSIdx) => (
+                                  <li
+                                    key={tSubCat.name}
+                                    className="w-full hover:bg-[#f1f1f1]"
+                                  >
+                                    <EditSubCat
+                                      name={tSubCat.name}
+                                      id={tSubCat?._id}
+                                      catData={cat?.children}
+                                      index={tSIdx}
+                                      selectedCat={tSubCat?.parentId}
+                                      selectedCatName={tSubCat?.parentCatName}
+                                    />
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </>
   );

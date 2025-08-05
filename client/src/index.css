@@ -234,15 +234,22 @@ textarea {
   height: 100%;
   opacity: 1;
 }
-.myAccount li a.active button  {
+.myAccount li a.active button {
   color: #ff5252 !important;
 }
 .react-international-phone-input {
   @apply focus:!border-black/50 !border-black/30 !w-5/6 !text-sm !p-5 !rounded-sm;
 }
 .react-international-phone-country-selector-button {
-  @apply !border-black/30 !p-5 !rounded-sm
+  @apply !border-black/30 !p-5 !rounded-sm;
 }
 .react-international-phone-input-container {
   width: 100%;
+}
+.btn-blue {
+  background-color: #f06d6d !important;
+  color: #fff !important;
+  &&:hover {
+    background-color: #ff5252 !important;
+  }
 }

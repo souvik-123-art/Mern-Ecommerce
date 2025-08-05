@@ -70,3 +70,13 @@ export const updatePassword = async (url, updatedData) => {
   return res;
 };
 
+export const deleteData = async (url) => {
+  const params = {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("accesstoken")}`,
+      "Content-Type": "application/json",
+    },
+  };
+  const res = await axios.delete(apiUrl + url, params);
+  return res;
+};

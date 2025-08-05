@@ -4,6 +4,8 @@ import cartPanelSlicereducer from "../redux/Slices/cartPanelSlice";
 import authSlicereducer from "../redux/Slices/authSlice";
 import userDetailsSlicereducer from "../redux/Slices/userDetailsSlice";
 import userImageSlicereducer from "../redux/Slices/userImage";
+import fullScreenPanelSliceReducer from "../redux/Slices/fullScreenPanelSlice";
+import userAddressSlicereducer from "../redux/Slices/userAddressSlice";
 export const store = configureStore({
   reducer: {
     proModal: productModalSlicereducer,
@@ -11,5 +13,7 @@ export const store = configureStore({
     auth: authSlicereducer,
     UserDetails: userDetailsSlicereducer,
     userImage: userImageSlicereducer,
+    userAddress: userAddressSlicereducer,
+    fullScreenPanel: fullScreenPanelSliceReducer,
   },
 });

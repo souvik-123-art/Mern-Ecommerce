@@ -3,8 +3,16 @@ import UserModel from "../models/user.model.js";
 
 export const addAddressController = async (req, res) => {
   try {
-    const { address_line, city, state, pincode, country, mobile, status } =
-      req.body;
+    const {
+      address_line,
+      city,
+      state,
+      pincode,
+      country,
+      mobile,
+      status,
+      selected,
+    } = req.body;
     const userId = req.userId;
 
     if (!address_line || !city || !state || !pincode || !country || !mobile) {
@@ -22,6 +30,7 @@ export const addAddressController = async (req, res) => {
       country,
       mobile,
       status,
+      selected,
       userId,
     });
     const saveAddress = await address.save();
@@ -117,3 +126,4 @@ export const deleteAddressController = async (req, res) => {
     });
   }
 };
+

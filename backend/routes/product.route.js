@@ -40,9 +40,9 @@ productRouter.get("/filterByPrice", getAllProductsByPrice);
 productRouter.get("/productRating", getAllProductsByRating);
 productRouter.get("/productsCount", getProductsCount);
 productRouter.get("/featuredProducts", getFeaturedProducts);
+productRouter.delete("/deleteImage", auth, removeImageFromCloudinary);
 productRouter.delete("/:id", auth, deleteProduct);
 productRouter.get("/:id", getSingleProduct);
-productRouter.delete("/deleteImage", auth, removeImageFromCloudinary);
 productRouter.put("/updateProduct/:id", auth, updateProduct);
 
 export default productRouter;

@@ -1,24 +1,45 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import UploadBox from "../../Components/UploadBox";
 import { IoClose } from "react-icons/io5";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import Button from "@mui/material/Button";
 import { BsCloudUpload } from "react-icons/bs";
-import { deleteImages, postData } from "../../utils/api";
+import {
+  deleteImages,
+  editData,
+  fetchDataFromApi,
+  postData,
+} from "../../utils/api";
 import toast from "react-hot-toast";
 import CircularProgress from "@mui/material/CircularProgress";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setIsOpenFullScreenPanel } from "../../redux/slices/fullScreenPanelSlice";
-const AddCategory = () => {
+const EditCategory = () => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
+  const [disable, setDisable] = useState(false);
+  const [previews, setPreviews] = useState([]);
   const [formFields, setFormFields] = useState({
     name: "",
     images: [],
   });
-  const [disable, setDisable] = useState(false)
-  const [previews, setPreviews] = useState([]);
+  const isOpenFullScreenPanel = useSelector(
+    (state) => state.fullScreenPanel.isOpenFullScreenPanel
+  );
+  const id = isOpenFullScreenPanel?.id;
+  useEffect(() => {
+    fetchDataFromApi(`/api/category/${id}`).then((res) => {
+      formFields.name = res?.category?.name;
+      setPreviews(res?.category?.images);
+    });
+    if (previews?.length !== 0) {
+      setDisable(false);
+    } else {
+      setDisable(true);
+    }
+  }, []);
+
   const setCatPreviews = (previewArr) => {
     setPreviews(previewArr);
     setFormFields({
@@ -34,6 +55,7 @@ const AddCategory = () => {
         [name]: value,
       };
     });
+    formFields.images = previews;
   };
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -48,23 +70,23 @@ const AddCategory = () => {
       setIsLoading(false);
       return false;
     }
-    postData("/api/category/create", formFields, { credentials: true }).then(
-      (res) => {
-        try {
-          if (!res?.error) {
-            toast.success(res.message);
-            setIsLoading(false);
-            dispatch(setIsOpenFullScreenPanel({ open: false }));
-          } else {
-            toast.error(res.message);
-            setIsLoading(false);
-          }
-        } catch (error) {
-          toast.error(error);
+    editData(`/api/category/updateCategory/${id}`, formFields, {
+      credentials: true,
+    }).then((res) => {
+      try {
+        if (!res?.data.error) {
+          toast.success(res.data.message);
+          setIsLoading(false);
+          dispatch(setIsOpenFullScreenPanel({ open: false }));
+        } else {
+          toast.error(res.data.message);
           setIsLoading(false);
         }
+      } catch (error) {
+        toast.error(error);
+        setIsLoading(false);
       }
-    );
+    });
   };
   const removeImg = (img, idx) => {
     setIsLoading(true);
@@ -155,4 +177,4 @@ const AddCategory = () => {
   );
 };
 
-export default AddCategory;
+export default EditCategory;

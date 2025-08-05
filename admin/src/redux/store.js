@@ -5,6 +5,7 @@ import fullScreenPanelSliceReducer from "./slices/fullScreenPanelSlice";
 import userDetailsSlicereducer from "../redux/slices/userDetailsSlice";
 import userImageSlicereducer from "../redux/slices/userImage";
 import userAddressSlicereducer from "../redux/slices/userAddressSlice";
+import catDataSliceReducer from "../redux/slices/categoryDataSlice";
 export const store = configureStore({
   reducer: {
     sidePanel: sidePanelSliceReducer,
@@ -13,5 +14,6 @@ export const store = configureStore({
     UserDetails: userDetailsSlicereducer,
     userImage: userImageSlicereducer,
     userAddress: userAddressSlicereducer,
+    catData: catDataSliceReducer,
   },
 });

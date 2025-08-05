@@ -7,7 +7,7 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import { fetchDataFromApi, postData } from "../../utils/api";
 import { useDispatch } from "react-redux";
-import { setIsOpenFullScreenPanel } from "../../redux/slices/fullScreenPanelSlice";
+import { setIsOpenFullScreenPanel } from "../../redux/Slices/fullScreenPanelSlice";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { setAddress } from "../../redux/slices/userAddressSlice";

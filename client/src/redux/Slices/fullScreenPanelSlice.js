@@ -3,8 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   isOpenFullScreenPanel: {
     open: false,
-    model: "",
-    id: "",
+    model: ''
   },
 };
 const fullScreenPanelSlice = createSlice({

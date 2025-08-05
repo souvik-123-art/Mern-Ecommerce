@@ -1,4 +1,5 @@
 import categoryModel from "../models/category.model.js";
+import UserModel from "../models/user.model.js";
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
 cloudinary.config({
@@ -9,7 +10,7 @@ cloudinary.config({
 });
 
 //image upload
-var imagesArr = [];
+let imagesArr = [];
 export const categoryImageController = async (req, res) => {
   try {
     imagesArr = [];
@@ -187,8 +188,6 @@ export const removeImageFromCloudinary = async (req, res) => {
   if (imageName) {
     const result = await cloudinary.uploader.destroy(imageName);
     if (result) {
-      user.avatar = undefined;
-      await user.save();
       return res.status(200).send(result);
     }
   }
@@ -264,6 +263,15 @@ export const updateCategory = async (req, res) => {
         error: true,
         success: false,
       });
+    }
+    const children = await categoryModel.find({ parentId: category._id });
+
+    for (let child of children) {
+      await categoryModel.findByIdAndUpdate(
+        child._id,
+        { parentCatName: category.name },
+        { new: true }
+      );
     }
     imagesArr = [];
     res.status(200).json({
