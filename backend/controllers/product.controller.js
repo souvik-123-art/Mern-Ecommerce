@@ -50,7 +50,7 @@ export const createProduct = async (req, res) => {
     let product = new ProductModel({
       name: req.body.name,
       description: req.body.description,
-      images: imagesArr,
+      images: req.body.images,
       brand: req.body.brand,
       price: req.body.price,
       oldPrice: req.body.oldPrice,
@@ -571,6 +571,44 @@ export const deleteProduct = async (req, res) => {
     });
   }
 };
+export const deleteMultipleProduct = async (req, res) => {
+  const { ids } = req.body;
+  if (!ids || !Array.isArray(ids)) {
+    return res.status(400).json({
+      message: "invalid input!",
+      error: true,
+      success: false,
+    });
+  }
+
+  for (let i = 0; i < ids?.length; i++) {
+    const product = await ProductModel.findById(ids(i));
+    const images = product.images;
+    for (let img of images) {
+      const imgUrl = img;
+      const urlArr = imgUrl.split("/");
+      const image = urlArr[urlArr.length - 1];
+      const imageName = image.split(".")[0];
+      if (imageName) {
+        const result = await cloudinary.uploader.destroy(imageName);
+      }
+    }
+  }
+  try {
+    await ProductModel.deleteMany({ _id: { $in: ids } });
+    return res.status(200).json({
+      message: "products deleted successfully",
+      error: false,
+      success: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
 // get single product
 
 export const getSingleProduct = async (req, res) => {
@@ -618,8 +656,6 @@ export const removeImageFromCloudinary = async (req, res) => {
   if (imageName) {
     const result = await cloudinary.uploader.destroy(imageName);
     if (result) {
-      user.avatar = undefined;
-      await user.save();
       return res.status(200).send(result);
     }
   }

@@ -14,8 +14,10 @@ import { postData } from "../../utils/api";
 import toast from "react-hot-toast";
 import { setIsOpenFullScreenPanel } from "../../redux/slices/fullScreenPanelSlice";
 import CircularProgress from "@mui/material/CircularProgress";
+import { useNavigate } from "react-router-dom";
 const AddSubCategory = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [parentCat, setParentCat] = useState("");
   const [parentCat2, setParentCat2] = useState("");
@@ -81,6 +83,7 @@ const AddSubCategory = () => {
           if (!res?.error) {
             toast.success(res.message);
             setIsLoading(false);
+            navigate("/subCategory/list");
             dispatch(setIsOpenFullScreenPanel({ open: false }));
           } else {
             toast.error(res.message);

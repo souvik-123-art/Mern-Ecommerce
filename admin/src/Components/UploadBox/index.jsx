@@ -24,6 +24,7 @@ const UploadBox = (props) => {
         ) {
           const file = files[i];
           selectedImages.push(file);
+
           formData.append(props?.name, file);
         } else {
           toast.error("please upload JPG, PNG or WEBP image");
@@ -33,7 +34,7 @@ const UploadBox = (props) => {
       }
       uploadImage(apiEndPoint, formData).then((res) => {
         setUploading(false);
-        props.setDisable(true)
+        props.setDisable(true);
         props.setCatPreviews(res?.data?.images);
       });
     } catch (error) {
@@ -46,7 +47,7 @@ const UploadBox = (props) => {
         <FaRegImages className="text-5xl cursor-pointer" />
         <h4 className="text-md font-semibold cursor-pointer">Image Upload</h4>
         <input
-        disabled={props.disable}
+          disabled={props.disable}
           type="file"
           accept="image/*"
           name={props?.name}
@@ -55,8 +56,12 @@ const UploadBox = (props) => {
           className="absolute inset-0 opacity-0 cursor-pointer"
         />
       </div>
-      <div className={`absolute inset-0 bg-black/40 ${uploading? "flex" : "hidden"} justify-center items-center z-50 left-0 top-0`}>
-        <CircularProgress className="!text-white"/>
+      <div
+        className={`absolute inset-0 bg-black/40 ${
+          uploading ? "flex" : "hidden"
+        } justify-center items-center z-50 left-0 top-0`}
+      >
+        <CircularProgress className="!text-white" />
       </div>
     </>
   );

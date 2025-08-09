@@ -12,27 +12,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { Login } from "./Pages/Login";
 import { SignUp } from "./Pages/SignUp";
 import Products from "./Pages/Products";
-
-import Dialog from "@mui/material/Dialog";
-import ListItemText from "@mui/material/ListItemText";
-import ListItemButton from "@mui/material/ListItemButton";
-import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import { IoClose } from "react-icons/io5";
-import Slide from "@mui/material/Slide";
-import { setIsOpenFullScreenPanel } from "./redux/slices/fullScreenPanelSlice";
-import Button from "@mui/material/Button";
-import AddProduct from "./Pages/Products/AddProduct";
 import HomeSliderBanners from "./Pages/HomeSliderBanners";
-import AddHomeSlide from "./Pages/HomeSliderBanners/addHomeSlide";
-import AddCategory from "./Pages/Category/AddCategory";
 import CategoryList from "./Pages/Category";
 import SubCategoryList from "./Pages/Category/SubCatList";
-import AddSubCategory from "./Pages/Category/AddSubCategory";
 import Users from "./Pages/Users";
 import Orders from "./Pages/Orders";
 import { ForgotPassword } from "./Pages/ForgotPasswordPage";
@@ -44,17 +26,10 @@ import { fetchDataFromApi } from "./utils/api";
 import ProtectedRoute from "./utils/protectedRoute.jsx";
 import Profile from "./Pages/Profile/index.jsx";
 import toast from "react-hot-toast";
-import AddAddress from "./Pages/Address/AddAddress.jsx";
-import EditCategory from "./Pages/Category/EditCategory.jsx";
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
+import ProductDetails from "./Pages/Products/ProductDetails.jsx";
 function App() {
   const isLogin = useSelector((state) => state.auth.isLogin);
   const dispatch = useDispatch();
-  const isOpenFullScreenPanel = useSelector(
-    (state) => state.fullScreenPanel.isOpenFullScreenPanel
-  );
   const sideBarOpen = useSelector((state) => state.sidePanel.sidePanelOpen);
   useEffect(() => {
     const token = localStorage.getItem("accesstoken");
@@ -209,6 +184,33 @@ function App() {
       ),
     },
     {
+      path: "/product/:id",
+      exact: true,
+      element: (
+        <ProtectedRoute>
+          <section className="main">
+            <Header />
+            <div className="contentMain flex">
+              <div
+                className={`sidebarWrapper ${
+                  sideBarOpen === true ? "w-[15%]" : "w-0"
+                } transition-all duration-300 overflow-hidden`}
+              >
+                <Sidebar />
+              </div>
+              <div
+                className={`contentRight ${
+                  sideBarOpen === true ? "w-[85%]" : "w-[100%]"
+                }  py-4 px-5 transition-all duration-300`}
+              >
+                <ProductDetails />
+              </div>
+            </div>
+          </section>
+        </ProtectedRoute>
+      ),
+    },
+    {
       path: "/profile",
       exact: true,
       element: (
@@ -318,44 +320,6 @@ function App() {
   return (
     <>
       <RouterProvider router={router} />
-      <Dialog
-        fullScreen
-        open={isOpenFullScreenPanel.open}
-        onClose={() => dispatch(setIsOpenFullScreenPanel({ open: false }))}
-        slots={{
-          transition: Transition,
-        }}
-      >
-        <AppBar sx={{ position: "relative" }}>
-          <Toolbar>
-            <IconButton
-              edge="start"
-              color="inherit"
-              onClick={() =>
-                dispatch(setIsOpenFullScreenPanel({ open: false }))
-              }
-              aria-label="close"
-            >
-              <IoClose className="text-gray-800" />
-            </IconButton>
-            <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-              <span className="text-gray-800">
-                {isOpenFullScreenPanel?.model}
-              </span>
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        {isOpenFullScreenPanel?.model === "Add Product" && <AddProduct />}
-        {isOpenFullScreenPanel?.model === "Add Home Slide" && <AddHomeSlide />}
-        {isOpenFullScreenPanel?.model === "Add Category" && <AddCategory />}
-        {isOpenFullScreenPanel?.model === "Edit Category" && <EditCategory />}
-        {isOpenFullScreenPanel?.model === "Add Sub Category" && (
-          <AddSubCategory />
-        )}
-        {isOpenFullScreenPanel?.model === "Add New Address" && (
-          <AddAddress />
-        )}
-      </Dialog>
     </>
   );
 }

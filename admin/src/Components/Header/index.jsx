@@ -17,6 +17,23 @@ import { setIsLogin } from "../../redux/slices/authSlice";
 import { Link } from "react-router-dom";
 import { fetchDataFromApi } from "../../utils/api";
 import { setPreviews } from "../../redux/slices/userImage";
+import Dialog from "@mui/material/Dialog";
+import AppBar from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
+import { IoClose } from "react-icons/io5";
+import Typography from "@mui/material/Typography";
+import AddProduct from "../../Pages/Products/AddProduct";
+import AddHomeSlide from "../../Pages/HomeSliderBanners/addHomeSlide";
+import AddCategory from "../../Pages/Category/AddCategory";
+import EditCategory from "../../Pages/Category/EditCategory";
+import AddSubCategory from "../../Pages/Category/AddSubCategory";
+import AddAddress from "../../Pages/Address/AddAddress";
+import { setIsOpenFullScreenPanel } from "../../redux/slices/fullScreenPanelSlice";
+import Slide from "@mui/material/Slide";
+import EditProduct from "../../Pages/Products/EditProduct";
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
     right: 1,
@@ -28,6 +45,9 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 export const Header = () => {
   const dispatch = useDispatch();
   const sideBarOpen = useSelector((state) => state.sidePanel.sidePanelOpen);
+  const isOpenFullScreenPanel = useSelector(
+    (state) => state.fullScreenPanel.isOpenFullScreenPanel
+  );
   const userDetails = useSelector((state) => state.UserDetails.userDetails);
   const previews = useSelector((state) => state.userImage.previews);
   const isLogin = useSelector((state) => state.auth.isLogin);
@@ -63,128 +83,167 @@ export const Header = () => {
     }
   }, [userDetails]);
   return (
-    <header
-      className={`w-full h-[70px] ${
-        sideBarOpen ? "pl-[18.5rem]" : "pl-7"
-      } bg-[#fff] flex items-center justify-between shadow-md sticky top-0 left-0 z-10 transition-all duration-300`}
-    >
-      <div className="part1">
-        <Button
-          onClick={() => dispatch(OpenSidePanel(!sideBarOpen))}
-          className="!w-[40px] !h-[40px] !rounded-full !min-w-[40px] !text-black/80"
-        >
-          {sideBarOpen ? (
-            <HiOutlineMenuAlt2 className="text-3xl" />
-          ) : (
-            <HiOutlineMenu className="text-3xl" />
-          )}
-        </Button>
-      </div>
-      <div className="part2 w-[40%] flex items-center justify-end gap-6 pr-7">
-        <IconButton aria-label="cart">
-          <StyledBadge badgeContent={4} color="secondary">
-            <FaRegBell />
-          </StyledBadge>
-        </IconButton>
-
-        <div className="relative">
-          <div
-            onClick={handleClickMyAcc}
-            className="rounded-full w-[35px] h-[35px] overflow-hidden cursor-pointer"
+    <>
+      <header
+        className={`w-full h-[70px] ${
+          sideBarOpen ? "pl-[18.5rem]" : "pl-7"
+        } bg-[#fff] flex items-center justify-between shadow-md sticky top-0 left-0 z-10 transition-all duration-300`}
+      >
+        <div className="part1">
+          <Button
+            onClick={() => dispatch(OpenSidePanel(!sideBarOpen))}
+            className="!w-[40px] !h-[40px] !rounded-full !min-w-[40px] !text-black/80"
           >
-            {previews?.length !== 0 ? (
-              <img
-                src={previews}
-                alt=""
-                className="w-full h-full object-cover"
-              />
+            {sideBarOpen ? (
+              <HiOutlineMenuAlt2 className="text-3xl" />
             ) : (
-              <img
-                src="https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1095249842.jpg"
-                alt=""
-                className="w-full h-full object-cover"
-              />
+              <HiOutlineMenu className="text-3xl" />
             )}
-          </div>
-          <Menu
-            anchorEl={anchorMyAcc}
-            id="account-menu"
-            open={openMyAcc}
-            onClose={handleCloseMyAcc}
-            onClick={handleCloseMyAcc}
-            slotProps={{
-              paper: {
-                elevation: 0,
-                sx: {
-                  overflow: "visible",
-                  filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-                  mt: 1.5,
-                  "& .MuiAvatar-root": {
-                    width: 32,
-                    height: 32,
-                    ml: -0.5,
-                    mr: 1,
-                  },
-                  "&::before": {
-                    content: '""',
-                    display: "block",
-                    position: "absolute",
-                    top: 0,
-                    right: 14,
-                    width: 10,
-                    height: 10,
-                    bgcolor: "background.paper",
-                    transform: "translateY(-50%) rotate(45deg)",
-                    zIndex: 0,
+          </Button>
+        </div>
+        <div className="part2 w-[40%] flex items-center justify-end gap-6 pr-7">
+          <IconButton aria-label="cart">
+            <StyledBadge badgeContent={4} color="secondary">
+              <FaRegBell />
+            </StyledBadge>
+          </IconButton>
+
+          <div className="relative">
+            <div
+              onClick={handleClickMyAcc}
+              className="rounded-full w-[35px] h-[35px] overflow-hidden cursor-pointer"
+            >
+              {previews?.length !== 0 ? (
+                <img
+                  src={previews}
+                  alt=""
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <img
+                  src="https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1095249842.jpg"
+                  alt=""
+                  className="w-full h-full object-cover"
+                />
+              )}
+            </div>
+            <Menu
+              anchorEl={anchorMyAcc}
+              id="account-menu"
+              open={openMyAcc}
+              onClose={handleCloseMyAcc}
+              onClick={handleCloseMyAcc}
+              slotProps={{
+                paper: {
+                  elevation: 0,
+                  sx: {
+                    overflow: "visible",
+                    filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                    mt: 1.5,
+                    "& .MuiAvatar-root": {
+                      width: 32,
+                      height: 32,
+                      ml: -0.5,
+                      mr: 1,
+                    },
+                    "&::before": {
+                      content: '""',
+                      display: "block",
+                      position: "absolute",
+                      top: 0,
+                      right: 14,
+                      width: 10,
+                      height: 10,
+                      bgcolor: "background.paper",
+                      transform: "translateY(-50%) rotate(45deg)",
+                      zIndex: 0,
+                    },
                   },
                 },
-              },
-            }}
-            transformOrigin={{ horizontal: "right", vertical: "top" }}
-            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-          >
-            <div className="flex items-center py-1 mb-2 px-3 gap-3">
-              <div className="rounded-full w-[40px] h-[40px] overflow-hidden pointer-events-none">
-                {previews?.length !== 0 ? (
-                  <img
-                    src={previews}
-                    alt=""
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <img
-                    src="https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1095249842.jpg"
-                    alt=""
-                    className="w-full h-full object-cover"
-                  />
-                )}
+              }}
+              transformOrigin={{ horizontal: "right", vertical: "top" }}
+              anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+            >
+              <div className="flex items-center py-1 mb-2 px-3 gap-3">
+                <div className="rounded-full w-[40px] h-[40px] overflow-hidden pointer-events-none">
+                  {previews?.length !== 0 ? (
+                    <img
+                      src={previews}
+                      alt=""
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <img
+                      src="https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1095249842.jpg"
+                      alt=""
+                      className="w-full h-full object-cover"
+                    />
+                  )}
+                </div>
+                <div className="info">
+                  <h3 className="text-[15px] leading-5 font-[500]">
+                    {userDetails?.name}
+                  </h3>
+                  <p className="text-xs opacity-70 font-[400]">
+                    {userDetails?.email}
+                  </p>
+                </div>
               </div>
-              <div className="info">
-                <h3 className="text-[15px] leading-5 font-[500]">
-                  {userDetails?.name}
-                </h3>
-                <p className="text-xs opacity-70 font-[400]">
-                  {userDetails?.email}
-                </p>
-              </div>
-            </div>
-            <Divider className="!mb-2" />
-            <Link to='/profile'>
-              <MenuItem
-                onClick={handleCloseMyAcc}
-                className="flex items-center gap-3"
-              >
-                <FaRegUser className="text-[16px]" />
-                <span className="text-sm">Profile</span>
+              <Divider className="!mb-2" />
+              <Link to="/profile">
+                <MenuItem
+                  onClick={handleCloseMyAcc}
+                  className="flex items-center gap-3"
+                >
+                  <FaRegUser className="text-[16px]" />
+                  <span className="text-sm">Profile</span>
+                </MenuItem>
+              </Link>
+              <MenuItem onClick={logout} className="flex items-center gap-2">
+                <IoIosLogOut className="text-[18px]" />
+                <span className="text-sm">Sign Out</span>
               </MenuItem>
-            </Link>
-            <MenuItem onClick={logout} className="flex items-center gap-2">
-              <IoIosLogOut className="text-[18px]" />
-              <span className="text-sm">Sign Out</span>
-            </MenuItem>
-          </Menu>
+            </Menu>
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+      <Dialog
+        fullScreen
+        open={isOpenFullScreenPanel.open}
+        onClose={() => dispatch(setIsOpenFullScreenPanel({ open: false }))}
+        slots={{
+          transition: Transition,
+        }}
+      >
+        <AppBar sx={{ position: "relative" }}>
+          <Toolbar>
+            <IconButton
+              edge="start"
+              color="inherit"
+              onClick={() =>
+                dispatch(setIsOpenFullScreenPanel({ open: false }))
+              }
+              aria-label="close"
+            >
+              <IoClose className="text-gray-800" />
+            </IconButton>
+            <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+              <span className="text-gray-800">
+                {isOpenFullScreenPanel?.model}
+              </span>
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        {isOpenFullScreenPanel?.model === "Add Product" && <AddProduct />}
+        {isOpenFullScreenPanel?.model === "Edit Product" && <EditProduct />}
+        {isOpenFullScreenPanel?.model === "Add Home Slide" && <AddHomeSlide />}
+        {isOpenFullScreenPanel?.model === "Add Category" && <AddCategory />}
+        {isOpenFullScreenPanel?.model === "Edit Category" && <EditCategory />}
+        {isOpenFullScreenPanel?.model === "Add Sub Category" && (
+          <AddSubCategory />
+        )}
+        {isOpenFullScreenPanel?.model === "Add New Address" && <AddAddress />}
+      </Dialog>
+    </>
   );
 };

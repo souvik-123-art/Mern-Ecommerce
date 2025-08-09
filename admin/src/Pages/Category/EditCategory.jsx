@@ -15,8 +15,10 @@ import toast from "react-hot-toast";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useDispatch, useSelector } from "react-redux";
 import { setIsOpenFullScreenPanel } from "../../redux/slices/fullScreenPanelSlice";
+import { useNavigate } from "react-router-dom";
 const EditCategory = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [disable, setDisable] = useState(false);
   const [previews, setPreviews] = useState([]);
@@ -30,8 +32,7 @@ const EditCategory = () => {
   const id = isOpenFullScreenPanel?.id;
   useEffect(() => {
     fetchDataFromApi(`/api/category/${id}`).then((res) => {
-      formFields.name = res?.category?.name;
-      setPreviews(res?.category?.images);
+      
     });
     if (previews?.length !== 0) {
       setDisable(false);
@@ -77,6 +78,7 @@ const EditCategory = () => {
         if (!res?.data.error) {
           toast.success(res.data.message);
           setIsLoading(false);
+          navigate("/category/list");
           dispatch(setIsOpenFullScreenPanel({ open: false }));
         } else {
           toast.error(res.data.message);

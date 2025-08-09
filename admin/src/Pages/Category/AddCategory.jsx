@@ -10,14 +10,16 @@ import toast from "react-hot-toast";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useDispatch } from "react-redux";
 import { setIsOpenFullScreenPanel } from "../../redux/slices/fullScreenPanelSlice";
+import { useNavigate } from "react-router-dom";
 const AddCategory = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [formFields, setFormFields] = useState({
     name: "",
     images: [],
   });
-  const [disable, setDisable] = useState(false)
+  const [disable, setDisable] = useState(false);
   const [previews, setPreviews] = useState([]);
   const setCatPreviews = (previewArr) => {
     setPreviews(previewArr);
@@ -54,6 +56,7 @@ const AddCategory = () => {
           if (!res?.error) {
             toast.success(res.message);
             setIsLoading(false);
+            navigate("/category/list")
             dispatch(setIsOpenFullScreenPanel({ open: false }));
           } else {
             toast.error(res.message);

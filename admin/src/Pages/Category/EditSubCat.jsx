@@ -9,6 +9,7 @@ import { deleteData, editData, fetchDataFromApi } from "../../utils/api";
 import toast from "react-hot-toast";
 import { setCatData } from "../../redux/slices/categoryDataSlice";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 const EditSubCat = (props) => {
   const dispatch = useDispatch();
   const [editMode, setEditMode] = useState(false);

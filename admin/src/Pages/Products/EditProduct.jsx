@@ -13,25 +13,20 @@ import { IoClose } from "react-icons/io5";
 import { BsCloudUpload } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import { setCatData } from "../../redux/slices/categoryDataSlice";
-import { deleteImages, fetchDataFromApi, postData } from "../../utils/api";
-import { useNavigate } from "react-router-dom";
+import {
+  deleteImages,
+  editData,
+  fetchDataFromApi,
+  postData,
+} from "../../utils/api";
+import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { setIsOpenFullScreenPanel } from "../../redux/slices/fullScreenPanelSlice";
 import CircularProgress from "@mui/material/CircularProgress";
 import { setProData } from "../../redux/slices/productsDataSlice";
-
-const AddProduct = () => {
+const EditProduct = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
-  const [disable, setDisable] = useState(false);
-  const [previews, setPreviews] = useState([]);
-  const isOpenFullScreenPanel = useSelector(
-    (state) => state.fullScreenPanel.isOpenFullScreenPanel
-  );
-  const [selectedCatObject, setSelectedCatObject] = useState(null);
-  const [selectedSubCatObject, setSelectedSubCatObject] = useState(null);
-  const catData = useSelector((state) => state.catData.catData);
   const [formFields, setFormFields] = useState({
     name: "",
     description: "",
@@ -54,52 +49,102 @@ const AddProduct = () => {
     size: [],
     productWeight: [],
   });
-  const [proCat, setProCat] = React.useState("");
-  const [proSubCat, setProSubCat] = React.useState("");
-  const [proTSubCat, setTProSubCat] = React.useState("");
-
-  const setCatPreviews = (previewArr) => {
-    setPreviews(previewArr);
-    setFormFields((fields) => {
-      return {
-        ...fields,
-        images: previewArr,
-      };
+  const isOpenFullScreenPanel = useSelector(
+    (state) => state.fullScreenPanel.isOpenFullScreenPanel
+  );
+  const [selectedCatObject, setSelectedCatObject] = useState(null);
+  const [selectedSubCatObject, setSelectedSubCatObject] = useState(null);
+  const id = isOpenFullScreenPanel.id;
+  useEffect(() => {
+    fetchDataFromApi(`/api/product/${id}`).then((res) => {
+      const product = res?.product;
+      setFormFields({
+        name: res?.product?.name,
+        description: res?.product?.description,
+        images: res?.product?.images,
+        brand: res?.product?.brand,
+        price: res?.product?.price,
+        oldPrice: res?.product?.oldPrice,
+        catName: res?.product?.catName,
+        category: res?.product?.category,
+        catId: res?.product?.catId,
+        subCatId: res?.product?.subCatId,
+        subCat: res?.product?.subCat,
+        thirdSubCatId: res?.product?.thirdSubCatId,
+        thirdSubCat: res?.product?.thirdSubCat,
+        countInStock: res?.product?.countInStock,
+        rating: res?.product?.rating,
+        discount: res?.product?.discount,
+        isFeatured: res?.product?.isFeatured,
+        productRam: res?.product?.productRam,
+        size: res?.product?.size,
+        productWeight: res?.product?.productWeight,
+      });
+      setProCat(res?.product?.catId);
+      setProSubCat(res?.product?.subCatId);
+      setTProSubCat(res?.product?.thirdSubCatId);
+      setIsFeatured(res?.product?.isFeatured);
+      setProRam(res?.product?.productRam);
+      setProSize(res?.product?.size);
+      setProWeight(res?.product?.productWeight);
+      setPreviews(res?.product?.images);
+      initializeCategoryStates(product);
     });
-  };
-
-  const removeImg = async (img, idx) => {
-    setIsLoading(true);
-    setDisable(true);
-    try {
-      await deleteImages(`/api/product/deleteImage?img=${img}`, {
-        credentials: true,
-      });
-
-      setPreviews((prev) => {
-        const updated = [...prev];
-        updated.splice(idx, 1);
-
-        setFormFields((fields) => {
-          return {
-            ...fields,
-            images: updated,
-          };
-        });
-
-        return updated;
-      });
-    } catch (error) {
-      toast.error("Failed to remove image");
-      console.error("Error removing image:", error);
-    } finally {
-      setDisable(false);
-      setIsLoading(false);
+  }, [id]);
+  const initializeCategoryStates = (productData) => {
+    if (catData?.length > 0 && productData) {
+      const selectedCat = catData.find((cat) => cat._id === productData.catId);
+      if (selectedCat) {
+        setSelectedCatObject(selectedCat);
+        const selectedSubCat = selectedCat.children?.find(
+          (subCat) => subCat._id === productData.subCatId
+        );
+        if (selectedSubCat) {
+          setSelectedSubCatObject(selectedSubCat);
+        }
+      }
     }
   };
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [disable, setDisable] = useState(false);
+  const [previews, setPreviews] = useState([]);
+  const catData = useSelector((state) => state.catData.catData);
+  const setCatPreviews = (previewArr) => {
+    const imgArr = previews;
+    for (let i = 0; i < previewArr.length; i++) {
+      imgArr.push(previewArr[i]);
+    }
+    setPreviews(imgArr);
+    setFormFields((fields) => {
+      return {
+        ...fields,
+        images: imgArr,
+      };
+    });
+  };
+  const removeImg = (img, idx) => {
+    setIsLoading(true);
+    var imageArr = [];
+    imageArr = previews;
+    deleteImages(`/api/product/deleteImage?img=${img}`, {
+      credentials: true,
+    }).then((res) => {
+      imageArr.splice(idx, 1);
+      setPreviews([]);
+      setTimeout(() => {
+        setPreviews(imageArr);
+        formFields.images = imageArr;
+      }, 100);
+      setDisable(false);
+      setIsLoading(false);
+    });
+  };
+  const [proCat, setProCat] = React.useState("");
+  const [proSubCat, setProSubCat] = React.useState("");
+  const [proTSubCat, setTProSubCat] = React.useState("");
   const handleChangeProCat = (event) => {
-    const selectedCatId = event.target.value;
+    const selectedCatId = event.target.value || proCat;
     setProCat(event.target.value);
     setFormFields((fields) => ({
       ...fields,
@@ -111,7 +156,7 @@ const AddProduct = () => {
   };
 
   const handleChangeProSubCat = (event) => {
-    const selectedSubCatId = event.target.value;
+    const selectedSubCatId = event.target.value || proSubCat;
     setProSubCat(event.target.value);
     setFormFields((fields) => ({ ...fields, subCatId: event.target.value }));
     const foundCat = selectedCatObject?.children?.find(
@@ -129,74 +174,68 @@ const AddProduct = () => {
   };
 
   const selectCatByName = (name) => {
-    setFormFields((fields) => ({ ...fields, catName: name }));
+    formFields.catName = name;
   };
-
   const selectSubCatByName = (name) => {
-    setFormFields((fields) => ({ ...fields, subCat: name }));
+    formFields.subCat = name;
   };
-
   const selectThirdSubCatByName = (name) => {
-    setFormFields((fields) => ({ ...fields, thirdSubCat: name }));
+    formFields.thirdSubCat = name;
   };
-
   const [isFeatured, setIsFeatured] = React.useState(false);
+
   const handleChangeIsFeatured = (event) => {
     setIsFeatured(event.target.value);
-    setFormFields((fields) => ({ ...fields, isFeatured: event.target.value }));
+    formFields.isFeatured = event.target.value;
   };
-
   const [proRam, setProRam] = React.useState([]);
+
   const handleChangeProRam = (event) => {
     const { value } = event.target;
-    const newRams = typeof value === "string" ? value.split(",") : value;
-    setProRam(newRams);
-    setFormFields((fields) => ({ ...fields, productRam: newRams }));
+    setProRam(typeof value === "string" ? value.split(",") : value);
+    formFields.productRam =
+      typeof value === "string" ? value.split(",") : value;
   };
-
   const [proWeight, setProWeight] = React.useState([]);
+
   const handleChangeProWeight = (event) => {
     const { value } = event.target;
-    const newWeights = typeof value === "string" ? value.split(",") : value;
-    setProWeight(newWeights);
-    setFormFields((fields) => ({ ...fields, productWeight: newWeights }));
+    setProWeight(typeof value === "string" ? value.split(",") : value);
+    formFields.productWeight =
+      typeof value === "string" ? value.split(",") : value;
   };
-
   const [proSize, setProSize] = React.useState([]);
+
   const handleChangeProSize = (event) => {
     const { value } = event.target;
-    const newSizes = typeof value === "string" ? value.split(",") : value;
-    setProSize(newSizes);
-    setFormFields((fields) => ({ ...fields, size: newSizes }));
+    setProSize(typeof value === "string" ? value.split(",") : value);
+    formFields.size = typeof value === "string" ? value.split(",") : value;
   };
 
   const onChangeInput = (e) => {
     const { name, value } = e.target;
-    setFormFields((fields) => {
+    setFormFields(() => {
       return {
-        ...fields,
+        ...formFields,
         [name]: value,
       };
     });
   };
-
   const onChangeRating = (e) => {
-    setFormFields((fields) => ({
-      ...fields,
+    setFormFields({
+      ...formFields,
       rating: e.target.value,
-    }));
+    });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsLoading(true);
-
     if (formFields.name === "") {
       toast.error("please add product name");
       setIsLoading(false);
       return false;
     }
-    // ... (your other validation checks)
     if (formFields.description === "") {
       toast.error("please add product description");
       setIsLoading(false);
@@ -261,23 +300,21 @@ const AddProduct = () => {
       setIsLoading(false);
       return false;
     }
-
-    const finalFormFields = { ...formFields, images: previews };
-
-    postData("/api/product/create", finalFormFields, {
+    editData(`/api/product/updateProduct/${id}`, formFields, {
       credentials: true,
     }).then((res) => {
       try {
         if (!res?.error) {
-          toast.success(res.message);
+          toast.success("Product Updated Succesfully");
           setIsLoading(false);
-          fetchDataFromApi("/api/product").then((res) => {
+          navigate("/products");
+          fetchDataFromApi(`/api/product/`).then((res) => {
+            console.log(res);
             dispatch(setProData(res?.data));
           });
-          navigate("/products");
           dispatch(setIsOpenFullScreenPanel({ open: false }));
         } else {
-          toast.error(res.message);
+          toast.error("Something Went Wrong");
           setIsLoading(false);
         }
       } catch (error) {
@@ -291,9 +328,6 @@ const AddProduct = () => {
       dispatch(setCatData(res?.data));
     });
   }, [isOpenFullScreenPanel]);
-
-  useEffect(() => {}, [previews, formFields.images]);
-
   return (
     <section className="p-5 bg-gray-50 h-[100vh]">
       <form className="form p-8 py-3" onSubmit={handleSubmit}>
@@ -349,6 +383,7 @@ const AddProduct = () => {
                   </Select>
                 </FormControl>
               )}
+              <div></div>
             </div>
             <div className="col-span-1">
               <h3 className="text-lg font-[500] mb-3">Product Sub Category</h3>
@@ -577,7 +612,7 @@ const AddProduct = () => {
               <h3 className="text-lg font-[500] mb-3">Product Rating</h3>
               <Rating
                 name="half-rating"
-                defaultValue={1}
+                value={formFields.rating}
                 precision={0.5}
                 onChange={onChangeRating}
               />
@@ -639,4 +674,4 @@ const AddProduct = () => {
   );
 };
 
-export default AddProduct;
+export default EditProduct;
