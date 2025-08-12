@@ -1,7 +1,10 @@
 import ProductModel from "../models/product.model.js";
+import proRAMSModel from "../models/proRam.Model.js";
+import proSIZEModel from "../models/proSize.Model.js";
 import UserModel from "../models/user.model.js";
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
+import proWGTModel from "../models/proWeight.Model.js";
 cloudinary.config({
   cloud_name: process.env.cloudinary_Config_Cloud_Name,
   api_key: process.env.cloudinary_Config_api_key,
@@ -582,7 +585,7 @@ export const deleteMultipleProduct = async (req, res) => {
   }
 
   for (let i = 0; i < ids?.length; i++) {
-    const product = await ProductModel.findById(ids(i));
+    const product = await ProductModel.findById(ids[i]);
     const images = product.images;
     for (let img of images) {
       const imgUrl = img;
@@ -702,6 +705,325 @@ export const updateProduct = async (req, res) => {
       error: false,
       success: true,
       message: "product successfully updated",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+
+export const createProductRAMS = async (req, res) => {
+  try {
+    let proRam = new proRAMSModel({
+      ram: req.body.ram,
+    });
+    proRam = await proRam.save();
+    if (!proRam) {
+      res.status(500).json({
+        message: "product RAM not created",
+        error: true,
+        success: false,
+      });
+    }
+    res.status(200).json({
+      message: "product RAM created",
+      error: false,
+      success: true,
+      proRam,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+export const getAllProductRams = async (req, res) => {
+  try {
+    const productRams = await proRAMSModel.find();
+    if (!productRams) {
+      return res.status(500).json({
+        message: "products Rams not created yet",
+        error: true,
+        success: false,
+      });
+    }
+    return res.status(200).json({
+      data: productRams,
+      error: false,
+      success: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+export const updateProductRam = async (req, res) => {
+  try {
+    const productRam = await proRAMSModel.findByIdAndUpdate(
+      req.params.id,
+      {
+        ram: req.body.ram,
+      },
+      { new: true }
+    );
+    if (!productRam) {
+      return res.status(404).json({
+        message: "the product RAM can not be updates!",
+        error: false,
+        success: true,
+      });
+    }
+
+    return res.status(200).json({
+      error: false,
+      success: true,
+      message: "product RAM successfully updated",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+export const deleteProductRams = async (req, res) => {
+  try {
+    const deleteProductRam = await proRAMSModel.findByIdAndDelete(
+      req.params.id
+    );
+    if (!deleteProductRam) {
+      res.status(404).json({
+        message: "product RAM not found!",
+        error: true,
+        success: false,
+      });
+    }
+    res.status(200).json({
+      message: "product RAM deleted",
+      error: false,
+      success: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+
+export const createProductSize = async (req, res) => {
+  try {
+    let proSize = new proSIZEModel({
+      size: req.body.size,
+    });
+    proSize = await proSize.save();
+    if (!proSize) {
+      res.status(500).json({
+        message: "product SIZE not created",
+        error: true,
+        success: false,
+      });
+    }
+    res.status(200).json({
+      message: "product SIZE created",
+      error: false,
+      success: true,
+      proSize,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+export const getAllProductSize = async (req, res) => {
+  try {
+    const productSizes = await proSIZEModel.find();
+    if (!productSizes) {
+      return res.status(500).json({
+        message: "products Size not created yet",
+        error: true,
+        success: false,
+      });
+    }
+    return res.status(200).json({
+      data: productSizes,
+      error: false,
+      success: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+export const updateProductSize = async (req, res) => {
+  try {
+    const productSize = await proSIZEModel.findByIdAndUpdate(
+      req.params.id,
+      {
+        size: req.body.size,
+      },
+      { new: true }
+    );
+    if (!productSize) {
+      return res.status(404).json({
+        message: "the product size can not be updated!",
+        error: false,
+        success: true,
+      });
+    }
+
+    return res.status(200).json({
+      error: false,
+      success: true,
+      message: "product size successfully updated",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+export const deleteProductSize = async (req, res) => {
+  try {
+    const deleteProductSize = await proSIZEModel.findByIdAndDelete(
+      req.params.id
+    );
+    if (!deleteProductSize) {
+      res.status(404).json({
+        message: "product SIZE not found!",
+        error: true,
+        success: false,
+      });
+    }
+    res.status(200).json({
+      message: "product SIZE deleted",
+      error: false,
+      success: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+
+
+export const createProductWgt = async (req, res) => {
+  try {
+    let proWgt = new proWGTModel({
+      wgt: req.body.wgt,
+    });
+    proWgt = await proWgt.save();
+    if (!proWgt) {
+      res.status(500).json({
+        message: "product WEIGHT not created",
+        error: true,
+        success: false,
+      });
+    }
+    res.status(200).json({
+      message: "product WEIGHT created",
+      error: false,
+      success: true,
+      proWgt,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+export const getAllProductWgt = async (req, res) => {
+  try {
+    const productWgts = await proWGTModel.find();
+    if (!productWgts) {
+      return res.status(500).json({
+        message: "products weight not created yet",
+        error: true,
+        success: false,
+      });
+    }
+    return res.status(200).json({
+      data: productWgts,
+      error: false,
+      success: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+export const updateProductWgt = async (req, res) => {
+  try {
+    const productWgt = await proWGTModel.findByIdAndUpdate(
+      req.params.id,
+      {
+        wgt: req.body.wgt,
+      },
+      { new: true }
+    );
+    if (!productWgt) {
+      return res.status(404).json({
+        message: "the product weight can not be updated!",
+        error: false,
+        success: true,
+      });
+    }
+
+    return res.status(200).json({
+      error: false,
+      success: true,
+      message: "product weight successfully updated",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+export const deleteProductWgt = async (req, res) => {
+  try {
+    const deleteProductWgt = await proWGTModel.findByIdAndDelete(
+      req.params.id
+    );
+    if (!deleteProductWgt) {
+      res.status(404).json({
+        message: "product WEIGHT not found!",
+        error: true,
+        success: false,
+      });
+    }
+    res.status(200).json({
+      message: "product WEIGHT deleted",
+      error: false,
+      success: true,
     });
   } catch (error) {
     return res.status(500).json({

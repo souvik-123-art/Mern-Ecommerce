@@ -27,6 +27,9 @@ import ProtectedRoute from "./utils/protectedRoute.jsx";
 import Profile from "./Pages/Profile/index.jsx";
 import toast from "react-hot-toast";
 import ProductDetails from "./Pages/Products/ProductDetails.jsx";
+import AddRams from "./Pages/Products/addRams.jsx";
+import AddSize from "./Pages/Products/addSize.jsx";
+import AddWeight from "./Pages/Products/addWeight.jsx";
 function App() {
   const isLogin = useSelector((state) => state.auth.isLogin);
   const dispatch = useDispatch();
@@ -177,6 +180,87 @@ function App() {
                 }  py-4 px-5 transition-all duration-300`}
               >
                 <Users />
+              </div>
+            </div>
+          </section>
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/product/addSize",
+      exact: true,
+      element: (
+        <ProtectedRoute>
+          <section className="main">
+            <Header />
+            <div className="contentMain flex">
+              <div
+                className={`sidebarWrapper ${
+                  sideBarOpen === true ? "w-[15%]" : "w-0"
+                } transition-all duration-300 overflow-hidden`}
+              >
+                <Sidebar />
+              </div>
+              <div
+                className={`contentRight ${
+                  sideBarOpen === true ? "w-[85%]" : "w-[100%]"
+                }  py-4 px-5 transition-all duration-300`}
+              >
+                <AddSize />
+              </div>
+            </div>
+          </section>
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/product/addWeight",
+      exact: true,
+      element: (
+        <ProtectedRoute>
+          <section className="main">
+            <Header />
+            <div className="contentMain flex">
+              <div
+                className={`sidebarWrapper ${
+                  sideBarOpen === true ? "w-[15%]" : "w-0"
+                } transition-all duration-300 overflow-hidden`}
+              >
+                <Sidebar />
+              </div>
+              <div
+                className={`contentRight ${
+                  sideBarOpen === true ? "w-[85%]" : "w-[100%]"
+                }  py-4 px-5 transition-all duration-300`}
+              >
+                <AddWeight />
+              </div>
+            </div>
+          </section>
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/product/addRams",
+      exact: true,
+      element: (
+        <ProtectedRoute>
+          <section className="main">
+            <Header />
+            <div className="contentMain flex">
+              <div
+                className={`sidebarWrapper ${
+                  sideBarOpen === true ? "w-[15%]" : "w-0"
+                } transition-all duration-300 overflow-hidden`}
+              >
+                <Sidebar />
+              </div>
+              <div
+                className={`contentRight ${
+                  sideBarOpen === true ? "w-[85%]" : "w-[100%]"
+                }  py-4 px-5 transition-all duration-300`}
+              >
+                <AddRams />
               </div>
             </div>
           </section>

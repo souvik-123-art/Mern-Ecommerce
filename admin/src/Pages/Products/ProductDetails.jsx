@@ -11,7 +11,7 @@ const ProductDetails = () => {
   const { id } = useParams();
   useEffect(() => {
     setIsLoading(true);
-    fetchDataFromApi(`/api/product/${id}`).then((res) => {
+    fetchDataFromApi(`/api/product/get/${id}`).then((res) => {
       if (!res?.error) {
         setSingleProData(res?.product);
         setTimeout(() => {

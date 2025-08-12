@@ -23,7 +23,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { setIsOpenFullScreenPanel } from "../../redux/slices/fullScreenPanelSlice";
 import CircularProgress from "@mui/material/CircularProgress";
-import { setProData } from "../../redux/slices/productsDataSlice";
+import {
+  setProData,
+  setProdRam,
+  setProdSize,
+  setProdWeight,
+} from "../../redux/slices/productsDataSlice";
 const EditProduct = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -52,11 +57,18 @@ const EditProduct = () => {
   const isOpenFullScreenPanel = useSelector(
     (state) => state.fullScreenPanel.isOpenFullScreenPanel
   );
+  const prodRam = useSelector((state) => state.proData.prodRam);
+  const prodSize = useSelector((state) => state.proData.prodSize);
+  const prodWgt = useSelector((state) => state.proData.prodWeight);
   const [selectedCatObject, setSelectedCatObject] = useState(null);
   const [selectedSubCatObject, setSelectedSubCatObject] = useState(null);
   const id = isOpenFullScreenPanel.id;
+  const [isLoading, setIsLoading] = useState(false);
+  const [disable, setDisable] = useState(false);
+  const [previews, setPreviews] = useState([]);
+  const catData = useSelector((state) => state.catData.catData);
   useEffect(() => {
-    fetchDataFromApi(`/api/product/${id}`).then((res) => {
+    fetchDataFromApi(`/api/product/get/${id}`).then((res) => {
       const product = res?.product;
       setFormFields({
         name: res?.product?.name,
@@ -76,21 +88,21 @@ const EditProduct = () => {
         rating: res?.product?.rating,
         discount: res?.product?.discount,
         isFeatured: res?.product?.isFeatured,
-        productRam: res?.product?.productRam,
-        size: res?.product?.size,
-        productWeight: res?.product?.productWeight,
+        productRam: res?.product?.productRam || [],
+        size: res?.product?.size || [],
+        productWeight: res?.product?.productWeight || [],
       });
       setProCat(res?.product?.catId);
       setProSubCat(res?.product?.subCatId);
       setTProSubCat(res?.product?.thirdSubCatId);
       setIsFeatured(res?.product?.isFeatured);
-      setProRam(res?.product?.productRam);
-      setProSize(res?.product?.size);
-      setProWeight(res?.product?.productWeight);
+      setProRam(res?.product?.productRam || []);
+      setProSize(res?.product?.size || []);
+      setProWeight(res?.product?.productWeight || []);
       setPreviews(res?.product?.images);
       initializeCategoryStates(product);
     });
-  }, [id]);
+  }, [id, catData]);
   const initializeCategoryStates = (productData) => {
     if (catData?.length > 0 && productData) {
       const selectedCat = catData.find((cat) => cat._id === productData.catId);
@@ -105,11 +117,6 @@ const EditProduct = () => {
       }
     }
   };
-
-  const [isLoading, setIsLoading] = useState(false);
-  const [disable, setDisable] = useState(false);
-  const [previews, setPreviews] = useState([]);
-  const catData = useSelector((state) => state.catData.catData);
   const setCatPreviews = (previewArr) => {
     const imgArr = previews;
     for (let i = 0; i < previewArr.length; i++) {
@@ -134,7 +141,7 @@ const EditProduct = () => {
       setPreviews([]);
       setTimeout(() => {
         setPreviews(imageArr);
-        formFields.images = imageArr;
+        setFormFields((prev) => ({ ...prev, images: imageArr }));
       }, 100);
       setDisable(false);
       setIsLoading(false);
@@ -324,9 +331,37 @@ const EditProduct = () => {
   };
 
   useEffect(() => {
-    fetchDataFromApi("/api/category").then((res) => {
-      dispatch(setCatData(res?.data));
-    });
+    Promise.all([
+      fetchDataFromApi("/api/product/rams/get"),
+      fetchDataFromApi("/api/product/size/get"),
+      fetchDataFromApi("/api/product/weight/get"),
+      fetchDataFromApi("/api/category"),
+    ])
+      .then(([ramRes, sizeRes, wgtRes, categoriesRes]) => {
+        if (!ramRes?.error) {
+          dispatch(setProdRam(ramRes?.data));
+        } else {
+          toast.error("Failed to fetch product rams.");
+        }
+        if (!sizeRes?.error) {
+          dispatch(setProdSize(sizeRes?.data));
+        } else {
+          toast.error("Failed to fetch product sizes.");
+        }
+        if (!wgtRes?.error) {
+          dispatch(setProdWeight(wgtRes?.data));
+        } else {
+          toast.error("Failed to fetch product weights.");
+        }
+        if (!categoriesRes?.error) {
+          dispatch(setCatData(categoriesRes?.data));
+        } else {
+          toast.error("Failed to fetch categories.");
+        }
+      })
+      .catch((error) => {
+        toast.error(`Initial data fetch error: ${error.message}`);
+      });
   }, [isOpenFullScreenPanel]);
   return (
     <section className="p-5 bg-gray-50 h-[100vh]">
@@ -555,9 +590,12 @@ const EditProduct = () => {
                     label="Select RAM"
                     onChange={handleChangeProRam}
                   >
-                    <MenuItem value={"4GB"}>4GB</MenuItem>
-                    <MenuItem value={"6GB"}>6GB</MenuItem>
-                    <MenuItem value={"8GB"}>8GB</MenuItem>
+                    {prodRam?.length !== 0 &&
+                      prodRam?.map((ram) => (
+                        <MenuItem key={ram.ram} value={ram.ram}>
+                          {ram.ram}
+                        </MenuItem>
+                      ))}
                   </Select>
                 </FormControl>
               </div>
@@ -577,9 +615,12 @@ const EditProduct = () => {
                     label="Select Weight"
                     onChange={handleChangeProWeight}
                   >
-                    <MenuItem value={10}>2KG</MenuItem>
-                    <MenuItem value={20}>4KG</MenuItem>
-                    <MenuItem value={30}>5KG</MenuItem>
+                    {prodWgt?.length !== 0 &&
+                      prodWgt?.map((wgt) => (
+                        <MenuItem key={wgt.wgt} value={wgt.wgt}>
+                          {wgt.wgt}
+                        </MenuItem>
+                      ))}
                   </Select>
                 </FormControl>
               </div>
@@ -599,11 +640,12 @@ const EditProduct = () => {
                     label="Select Size"
                     onChange={handleChangeProSize}
                   >
-                    <MenuItem value={"S"}>S</MenuItem>
-                    <MenuItem value={"M"}>M</MenuItem>
-                    <MenuItem value={"L"}>L</MenuItem>
-                    <MenuItem value={"XL"}>XL</MenuItem>
-                    <MenuItem value={"XXL"}>XXL</MenuItem>
+                    {prodSize?.length !== 0 &&
+                      prodSize?.map((size) => (
+                        <MenuItem key={size.size} value={size.size}>
+                          {size.size}
+                        </MenuItem>
+                      ))}
                   </Select>
                 </FormControl>
               </div>

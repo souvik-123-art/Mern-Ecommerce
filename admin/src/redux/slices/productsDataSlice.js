@@ -2,6 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   proData: [],
+  prodRam: [],
+  prodSize: [],
+  prodWeight: [],
 };
 const proDataSlice = createSlice({
   name: "ProData",
@@ -10,7 +13,17 @@ const proDataSlice = createSlice({
     setProData: (state, action) => {
       state.proData = action.payload;
     },
+    setProdRam: (state, action) => {
+      state.prodRam = action.payload;
+    },
+    setProdSize: (state, action) => {
+      state.prodSize = action.payload;
+    },
+    setProdWeight: (state, action) => {
+      state.prodWeight = action.payload;
+    },
   },
 });
-export const { setProData } = proDataSlice.actions;
+export const { setProData, setProdRam, setProdSize, setProdWeight } =
+  proDataSlice.actions;
 export default proDataSlice.reducer;

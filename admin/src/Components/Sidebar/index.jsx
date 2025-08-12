@@ -136,6 +136,27 @@ export const Sidebar = () => {
                   Product Upload
                 </Button>
               </li>
+              <li>
+                <Link to="/product/addRams">
+                  <Button className="!text-black/80 !capitalize !justify-start !w-full !text-sm !font-[400] !py-2 hover:!bg-[#f1f1f1] !pl-9 !font-['lexend']">
+                    Add Product RAMS
+                  </Button>
+                </Link>
+              </li>
+              <li>
+                <Link to="/product/addSize">
+                  <Button className="!text-black/80 !capitalize !justify-start !w-full !text-sm !font-[400] !py-2 hover:!bg-[#f1f1f1] !pl-9 !font-['lexend']">
+                    Add Product SIZE
+                  </Button>
+                </Link>
+              </li>
+              <li>
+                <Link to="/product/addWeight">
+                  <Button className="!text-black/80 !capitalize !justify-start !w-full !text-sm !font-[400] !py-2 hover:!bg-[#f1f1f1] !pl-9 !font-['lexend']">
+                    Add Product WEIGHT
+                  </Button>
+                </Link>
+              </li>
             </ul>
           </Collapse>
         </li>

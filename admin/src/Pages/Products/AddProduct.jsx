@@ -18,7 +18,12 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { setIsOpenFullScreenPanel } from "../../redux/slices/fullScreenPanelSlice";
 import CircularProgress from "@mui/material/CircularProgress";
-import { setProData } from "../../redux/slices/productsDataSlice";
+import {
+  setProData,
+  setProdRam,
+  setProdSize,
+  setProdWeight,
+} from "../../redux/slices/productsDataSlice";
 
 const AddProduct = () => {
   const dispatch = useDispatch();
@@ -29,6 +34,9 @@ const AddProduct = () => {
   const isOpenFullScreenPanel = useSelector(
     (state) => state.fullScreenPanel.isOpenFullScreenPanel
   );
+  const prodRam = useSelector((state) => state.proData.prodRam);
+  const prodSize = useSelector((state) => state.proData.prodSize);
+  const prodWgt = useSelector((state) => state.proData.prodWeight);
   const [selectedCatObject, setSelectedCatObject] = useState(null);
   const [selectedSubCatObject, setSelectedSubCatObject] = useState(null);
   const catData = useSelector((state) => state.catData.catData);
@@ -59,11 +67,15 @@ const AddProduct = () => {
   const [proTSubCat, setTProSubCat] = React.useState("");
 
   const setCatPreviews = (previewArr) => {
-    setPreviews(previewArr);
+    const imgArr = previews;
+    for (let i = 0; i < previewArr.length; i++) {
+      imgArr.push(previewArr[i]);
+    }
+    setPreviews(imgArr);
     setFormFields((fields) => {
       return {
         ...fields,
-        images: previewArr,
+        images: imgArr,
       };
     });
   };
@@ -287,12 +299,38 @@ const AddProduct = () => {
   };
 
   useEffect(() => {
-    fetchDataFromApi("/api/category").then((res) => {
-      dispatch(setCatData(res?.data));
-    });
+    Promise.all([
+      fetchDataFromApi("/api/product/rams/get"),
+      fetchDataFromApi("/api/product/size/get"),
+      fetchDataFromApi("/api/product/weight/get"),
+      fetchDataFromApi("/api/category"),
+    ])
+      .then(([ramRes, sizeRes, wgtRes, categoriesRes]) => {
+        if (!ramRes?.error) {
+          dispatch(setProdRam(ramRes?.data));
+        } else {
+          toast.error("Failed to fetch product rams.");
+        }
+        if (!sizeRes?.error) {
+          dispatch(setProdSize(sizeRes?.data));
+        } else {
+          toast.error("Failed to fetch product sizes.");
+        }
+        if (!wgtRes?.error) {
+          dispatch(setProdWeight(wgtRes?.data));
+        } else {
+          toast.error("Failed to fetch product weights.");
+        }
+        if (!categoriesRes?.error) {
+          dispatch(setCatData(categoriesRes?.data));
+        } else {
+          toast.error("Failed to fetch categories.");
+        }
+      })
+      .catch((error) => {
+        toast.error(`Initial data fetch error: ${error.message}`);
+      });
   }, [isOpenFullScreenPanel]);
-
-  useEffect(() => {}, [previews, formFields.images]);
 
   return (
     <section className="p-5 bg-gray-50 h-[100vh]">
@@ -520,9 +558,12 @@ const AddProduct = () => {
                     label="Select RAM"
                     onChange={handleChangeProRam}
                   >
-                    <MenuItem value={"4GB"}>4GB</MenuItem>
-                    <MenuItem value={"6GB"}>6GB</MenuItem>
-                    <MenuItem value={"8GB"}>8GB</MenuItem>
+                    {prodRam?.length !== 0 &&
+                      prodRam?.map((ram) => (
+                        <MenuItem key={ram.ram} value={ram.ram}>
+                          {ram.ram}
+                        </MenuItem>
+                      ))}
                   </Select>
                 </FormControl>
               </div>
@@ -542,9 +583,12 @@ const AddProduct = () => {
                     label="Select Weight"
                     onChange={handleChangeProWeight}
                   >
-                    <MenuItem value={10}>2KG</MenuItem>
-                    <MenuItem value={20}>4KG</MenuItem>
-                    <MenuItem value={30}>5KG</MenuItem>
+                    {prodSize?.length !== 0 &&
+                      prodSize?.map((size) => (
+                        <MenuItem key={size.size} value={size.size}>
+                          {size.size}
+                        </MenuItem>
+                      ))}
                   </Select>
                 </FormControl>
               </div>
@@ -564,11 +608,12 @@ const AddProduct = () => {
                     label="Select Size"
                     onChange={handleChangeProSize}
                   >
-                    <MenuItem value={"S"}>S</MenuItem>
-                    <MenuItem value={"M"}>M</MenuItem>
-                    <MenuItem value={"L"}>L</MenuItem>
-                    <MenuItem value={"XL"}>XL</MenuItem>
-                    <MenuItem value={"XXL"}>XXL</MenuItem>
+                    {prodWgt?.length !== 0 &&
+                      prodWgt?.map((wgt) => (
+                        <MenuItem key={wgt.wgt} value={wgt.wgt}>
+                          {wgt.wgt}
+                        </MenuItem>
+                      ))}
                   </Select>
                 </FormControl>
               </div>

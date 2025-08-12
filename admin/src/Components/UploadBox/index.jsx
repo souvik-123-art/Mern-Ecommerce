@@ -34,7 +34,11 @@ const UploadBox = (props) => {
       }
       uploadImage(apiEndPoint, formData).then((res) => {
         setUploading(false);
-        props.setDisable(true);
+        if (props?.multiple === true) {
+          props.setDisable(false);
+        } else {
+          props.setDisable(true);
+        }
         props.setCatPreviews(res?.data?.images);
       });
     } catch (error) {
