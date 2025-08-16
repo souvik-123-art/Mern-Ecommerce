@@ -49,7 +49,7 @@ export const createCategory = async (req, res) => {
   try {
     let category = new categoryModel({
       name: req.body.name,
-      images: imagesArr,
+      images: req.body.images,
       parentId: req.body.parentId,
       parentCatName: req.body.parentCatName,
     });

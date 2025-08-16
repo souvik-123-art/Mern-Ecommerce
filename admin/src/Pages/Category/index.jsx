@@ -13,18 +13,14 @@ import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
+
 import TableRow from "@mui/material/TableRow";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import SearchBox from "../../Components/SearchBox";
+
 import { setIsOpenFullScreenPanel } from "../../redux/slices/fullScreenPanelSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteData, fetchDataFromApi } from "../../utils/api";
 import toast from "react-hot-toast";
 import { setCatData } from "../../redux/slices/categoryDataSlice";
-const label = { inputProps: { "aria-label": "Checkbox demo" } };
 const columns = [
   { id: "catImage", label: "Category Image", minWidth: 100 },
   { id: "catName", label: "Category Name", minWidth: 100 },
@@ -33,7 +29,6 @@ const columns = [
 const CategoryList = () => {
   const dispatch = useDispatch();
   const catData = useSelector((state) => state.catData.catData);
-  const [categoryFilterVal, setCategoryFilterVal] = useState("");
   const removeCategory = (id) => {
     deleteData(`/api/category/deleteCategory/${id}`, {
       withCredentials: true,
@@ -60,21 +55,7 @@ const CategoryList = () => {
       dispatch(setCatData(res?.data));
     });
   }, [isOpenFullScreenPanel]);
-  const handleChangeCatFilter = (event) => {
-    setCategoryFilterVal(event.target.value);
-  };
 
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
   return (
     <>
       <div className="py-3 flex items-center">
@@ -105,9 +86,6 @@ const CategoryList = () => {
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
-                <TableCell width={70}>
-                  <Checkbox {...label} size="small" />
-                </TableCell>
                 {columns.map((column) => (
                   <TableCell
                     key={column.id}
@@ -123,11 +101,8 @@ const CategoryList = () => {
               {catData?.length !== 0 &&
                 catData?.map((item, idx) => (
                   <TableRow key={item.name}>
-                    <TableCell>
-                      <Checkbox {...label} size="small" />
-                    </TableCell>
                     <TableCell width={100}>
-                      <div className="flex items-center gap-4 w-[70px]">
+                      <div className="flex items-center gap-4 w-[50px]">
                         <div className="img w-full rounded-md overflow-hidden">
                           <img src={item.images} className="w-full" alt="" />
                         </div>
@@ -167,15 +142,6 @@ const CategoryList = () => {
             </TableBody>
           </Table>
         </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[10, 25, 100]}
-          component="div"
-          count={10}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
       </div>
     </>
   );

@@ -455,7 +455,7 @@ const Products = () => {
           {" "}
           {/* min-h for consistent space */}
           <div
-            className={`absolute inset-0 bg-[#f1f1f1] ${
+            className={`absolute inset-0 bg-white/40 ${
               isLoading ? "flex" : "hidden"
             } justify-center items-center z-50 left-0 top-0`}
           >

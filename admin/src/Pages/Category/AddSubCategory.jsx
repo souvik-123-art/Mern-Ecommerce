@@ -10,11 +10,12 @@ import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import { useDispatch, useSelector } from "react-redux";
-import { postData } from "../../utils/api";
+import { fetchDataFromApi, postData } from "../../utils/api";
 import toast from "react-hot-toast";
 import { setIsOpenFullScreenPanel } from "../../redux/slices/fullScreenPanelSlice";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useNavigate } from "react-router-dom";
+import { setCatData } from "../../redux/slices/categoryDataSlice";
 const AddSubCategory = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -83,6 +84,9 @@ const AddSubCategory = () => {
           if (!res?.error) {
             toast.success(res.message);
             setIsLoading(false);
+            fetchDataFromApi("/api/category").then((res) => {
+              dispatch(setCatData(res?.data));
+            });
             navigate("/subCategory/list");
             dispatch(setIsOpenFullScreenPanel({ open: false }));
           } else {
@@ -116,6 +120,9 @@ const AddSubCategory = () => {
             toast.success(res.message);
             setIsLoading(false);
             dispatch(setIsOpenFullScreenPanel({ open: false }));
+            fetchDataFromApi("/api/category").then((res) => {
+              dispatch(setCatData(res?.data));
+            });
           } else {
             toast.error(res.message);
             setIsLoading(false);

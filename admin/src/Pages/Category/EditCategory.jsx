@@ -32,7 +32,12 @@ const EditCategory = () => {
   const id = isOpenFullScreenPanel?.id;
   useEffect(() => {
     fetchDataFromApi(`/api/category/${id}`).then((res) => {
-      
+      setPreviews(res?.category?.images);
+      setFormFields((prev) => ({
+        ...prev,
+        name: res?.category?.name,
+        images: previews,
+      }));
     });
     if (previews?.length !== 0) {
       setDisable(false);

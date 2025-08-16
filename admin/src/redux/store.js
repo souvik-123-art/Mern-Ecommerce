@@ -7,6 +7,7 @@ import userImageSlicereducer from "../redux/slices/userImage";
 import userAddressSlicereducer from "../redux/slices/userAddressSlice";
 import catDataSliceReducer from "../redux/slices/categoryDataSlice";
 import proDataSliceReducer from "../redux/slices/productsDataSlice";
+import homeBannerSliceReducer from "../redux/slices/HomeBannerSlice";
 export const store = configureStore({
   reducer: {
     sidePanel: sidePanelSliceReducer,
@@ -17,5 +18,6 @@ export const store = configureStore({
     userAddress: userAddressSlicereducer,
     catData: catDataSliceReducer,
     proData: proDataSliceReducer,
+    homeBannerData: homeBannerSliceReducer,
   },
 });

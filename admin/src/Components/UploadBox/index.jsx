@@ -13,6 +13,7 @@ const UploadBox = (props) => {
     try {
       setPreviews([]);
       const files = e.target.files;
+      if (!files.length) return;
       setUploading(true);
       for (let i = 0; i < files.length; i++) {
         if (
@@ -29,6 +30,7 @@ const UploadBox = (props) => {
         } else {
           toast.error("please upload JPG, PNG or WEBP image");
           setUploading(false);
+          e.target.value = "";
           return false;
         }
       }
@@ -40,9 +42,11 @@ const UploadBox = (props) => {
           props.setDisable(true);
         }
         props.setCatPreviews(res?.data?.images);
+        e.target.value = "";
       });
     } catch (error) {
       console.log(error);
+      e.target.value = "";
     }
   };
   return (
@@ -61,11 +65,11 @@ const UploadBox = (props) => {
         />
       </div>
       <div
-        className={`absolute inset-0 bg-black/40 ${
+        className={`absolute inset-0 bg-white/40 ${
           uploading ? "flex" : "hidden"
         } justify-center items-center z-50 left-0 top-0`}
       >
-        <CircularProgress className="!text-white" />
+        <CircularProgress className="!text-primary" />
       </div>
     </>
   );

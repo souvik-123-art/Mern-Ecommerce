@@ -583,10 +583,10 @@ const AddProduct = () => {
                     label="Select Weight"
                     onChange={handleChangeProWeight}
                   >
-                    {prodSize?.length !== 0 &&
-                      prodSize?.map((size) => (
-                        <MenuItem key={size.size} value={size.size}>
-                          {size.size}
+                    {prodWgt?.length !== 0 &&
+                      prodWgt?.map((wgt) => (
+                        <MenuItem key={wgt.wgt} value={wgt.wgt}>
+                          {wgt.wgt}
                         </MenuItem>
                       ))}
                   </Select>
@@ -608,10 +608,10 @@ const AddProduct = () => {
                     label="Select Size"
                     onChange={handleChangeProSize}
                   >
-                    {prodWgt?.length !== 0 &&
-                      prodWgt?.map((wgt) => (
-                        <MenuItem key={wgt.wgt} value={wgt.wgt}>
-                          {wgt.wgt}
+                    {prodSize?.length !== 0 &&
+                      prodSize?.map((size) => (
+                        <MenuItem key={size.size} value={size.size}>
+                          {size.size}
                         </MenuItem>
                       ))}
                   </Select>
