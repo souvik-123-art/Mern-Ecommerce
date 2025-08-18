@@ -32,6 +32,8 @@ import Typography from "@mui/material/Typography";
 import { setIsOpenFullScreenPanel } from "./redux/Slices/fullScreenPanelSlice";
 import Slide from "@mui/material/Slide";
 import AddAddress from "./pages/Address/AddAddress";
+import { setLgBanners } from "./redux/Slices/HomeBannerSlice";
+import { setCatData } from "./redux/Slices/categoryDataSlice";
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -58,6 +60,21 @@ function App() {
       dispatch(setIsLogin(false));
     }
   }, [isLogin]);
+
+  useEffect(() => {
+    Promise.all([
+      fetchDataFromApi("/api/category"),
+      fetchDataFromApi("/api/homeBanners"),
+    ])
+      .then(([catRes, bannerRes]) => {
+        dispatch(setCatData(catRes?.data));
+        dispatch(setLgBanners(bannerRes?.data));
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  }, [dispatch]);
+
   return (
     <>
       <BrowserRouter>
@@ -105,7 +122,10 @@ function App() {
             transition: Transition,
           }}
         >
-          <AppBar className="!bg-gray-800 !shadow-md" sx={{ position: "relative" }}>
+          <AppBar
+            className="!bg-gray-800 !shadow-md"
+            sx={{ position: "relative" }}
+          >
             <Toolbar>
               <IconButton
                 edge="start"

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { HomeSlider } from "../../components/SwiperSlider";
 import { HomeCatSlider } from "../../components/HomeCatSlider";
@@ -13,12 +13,56 @@ import { Navigation } from "swiper/modules";
 import { BlogItem } from "../../components/BlogItem";
 import { HomeSliderV2 } from "../../components/HomeSliderV2";
 import { BannerBoxV2 } from "../../components/BannerBoxV2";
-export const Home = () => {
-  const [value, setValue] = React.useState(0);
+import { useDispatch, useSelector } from "react-redux";
+import { fetchDataFromApi } from "../../utils/api";
+import {
+  setFeaturedProData,
+  setPopularProData,
+  setProData,
+} from "../../redux/Slices/productsDataSlice";
 
+export const Home = () => {
+  const dispatch = useDispatch();
+  const catData = useSelector((state) => state.catData.catData);
+  const proData = useSelector((state) => state.proData.proData);
+  const popularProduct = useSelector((state) => state.proData.popularProData);
+  const featuredProduct = useSelector((state) => state.proData.featuredProData);
+  const [value, setValue] = React.useState(0);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+  const filterByCatId = (id) => {
+    fetchDataFromApi(`/api/product/category/${id}`).then((res) => {
+      if (!res?.error) {
+        dispatch(setPopularProData(res?.data));
+      }
+    });
+  };
+  useEffect(() => {
+    fetchDataFromApi(`/api/product/category/${catData[0]?._id}`).then((res) => {
+      if (!res?.error) {
+        dispatch(setPopularProData(res?.data));
+      }
+    });
+  }, [catData]);
+  useEffect(() => {
+    Promise
+      .all([
+        fetchDataFromApi("/api/product"),
+        fetchDataFromApi("/api/product/featuredProducts"),
+      ])
+      .then(([latestPorRes, featuredProRes]) => {
+        if (!latestPorRes?.error) {
+          dispatch(setProData(latestPorRes?.data));
+        }
+        if (!featuredProRes?.error) {
+          dispatch(setFeaturedProData(featuredProRes?.data));
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  }, []);
   return (
     <>
       <HomeSlider />
@@ -45,18 +89,20 @@ export const Home = () => {
                   },
                 }}
               >
-                <Tab label="Fashion" />
-                <Tab label="Electronics" />
-                <Tab label="Bags" />
-                <Tab label="Footwear" />
-                <Tab label="Groceries" />
-                <Tab label="Beauty" />
-                <Tab label="Wellness" />
-                <Tab label="Jewellery" />
+                {catData?.length !== 0 &&
+                  catData?.map((cat) => (
+                    <Tab
+                      key={cat?._id}
+                      label={cat?.name}
+                      onClick={() => filterByCatId(cat?._id)}
+                    />
+                  ))}
               </Tabs>
             </div>
           </div>
-          <ProductSlider items={6} />
+          {popularProduct?.length !== 0 && (
+            <ProductSlider items={6} data={popularProduct} />
+          )}
         </div>
       </section>
       <section className="py-6">
@@ -104,14 +150,16 @@ export const Home = () => {
       <section className="bg-white pt-0">
         <div className="container mx-auto">
           <h3 className="text-3xl font-semibold mb-2">Latest Products</h3>
-          <ProductSlider items={6} />
+          {proData?.length !== 0 && <ProductSlider items={6} data={proData} />}
           <AdsBannerSlider items={3} />
         </div>
       </section>
       <section className="bg-white py-6">
         <div className="container mx-auto">
           <h3 className="text-3xl font-semibold mb-2">Featured Products</h3>
-          <ProductSlider items={6} />
+          {popularProduct?.length !== 0 && (
+            <ProductSlider items={6} data={featuredProduct} />
+          )}
           <AdsBannerSlider items={3} />
         </div>
       </section>

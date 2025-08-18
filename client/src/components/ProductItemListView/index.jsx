@@ -7,7 +7,6 @@ import { FaRegHeart } from "react-icons/fa";
 import { GoGitCompare } from "react-icons/go";
 import { MdZoomOutMap } from "react-icons/md";
 import { FaOpencart } from "react-icons/fa";
-import { openProductModal } from "../../redux/Slices/productModalSlice";
 import { useDispatch } from "react-redux";
 export const ProductItemListView = () => {
   const dispatch = useDispatch()
