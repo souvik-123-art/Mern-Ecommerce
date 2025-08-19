@@ -21,10 +21,12 @@ export default function ProductModal() {
   const id = useSelector((state) => state.proModal.productModalOpen.id);
 
   useEffect(() => {
-    fetchDataFromApi(`/api/product/get/${id}`).then((res) => {
-      setProData(res?.product);
-    });
-  }, [isOpen]);
+    if (isOpen) {
+      fetchDataFromApi(`/api/product/get/${id}`).then((res) => {
+        setProData(res?.product);
+      });
+    }
+  }, [isOpen, id]);
   return (
     <Dialog
       open={isOpen}

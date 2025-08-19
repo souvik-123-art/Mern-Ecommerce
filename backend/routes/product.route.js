@@ -2,6 +2,7 @@ import { Router } from "express";
 import auth from "../middlewares/auth.js";
 import upload from "../middlewares/multer.js";
 import {
+  bannerImageController,
   createProduct,
   createProductRAMS,
   createProductSize,
@@ -40,6 +41,12 @@ productRouter.post(
   auth,
   upload.array("images"),
   productImageController
+);
+productRouter.post(
+  "/uploadBannerImages",
+  auth,
+  upload.array("bannerImages"),
+  bannerImageController
 );
 productRouter.post("/create", auth, createProduct);
 productRouter.post("/rams/create", auth, createProductRAMS);

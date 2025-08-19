@@ -67,8 +67,8 @@ const Header = () => {
     }
   }, [userDetails]);
   return (
-    <header>
-      <div className="top-strip py-2 bg-gray-900 text-white">
+    <header className="sticky -top-[125px] left-0 z-[999]">
+      <div className="top-strip py-2 bg-gray-900 text-white sticky">
         <div className="container mx-auto">
           <div className="flex items-center justify-between">
             <div className="col1 w-[50%] ">

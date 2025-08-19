@@ -77,6 +77,20 @@ const productSchema = mongoose.Schema(
       type: Number,
       required: true,
     },
+    bannerImages: [
+      {
+        type: String,
+        reuired: true,
+      },
+    ],
+    bannerTitleName: {
+      type: String,
+      required: true,
+    },
+    isDisplayOnHomeBanner: {
+      type: Boolean,
+      default: false,
+    },
     productRam: [{ type: String, default: null }],
     size: [{ type: String, default: null }],
     productWeight: [{ type: String, default: null }],

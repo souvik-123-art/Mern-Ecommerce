@@ -24,13 +24,16 @@ import {
   setProdSize,
   setProdWeight,
 } from "../../redux/slices/productsDataSlice";
+import Switch from "@mui/material/Switch";
 
+const label = { inputProps: { "aria-label": "Switch demo" } };
 const AddProduct = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [disable, setDisable] = useState(false);
   const [previews, setPreviews] = useState([]);
+  const [bannerPreviews, setBannerPreviews] = useState([]);
   const isOpenFullScreenPanel = useSelector(
     (state) => state.fullScreenPanel.isOpenFullScreenPanel
   );
@@ -44,6 +47,9 @@ const AddProduct = () => {
     name: "",
     description: "",
     images: [],
+    bannerImages: [],
+    bannerTitleName: "",
+    isDisplayOnHomeBanner: false,
     brand: "",
     price: "",
     oldPrice: "",
@@ -65,6 +71,7 @@ const AddProduct = () => {
   const [proCat, setProCat] = React.useState("");
   const [proSubCat, setProSubCat] = React.useState("");
   const [proTSubCat, setTProSubCat] = React.useState("");
+  const [checkedSwitch, setCheckedSwitch] = React.useState(false);
 
   const setCatPreviews = (previewArr) => {
     const imgArr = previews;
@@ -76,6 +83,19 @@ const AddProduct = () => {
       return {
         ...fields,
         images: imgArr,
+      };
+    });
+  };
+  const setBannerImagesFun = (previewArr) => {
+    const imgArr = bannerPreviews;
+    for (let i = 0; i < previewArr.length; i++) {
+      imgArr.push(previewArr[i]);
+    }
+    setBannerPreviews(imgArr);
+    setFormFields((fields) => {
+      return {
+        ...fields,
+        bannerImages: imgArr,
       };
     });
   };
@@ -96,6 +116,36 @@ const AddProduct = () => {
           return {
             ...fields,
             images: updated,
+          };
+        });
+
+        return updated;
+      });
+    } catch (error) {
+      toast.error("Failed to remove image");
+      console.error("Error removing image:", error);
+    } finally {
+      setDisable(false);
+      setIsLoading(false);
+    }
+  };
+
+  const removeImg2 = async (img, idx) => {
+    setIsLoading(true);
+    setDisable(true);
+    try {
+      await deleteImages(`/api/product/deleteImage?img=${img}`, {
+        credentials: true,
+      });
+
+      setBannerPreviews((prev) => {
+        const updated = [...prev];
+        updated.splice(idx, 1);
+
+        setFormFields((fields) => {
+          return {
+            ...fields,
+            bannerImages: updated,
           };
         });
 
@@ -191,7 +241,13 @@ const AddProduct = () => {
       };
     });
   };
-
+  const handleChangeSwitch = (e) => {
+    setCheckedSwitch(e.target.checked);
+    setFormFields((prev) => ({
+      ...prev,
+      isDisplayOnHomeBanner: e.target.checked,
+    }));
+  };
   const onChangeRating = (e) => {
     setFormFields((fields) => ({
       ...fields,
@@ -274,7 +330,11 @@ const AddProduct = () => {
       return false;
     }
 
-    const finalFormFields = { ...formFields, images: previews };
+    const finalFormFields = {
+      ...formFields,
+      images: previews,
+      bannerImages: bannerPreviews,
+    };
 
     postData("/api/product/create", finalFormFields, {
       credentials: true,
@@ -663,6 +723,60 @@ const AddProduct = () => {
                 setCatPreviews={setCatPreviews}
                 disable={disable}
                 setDisable={setDisable}
+              />
+            </div>
+          </div>
+          <div className="col w-full p-5 px-0">
+            <div className="shadow-md bg-white p-4 w-full relative">
+              <Switch
+                onChange={handleChangeSwitch}
+                checked={checkedSwitch}
+                className="!absolute right-5"
+                {...label}
+              />
+              <h3 className="font-bold text-lg mb-3">Banner Images</h3>
+              <div className="grid grid-cols-7 gap-4">
+                {bannerPreviews?.length !== 0 &&
+                  bannerPreviews?.map((image, index) => (
+                    <div key={image} className="uploadImageWrapper relative">
+                      <span
+                        className="cursor-pointer"
+                        onClick={() => removeImg2(image, index)}
+                      >
+                        <IoClose className="absolute text-white bg-red-500 p-1 rounded-full -right-1 -top-1 text-2xl z-20" />
+                      </span>
+
+                      <div className="lazyload w-full rounded-md overflow-hidden border border-dashed border-black/30 h-[150px] bg-gray-100 hover:bg-gray-200 text-gray-500 relative">
+                        <LazyLoadImage
+                          className="w-full h-full object-cover"
+                          effect="blur"
+                          wrapperProps={{
+                            // If you need to, you can tweak the effect transition using the wrapper style.
+                            style: { transitionDelay: "1s" },
+                          }}
+                          alt={"image"}
+                          src={image}
+                        />
+                      </div>
+                    </div>
+                  ))}
+
+                <UploadBox
+                  multiple={false}
+                  name="bannerImages"
+                  url="/api/product/uploadBannerImages"
+                  setCatPreviews={setBannerImagesFun}
+                  disable={disable}
+                  setDisable={setDisable}
+                />
+              </div>
+              <h3 className="font-bold text-lg mb-3 mt-5">Banner Title</h3>
+              <input
+                type="text"
+                className="w-1/2 h-[40px] border border-black/30 outline-none focus:border-black/50 rounded-md p-3 text-sm"
+                name="bannerTitleName"
+                value={formFields.bannerTitleName}
+                onChange={onChangeInput}
               />
             </div>
           </div>

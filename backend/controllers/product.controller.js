@@ -45,6 +45,40 @@ export const productImageController = async (req, res) => {
     });
   }
 };
+var bannerImage = [];
+export const bannerImageController = async (req, res) => {
+  try {
+    bannerImage = [];
+    const image = req.files;
+    const options = {
+      use_filename: true,
+      unique_filename: false,
+      overwrite: false,
+    };
+    for (let i = 0; i < req?.files?.length; i++) {
+      const img = await cloudinary.uploader.upload(
+        image[i].path,
+        options,
+        (error, result) => {
+          console.log(result);
+          bannerImage.push(result.secure_url);
+          fs.unlinkSync(`backend/uploads/${req.files[i].filename}`);
+          console.log(req.files[i].filename);
+        }
+      );
+    }
+
+    return res.status(200).json({
+      images: bannerImage,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
 
 //create product
 
@@ -52,8 +86,11 @@ export const createProduct = async (req, res) => {
   try {
     let product = new ProductModel({
       name: req.body.name,
+      bannerTitleName: req.body.bannerTitleName,
       description: req.body.description,
       images: req.body.images,
+      bannerImages: req.body.bannerImages,
+      isDisplayOnHomeBanner: req.body.isDisplayOnHomeBanner,
       brand: req.body.brand,
       price: req.body.price,
       oldPrice: req.body.oldPrice,
@@ -669,9 +706,11 @@ export const updateProduct = async (req, res) => {
       req.params.id,
       {
         name: req.body.name,
+        bannerTitleName: req.body.bannerTitleName,
         description: req.body.description,
         images: req.body.images,
-        // images: imagesArr,
+        bannerImages: req.body.bannerImages,
+        isDisplayOnHomeBanner: req.body.isDisplayOnHomeBanner,
         brand: req.body.brand,
         price: req.body.price,
         oldPrice: req.body.oldPrice,
@@ -927,7 +966,6 @@ export const deleteProductSize = async (req, res) => {
   }
 };
 
-
 export const createProductWgt = async (req, res) => {
   try {
     let proWgt = new proWGTModel({
@@ -1010,9 +1048,7 @@ export const updateProductWgt = async (req, res) => {
 };
 export const deleteProductWgt = async (req, res) => {
   try {
-    const deleteProductWgt = await proWGTModel.findByIdAndDelete(
-      req.params.id
-    );
+    const deleteProductWgt = await proWGTModel.findByIdAndDelete(req.params.id);
     if (!deleteProductWgt) {
       res.status(404).json({
         message: "product WEIGHT not found!",

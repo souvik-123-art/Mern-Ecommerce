@@ -20,6 +20,7 @@ import {
   setPopularProData,
   setProData,
 } from "../../redux/Slices/productsDataSlice";
+import ProductSkeleton from "../../components/ProductSkeleton";
 
 export const Home = () => {
   const dispatch = useDispatch();
@@ -32,6 +33,7 @@ export const Home = () => {
     setValue(newValue);
   };
   const filterByCatId = (id) => {
+    dispatch(setPopularProData([]));
     fetchDataFromApi(`/api/product/category/${id}`).then((res) => {
       if (!res?.error) {
         dispatch(setPopularProData(res?.data));
@@ -46,14 +48,13 @@ export const Home = () => {
     });
   }, [catData]);
   useEffect(() => {
-    Promise
-      .all([
-        fetchDataFromApi("/api/product"),
-        fetchDataFromApi("/api/product/featuredProducts"),
-      ])
-      .then(([latestPorRes, featuredProRes]) => {
-        if (!latestPorRes?.error) {
-          dispatch(setProData(latestPorRes?.data));
+    Promise.all([
+      fetchDataFromApi("/api/product"),
+      fetchDataFromApi("/api/product/featuredProducts"),
+    ])
+      .then(([latestProRes, featuredProRes]) => {
+        if (!latestProRes?.error) {
+          dispatch(setProData(latestProRes?.data));
         }
         if (!featuredProRes?.error) {
           dispatch(setFeaturedProData(featuredProRes?.data));
@@ -100,15 +101,24 @@ export const Home = () => {
               </Tabs>
             </div>
           </div>
-          {popularProduct?.length !== 0 && (
+          {popularProduct?.length !== 0 ? (
             <ProductSlider items={6} data={popularProduct} />
+          ) : (
+            <div className="grid grid-cols-6 gap-4 py-8">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="col-span-1">
+                  {/* Skeleton Product Card */}
+                  <ProductSkeleton />
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </section>
       <section className="py-6">
         <div className="container mx-auto flex">
           <div className="part1 w-[70%]">
-            <HomeSliderV2 />
+            {proData?.length !== 0 && <HomeSliderV2 data={proData} />}
           </div>
           <div className="part2 pl-5 w-[30%] flex flex-col gap-5">
             <BannerBoxV2
@@ -150,15 +160,35 @@ export const Home = () => {
       <section className="bg-white pt-0">
         <div className="container mx-auto">
           <h3 className="text-3xl font-semibold mb-2">Latest Products</h3>
-          {proData?.length !== 0 && <ProductSlider items={6} data={proData} />}
+          {proData?.length !== 0 ? (
+            <ProductSlider items={6} data={proData} />
+          ) : (
+            <div className="grid grid-cols-6 gap-4 py-8">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="col-span-1">
+                  {/* Skeleton Product Card */}
+                  <ProductSkeleton />
+                </div>
+              ))}
+            </div>
+          )}
           <AdsBannerSlider items={3} />
         </div>
       </section>
       <section className="bg-white py-6">
         <div className="container mx-auto">
           <h3 className="text-3xl font-semibold mb-2">Featured Products</h3>
-          {popularProduct?.length !== 0 && (
+          {popularProduct?.length !== 0 ? (
             <ProductSlider items={6} data={featuredProduct} />
+          ) : (
+            <div className="grid grid-cols-6 gap-4 py-8">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="col-span-1">
+                  {/* Skeleton Product Card */}
+                  <ProductSkeleton />
+                </div>
+              ))}
+            </div>
           )}
           <AdsBannerSlider items={3} />
         </div>
