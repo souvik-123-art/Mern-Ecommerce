@@ -31,6 +31,8 @@ import AddAddress from "../../Pages/Address/AddAddress";
 import { setIsOpenFullScreenPanel } from "../../redux/slices/fullScreenPanelSlice";
 import Slide from "@mui/material/Slide";
 import EditProduct from "../../Pages/Products/EditProduct";
+import AddBannerV1 from "../../Pages/Banners/addBannerV1";
+import EditBannerV1 from "../../Pages/Banners/editBannerV1";
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -243,6 +245,8 @@ export const Header = () => {
           <AddSubCategory />
         )}
         {isOpenFullScreenPanel?.model === "Add New Address" && <AddAddress />}
+        {isOpenFullScreenPanel?.model === "Add Banner V1" && <AddBannerV1 />}
+        {isOpenFullScreenPanel?.model === "Edit Banner V1" && <EditBannerV1 />}
       </Dialog>
     </>
   );

@@ -13,6 +13,7 @@ import { Login } from "./Pages/Login";
 import { SignUp } from "./Pages/SignUp";
 import Products from "./Pages/Products";
 import HomeSliderBanners from "./Pages/HomeSliderBanners";
+import BannerV1List from "./Pages/Banners";
 import CategoryList from "./Pages/Category";
 import SubCategoryList from "./Pages/Category/SubCatList";
 import Users from "./Pages/Users";
@@ -30,6 +31,7 @@ import ProductDetails from "./Pages/Products/ProductDetails.jsx";
 import AddRams from "./Pages/Products/addRams.jsx";
 import AddSize from "./Pages/Products/addSize.jsx";
 import AddWeight from "./Pages/Products/addWeight.jsx";
+import { setCatData } from "./redux/slices/categoryDataSlice.js";
 function App() {
   const isLogin = useSelector((state) => state.auth.isLogin);
   const dispatch = useDispatch();
@@ -50,6 +52,11 @@ function App() {
       dispatch(setIsLogin(false));
     }
   }, [isLogin]);
+  useEffect(() => {
+    fetchDataFromApi("/api/category").then((res) => {
+      dispatch(setCatData(res?.data));
+    });
+  }, []);
   const router = createBrowserRouter([
     {
       path: "/products",
@@ -153,6 +160,33 @@ function App() {
                 }  py-4 px-5 transition-all duration-300`}
               >
                 <HomeSliderBanners />
+              </div>
+            </div>
+          </section>
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/bannerV1List",
+      exact: true,
+      element: (
+        <ProtectedRoute>
+          <section className="main">
+            <Header />
+            <div className="contentMain flex">
+              <div
+                className={`sidebarWrapper ${
+                  sideBarOpen === true ? "w-[15%]" : "w-0"
+                } transition-all duration-300 overflow-hidden`}
+              >
+                <Sidebar />
+              </div>
+              <div
+                className={`contentRight ${
+                  sideBarOpen === true ? "w-[85%]" : "w-[100%]"
+                }  py-4 px-5 transition-all duration-300`}
+              >
+                <BannerV1List />
               </div>
             </div>
           </section>

@@ -32,7 +32,7 @@ import Typography from "@mui/material/Typography";
 import { setIsOpenFullScreenPanel } from "./redux/Slices/fullScreenPanelSlice";
 import Slide from "@mui/material/Slide";
 import AddAddress from "./pages/Address/AddAddress";
-import { setLgBanners } from "./redux/Slices/HomeBannerSlice";
+import { setBannerV1, setLgBanners } from "./redux/Slices/HomeBannerSlice";
 import { setCatData } from "./redux/Slices/categoryDataSlice";
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -65,10 +65,12 @@ function App() {
     Promise.all([
       fetchDataFromApi("/api/category"),
       fetchDataFromApi("/api/homeBanners"),
+      fetchDataFromApi("/api/bannerV1"),
     ])
-      .then(([catRes, bannerRes]) => {
+      .then(([catRes, bannerRes, bannerV1Res]) => {
         dispatch(setCatData(catRes?.data));
         dispatch(setLgBanners(bannerRes?.data));
+        dispatch(setBannerV1(bannerV1Res?.data));
       })
       .catch((error) => {
         console.error("Error fetching data:", error);

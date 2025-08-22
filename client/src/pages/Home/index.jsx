@@ -21,6 +21,7 @@ import {
   setProData,
 } from "../../redux/Slices/productsDataSlice";
 import ProductSkeleton from "../../components/ProductSkeleton";
+import { AdsBannerSliderV2 } from "../../components/AdsBannerSliderV2";
 
 export const Home = () => {
   const dispatch = useDispatch();
@@ -28,6 +29,10 @@ export const Home = () => {
   const proData = useSelector((state) => state.proData.proData);
   const popularProduct = useSelector((state) => state.proData.popularProData);
   const featuredProduct = useSelector((state) => state.proData.featuredProData);
+  const bannerV1 = useSelector((state) => state.homeBannerData.bannerV1);
+  const bannersToShow = [...(bannerV1 || [])]
+    .sort(() => 0.5 - Math.random())
+    .slice(0, 2);
   const [value, setValue] = React.useState(0);
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -121,18 +126,14 @@ export const Home = () => {
             {proData?.length !== 0 && <HomeSliderV2 data={proData} />}
           </div>
           <div className="part2 pl-5 w-[30%] flex flex-col gap-5">
-            <BannerBoxV2
-              info={"left"}
-              img={
-                "https://demos.codezeel.com/prestashop/PRS21/PRS210502/img/cms/sub-banner-1.jpg"
-              }
-            />
-            <BannerBoxV2
-              info={"right"}
-              img={
-                "https://demos.codezeel.com/prestashop/PRS21/PRS210502/img/cms/sub-banner-2.jpg"
-              }
-            />
+            {bannersToShow?.map((banner) => (
+              <BannerBoxV2
+                key={banner._id}
+                data={banner}
+                info={banner.align} // align saved from DB ("left" or "right")
+                link={`/product-details/${banner._id}`} // you can customize
+              />
+            ))}
           </div>
         </div>
       </section>
@@ -154,7 +155,7 @@ export const Home = () => {
               <p className="font-bold text-3xl">- Only $200*</p>
             </div>
           </div>
-          <AdsBannerSlider items={4} />
+          <AdsBannerSliderV2 items={4} />
         </div>
       </section>
       <section className="bg-white pt-0">

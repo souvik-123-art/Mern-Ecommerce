@@ -212,25 +212,33 @@ const EditProduct = () => {
   const [proSubCat, setProSubCat] = React.useState("");
   const [proTSubCat, setTProSubCat] = React.useState("");
   const handleChangeProCat = (event) => {
-    const selectedCatId = event.target.value || proCat;
+    const selectedCatId = event.target.value;
     setProCat(event.target.value);
     setFormFields((fields) => ({
       ...fields,
-      catId: event.target.value,
-      category: event.target.value,
+      catId: selectedCatId,
+      subCatId: "",
+      thirdSubCatId: "",
     }));
     const foundCat = catData.find((cat) => cat._id === selectedCatId);
     setSelectedCatObject(foundCat);
+    setProSubCat("");
+    setTProSubCat("");
+    setSelectedSubCatObject(null);
   };
-
   const handleChangeProSubCat = (event) => {
-    const selectedSubCatId = event.target.value || proSubCat;
+    const selectedSubCatId = event.target.value;
     setProSubCat(event.target.value);
-    setFormFields((fields) => ({ ...fields, subCatId: event.target.value }));
+    setFormFields((fields) => ({
+      ...fields,
+      subCatId: selectedSubCatId,
+      thirdSubCatId: "",
+    }));
     const foundCat = selectedCatObject?.children?.find(
       (subCat) => subCat._id === selectedSubCatId
     );
     setSelectedSubCatObject(foundCat);
+    setTProSubCat("");
   };
 
   const handleChangeProTSubCat = (event) => {

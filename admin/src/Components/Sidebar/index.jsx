@@ -233,6 +233,48 @@ export const Sidebar = () => {
           </Link>
         </li>
         <li>
+          <Button
+            onClick={() => isOpenSubMenu(5)}
+            className="!w-full !justify-start !capitalize !flex !gap-3 !text-lg !text-black/80 !font-semibold !font-['lexend'] !py-2 hover:!bg-[#f1f1f1]"
+          >
+            <BiCategoryAlt className="text-xl" />
+            Banners
+            <span className="ml-auto">
+              <FaAngleDown
+                className={`${
+                  subMenuIndex === 5 ? "-rotate-180" : ""
+                } transition-all duration-300`}
+              />
+            </span>
+          </Button>
+          <Collapse isOpened={subMenuIndex === 5 ? true : false}>
+            <ul className="ml-3 w-full border-l pr-3">
+              <li>
+                <Link to="/bannerV1List">
+                  <Button className="!text-black/80 !capitalize !justify-start !w-full !text-sm !font-[400] !py-2 hover:!bg-[#f1f1f1] !pl-9 !font-['lexend']">
+                    Banner V1 List
+                  </Button>
+                </Link>
+              </li>
+              <li>
+                <Button
+                  onClick={() =>
+                    dispatch(
+                      setIsOpenFullScreenPanel({
+                        open: true,
+                        model: "Add Banner V1",
+                      })
+                    )
+                  }
+                  className="!text-black/80 !capitalize !justify-start !w-full !text-sm !font-[400] !py-2 hover:!bg-[#f1f1f1] !pl-9 !font-['lexend']"
+                >
+                  Add Banner
+                </Button>
+              </li>
+            </ul>
+          </Collapse>
+        </li>
+        <li>
           <Link to="/logout">
             <Button className="!w-full !justify-start !capitalize !flex !gap-3 !text-lg !text-black/80 !font-semibold !font-['lexend'] !py-2 hover:!bg-[#f1f1f1]">
               <RiLogoutCircleRLine className="text-xl" />

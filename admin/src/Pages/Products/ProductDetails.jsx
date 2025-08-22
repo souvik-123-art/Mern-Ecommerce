@@ -77,9 +77,8 @@ const ProductDetails = () => {
           </p>
           <div className="flex items-center gap-3 mt-4">
             <span className="text-sm">
-              {singleProData?.size && (
+              {singleProData?.size?.length !== 0 && (
                 <span className="flex items-center gap-2 text-lg">
-                  {" "}
                   Size:
                   {singleProData?.size?.map((size, index, array) => (
                     <p className="font-light" key={size}>
@@ -89,10 +88,10 @@ const ProductDetails = () => {
                   ))}
                 </span>
               )}
-              {singleProData?.productRam === 0 && (
+              {singleProData?.productRam?.length !== 0 && (
                 <span className="flex items-center gap-2 text-lg">
                   {" "}
-                  Size:
+                  Ram:
                   {singleProData?.productRam?.map((ram, index, array) => (
                     <p className="font-light" key={ram}>
                       {ram}
@@ -101,10 +100,10 @@ const ProductDetails = () => {
                   ))}
                 </span>
               )}
-              {singleProData?.productWeight.lemgth === 0 && (
+              {singleProData?.productWeight?.length !== 0 && (
                 <span className="flex items-center gap-2 text-lg">
                   {" "}
-                  Size:
+                  Weight:
                   {singleProData?.productWeight?.map((weight, index, array) => (
                     <p className="font-light" key={weight}>
                       {weight}

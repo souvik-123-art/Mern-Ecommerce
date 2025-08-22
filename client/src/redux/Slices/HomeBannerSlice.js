@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   lgBanners: [],
+  bannerV1: [],
 };
 const homeBannerSlice = createSlice({
   name: "HomeBannerData",
@@ -10,7 +11,10 @@ const homeBannerSlice = createSlice({
     setLgBanners: (state, action) => {
       state.lgBanners = action.payload;
     },
+    setBannerV1: (state, action) => {
+      state.bannerV1 = action.payload;
+    },
   },
 });
-export const { setLgBanners } = homeBannerSlice.actions;
+export const { setLgBanners, setBannerV1 } = homeBannerSlice.actions;
 export default homeBannerSlice.reducer;

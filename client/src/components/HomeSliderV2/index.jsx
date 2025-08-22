@@ -12,8 +12,6 @@ import { EffectFade, Navigation, Pagination, Autoplay } from "swiper/modules";
 import Button from "@mui/material/Button";
 import { Link } from "react-router-dom";
 export const HomeSliderV2 = (props) => {
-  console.log(props.data);
-
   return (
     <>
       <Swiper
@@ -50,7 +48,10 @@ export const HomeSliderV2 = (props) => {
                         ₹{item?.price.toLocaleString("en-IN")}/-
                       </span>
                     </p>
-                    <Link className="w-full block" to={`/product-details/${item?._id}`}>
+                    <Link
+                      className="w-full block"
+                      to={`/product-details/${item?._id}`}
+                    >
                       <Button className="!px-4 !py-2 !bg-primary !text-white !transition hover:!bg-gray-900 self-start">
                         Shop Now
                       </Button>
