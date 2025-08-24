@@ -34,6 +34,7 @@ import Slide from "@mui/material/Slide";
 import AddAddress from "./pages/Address/AddAddress";
 import { setBannerV1, setLgBanners } from "./redux/Slices/HomeBannerSlice";
 import { setCatData } from "./redux/Slices/categoryDataSlice";
+import { setBlogData } from "./redux/Slices/blogSlice";
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -66,11 +67,13 @@ function App() {
       fetchDataFromApi("/api/category"),
       fetchDataFromApi("/api/homeBanners"),
       fetchDataFromApi("/api/bannerV1"),
+      fetchDataFromApi("/api/blog"),
     ])
-      .then(([catRes, bannerRes, bannerV1Res]) => {
+      .then(([catRes, bannerRes, bannerV1Res, blogRes]) => {
         dispatch(setCatData(catRes?.data));
         dispatch(setLgBanners(bannerRes?.data));
         dispatch(setBannerV1(bannerV1Res?.data));
+        dispatch(setBlogData(blogRes?.data));
       })
       .catch((error) => {
         console.error("Error fetching data:", error);

@@ -32,6 +32,7 @@ import AddRams from "./Pages/Products/addRams.jsx";
 import AddSize from "./Pages/Products/addSize.jsx";
 import AddWeight from "./Pages/Products/addWeight.jsx";
 import { setCatData } from "./redux/slices/categoryDataSlice.js";
+import BlogList from "./Pages/Blog/index.jsx";
 function App() {
   const isLogin = useSelector((state) => state.auth.isLogin);
   const dispatch = useDispatch();
@@ -187,6 +188,33 @@ function App() {
                 }  py-4 px-5 transition-all duration-300`}
               >
                 <BannerV1List />
+              </div>
+            </div>
+          </section>
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/blogList",
+      exact: true,
+      element: (
+        <ProtectedRoute>
+          <section className="main">
+            <Header />
+            <div className="contentMain flex">
+              <div
+                className={`sidebarWrapper ${
+                  sideBarOpen === true ? "w-[15%]" : "w-0"
+                } transition-all duration-300 overflow-hidden`}
+              >
+                <Sidebar />
+              </div>
+              <div
+                className={`contentRight ${
+                  sideBarOpen === true ? "w-[85%]" : "w-[100%]"
+                }  py-4 px-5 transition-all duration-300`}
+              >
+                <BlogList />
               </div>
             </div>
           </section>

@@ -33,6 +33,8 @@ import Slide from "@mui/material/Slide";
 import EditProduct from "../../Pages/Products/EditProduct";
 import AddBannerV1 from "../../Pages/Banners/addBannerV1";
 import EditBannerV1 from "../../Pages/Banners/editBannerV1";
+import AddBlog from "../../Pages/Blog/addBlog";
+import EditBlog from "../../Pages/Blog/editBlog";
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -246,7 +248,9 @@ export const Header = () => {
         )}
         {isOpenFullScreenPanel?.model === "Add New Address" && <AddAddress />}
         {isOpenFullScreenPanel?.model === "Add Banner V1" && <AddBannerV1 />}
+        {isOpenFullScreenPanel?.model === "Add Blog" && <AddBlog />}
         {isOpenFullScreenPanel?.model === "Edit Banner V1" && <EditBannerV1 />}
+        {isOpenFullScreenPanel?.model === "Edit Blog" && <EditBlog />}
       </Dialog>
     </>
   );

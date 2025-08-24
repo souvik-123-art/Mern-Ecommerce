@@ -15,6 +15,7 @@ import myListRouter from "./routes/myList.route.js";
 import addressRouter from "./routes/address.route.js";
 import homeBannerRouter from "./routes/HomeBanner.route.js";
 import bannerV1Router from "./routes/bannerV1.route.js";
+import blogRouter from "./routes/blog.route.js";
 app.use(cors());
 // app.options("*", cors());
 app.use(express.json());
@@ -36,6 +37,7 @@ app.use("/api/category", categoryRouter);
 app.use("/api/product", productRouter);
 app.use("/api/homeBanners", homeBannerRouter);
 app.use("/api/bannerV1", bannerV1Router);
+app.use("/api/blog", blogRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/myList", myListRouter);
 

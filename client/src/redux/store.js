@@ -9,6 +9,7 @@ import userAddressSlicereducer from "../redux/Slices/userAddressSlice";
 import catDataSliceReducer from "../redux/slices/categoryDataSlice";
 import homeBannerSliceReducer from "../redux/slices/HomeBannerSlice";
 import proDataSliceReducer from "../redux/slices/productsDataSlice";
+import blogSliceReducer from "../redux/slices/blogSlice";
 export const store = configureStore({
   reducer: {
     proModal: productModalSlicereducer,
@@ -21,5 +22,6 @@ export const store = configureStore({
     fullScreenPanel: fullScreenPanelSliceReducer,
     homeBannerData: homeBannerSliceReducer,
     proData: proDataSliceReducer,
+    blogData: blogSliceReducer,
   },
 });

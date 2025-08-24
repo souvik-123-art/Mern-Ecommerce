@@ -25,6 +25,7 @@ import { AdsBannerSliderV2 } from "../../components/AdsBannerSliderV2";
 
 export const Home = () => {
   const dispatch = useDispatch();
+  const blogs = useSelector((state) => state.blogData.blogData);
   const catData = useSelector((state) => state.catData.catData);
   const proData = useSelector((state) => state.proData.proData);
   const popularProduct = useSelector((state) => state.proData.popularProData);
@@ -197,29 +198,23 @@ export const Home = () => {
       <section className="blogSection py-8">
         <div className="container mx-auto">
           <h3 className="text-3xl font-semibold mb-2">From The Blog</h3>
-          <Swiper
-            navigation={true}
-            slidesPerView={4}
-            spaceBetween={30}
-            modules={[Navigation]}
-            className="blogSwiper"
-          >
-            <SwiperSlide>
-              <BlogItem />
-            </SwiperSlide>
-            <SwiperSlide>
-              <BlogItem />
-            </SwiperSlide>
-            <SwiperSlide>
-              <BlogItem />
-            </SwiperSlide>
-            <SwiperSlide>
-              <BlogItem />
-            </SwiperSlide>
-            <SwiperSlide>
-              <BlogItem />
-            </SwiperSlide>
-          </Swiper>
+          {blogs?.length !== 0 ? (
+            <Swiper
+              navigation={true}
+              slidesPerView={4}
+              spaceBetween={30}
+              modules={[Navigation]}
+              className="blogSwiper"
+            >
+              {blogs?.map((blog) => (
+                <SwiperSlide key={blog._id}>
+                  <BlogItem data={blog} />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          ) : (
+            "Blogs Not Available"
+          )}
         </div>
       </section>
     </>
