@@ -3,7 +3,7 @@ import "../ProductItem/style.css";
 import { Link } from "react-router-dom";
 import Rating from "@mui/material/Rating";
 import Button from "@mui/material/Button";
-import { FaRegHeart } from "react-icons/fa";
+import { FaOpencart, FaRegHeart } from "react-icons/fa";
 import { GoGitCompare } from "react-icons/go";
 import { MdZoomOutMap } from "react-icons/md";
 import { productModal } from "../../redux/Slices/productModalSlice";
@@ -78,6 +78,9 @@ export const ProductItem = (props) => {
             ₹{props?.data?.price.toLocaleString("en-IN")}
           </span>
         </div>
+        <Button className="!px-4 w-full !py-2 !bg-primary !text-white !transition hover:!bg-gray-900 flex items-center gap-1 !mt-3">
+          <FaOpencart className="text-xl" /> Add To Cart
+        </Button>
       </div>
     </div>
   );

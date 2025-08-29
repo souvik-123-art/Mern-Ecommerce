@@ -11,9 +11,14 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { useDispatch } from "react-redux";
 import { postData } from "../../utils/api";
 import toast from "react-hot-toast";
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { firebaseApp } from "../../utils/FireBase";
+const auth = getAuth(firebaseApp);
+const provider = new GoogleAuthProvider();
 export const Login = () => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoading2, setIsLoading2] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [formFields, setFormFields] = useState({
     email: "",
@@ -69,6 +74,45 @@ export const Login = () => {
         setIsLoading(false);
       }
     });
+  };
+  const authWithGoogle = () => {
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        // The signed-in user info.
+        const user = result.user;
+        // IdP data available using getAdditionalUserInfo(result)
+        // ...
+        const fields = {
+          email: user.providerData[0].email,
+          panel: "admin",
+        };
+        postData("/api/user/loginWithGoogle", fields).then((res) => {
+          if (!res?.error) {
+            setIsLoading2(false);
+            toast.success(res?.message);
+            localStorage.setItem("accesstoken", res.data.accesstoken);
+            localStorage.setItem("refreshtoken", res.data.refreshtoken);
+            dispatch(setIsLogin(true));
+            navigate("/");
+          } else {
+            setIsLoading2(false);
+            toast.error(res?.message);
+          }
+        });
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // The email of the user's account used.
+        const email = error.customData.email;
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        // ...
+      });
   };
   return (
     <section className="login">
@@ -174,21 +218,33 @@ export const Login = () => {
           <p className="text-center font-semibold text-sm mt-4">
             Or continue with social account
           </p>
-          <Button className="!text-red-300 !w-full !bg-gray-700 !font-medium !rounded !transition !text-sm !px-5 !py-2.5 !flex !items-center !mt-3 !justify-center !mb-2 hover:!bg-gray-600">
-            <svg
-              class="w-4 h-4 me-2"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              viewBox="0 0 18 19"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M8.842 18.083a8.8 8.8 0 0 1-8.65-8.948 8.841 8.841 0 0 1 8.8-8.652h.153a8.464 8.464 0 0 1 5.7 2.257l-2.193 2.038A5.27 5.27 0 0 0 9.09 3.4a5.882 5.882 0 0 0-.2 11.76h.124a5.091 5.091 0 0 0 5.248-4.057L14.3 11H9V8h8.34c.066.543.095 1.09.088 1.636-.086 5.053-3.463 8.449-8.4 8.449l-.186-.002Z"
-                clip-rule="evenodd"
+          <Button
+            onClick={authWithGoogle}
+            className="!bg-gray-700 !text-white !font-medium !rounded !transition !text-sm !px-5 !py-2.5 !flex !items-center !mt-3 !justify-center w-full !mb-2 hover:!bg-gray-600"
+          >
+            {isLoading2 ? (
+              <CircularProgress
+                className="!w-[20px] !h-[20px]"
+                color="inherit"
               />
-            </svg>
-            Sign in with Google
+            ) : (
+              <>
+                <svg
+                  className="w-4 h-4 me-2"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  viewBox="0 0 18 19"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M8.842 18.083a8.8 8.8 0 0 1-8.65-8.948 8.841 8.841 0 0 1 8.8-8.652h.153a8.464 8.464 0 0 1 5.7 2.257l-2.193 2.038A5.27 5.27 0 0 0 9.09 3.4a5.882 5.882 0 0 0-.2 11.76h.124a5.091 5.091 0 0 0 5.248-4.057L14.3 11H9V8h8.34c.066.543.095 1.09.088 1.636-.086 5.053-3.463 8.449-8.4 8.449l-.186-.002Z"
+                    clipRule="evenodd"
+                  />
+                </svg>{" "}
+                Sign in with Google
+              </>
+            )}
           </Button>
         </div>
       </div>

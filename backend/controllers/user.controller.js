@@ -75,7 +75,59 @@ export const registerUserController = async (req, res) => {
     });
   }
 };
-
+export const registerWithGoogle = async (req, res) => {
+  const { name, email, mobile, avatar, password, signUpWithGoogle, panel } =
+    req.body;
+  try {
+    const existUser = await UserModel.findOne({ email });
+    if (
+      existUser &&
+      ((panel === "admin" && existUser.role === "ADMIN") ||
+        (panel === "client" && existUser.role === "USER"))
+    ) {
+      return res.status(400).json({
+        message: "user already exists",
+        error: true,
+        success: false,
+      });
+    }
+    const user = await UserModel.create({
+      name,
+      email,
+      avatar,
+      mobile,
+      password,
+      signUpWithGoogle,
+      role: panel === "admin" ? "ADMIN" : "USER",
+      isVerified: true,
+      last_login_date: new Date(),
+    });
+    const accesstoken = genAccessToken(user._id);
+    const refreshtoken = await genRefreshToken(user._id);
+    const cookiesOption = {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+    };
+    res.cookie("accessToken", accesstoken, cookiesOption);
+    res.cookie("refreshToken", refreshtoken, cookiesOption);
+    return res.status(200).json({
+      message: "login successfully",
+      error: false,
+      success: true,
+      data: {
+        accesstoken,
+        refreshtoken,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
 export const verifyEmailController = async (req, res) => {
   try {
     const { code } = req.body;
@@ -157,6 +209,74 @@ export const loginUserController = async (req, res) => {
       return res
         .status(400)
         .json({ success: false, error: true, message: "something went wrong" });
+    }
+    const accesstoken = genAccessToken(user._id);
+    const refreshtoken = await genRefreshToken(user._id);
+    const updateUser = await UserModel.findByIdAndUpdate(user?._id, {
+      last_login_date: new Date(),
+    });
+    const cookiesOption = {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+    };
+    res.cookie("accessToken", accesstoken, cookiesOption);
+    res.cookie("refreshToken", refreshtoken, cookiesOption);
+    return res.json({
+      message: "login successfully",
+      error: false,
+      success: true,
+      data: {
+        accesstoken,
+        refreshtoken,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+export const loginWithGoogle = async (req, res) => {
+  const { email, panel } = req.body;
+  try {
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      return res
+        .status(400)
+        .json({ success: false, error: true, message: "invalid credentials" });
+    }
+    // ✅ Role-based restriction
+    if (panel === "admin" && user.role !== "ADMIN") {
+      return res.status(403).json({
+        success: false,
+        error: true,
+        message: "Admin Not Found! please create account first.",
+      });
+    }
+    if (panel === "client" && user.role !== "USER") {
+      return res.status(403).json({
+        success: false,
+        error: true,
+        message: "User Not Found! please create account first.",
+      });
+    }
+    if (user.status !== "Active") {
+      return res.status(400).json({
+        message: "Contact to Admin",
+        success: false,
+        error: true,
+      });
+    }
+    if (!user.isVerified) {
+      return res.status(400).json({
+        message:
+          "your email is not verified yet please verify your email first",
+        success: false,
+        error: true,
+      });
     }
     const accesstoken = genAccessToken(user._id);
     const refreshtoken = await genRefreshToken(user._id);

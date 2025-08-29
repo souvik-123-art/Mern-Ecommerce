@@ -3,9 +3,11 @@ import {
   changePassword,
   forgotPasswordController,
   loginUserController,
+  loginWithGoogle,
   logoutController,
   refreshToken,
   registerUserController,
+  registerWithGoogle,
   removeImageFromCloudinary,
   resetPassword,
   updateUserDetails,
@@ -19,8 +21,10 @@ import upload from "../middlewares/multer.js";
 const userRouter = Router();
 
 userRouter.post("/register", registerUserController);
+userRouter.post("/registerWithGoogle", registerWithGoogle);
 userRouter.post("/verify-email", verifyEmailController);
 userRouter.post("/login", loginUserController);
+userRouter.post("/loginWithGoogle", loginWithGoogle);
 userRouter.get("/logout", auth, logoutController);
 userRouter.put(
   "/user-avatar",

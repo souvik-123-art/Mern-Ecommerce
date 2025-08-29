@@ -1069,3 +1069,91 @@ export const deleteProductWgt = async (req, res) => {
     });
   }
 };
+
+export const filters = async (req, res) => {
+  const {
+    catId,
+    subCatId,
+    thirdSubCatId,
+    minPrice,
+    maxPrice,
+    rating,
+    page,
+    limit,
+  } = req.body;
+
+  const filters = {};
+
+  if (catId?.length) {
+    filters.catId = { $in: catId };
+  }
+  if (subCatId?.length) {
+    filters.subCatId = { $in: subCatId };
+  }
+  if (thirdSubCatId?.length) {
+    filters.thirdSubCatId = { $in: thirdSubCatId };
+  }
+  if (rating?.length) {
+    filters.rating = { $in: rating };
+  }
+
+  if (minPrice || maxPrice) {
+    filters.price = { $gte: +minPrice || 0, $lte: +maxPrice || Infinity };
+  }
+  try {
+    const products = await ProductModel.find(filters)
+      .populate("category")
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit));
+
+    const total = await ProductModel.countDocuments(filters);
+
+    return res.status(200).json({
+      error: false,
+      success: true,
+      products: products,
+      total: total,
+      page: parseInt(page),
+      totalPages: Math.ceil(total / limit),
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+const sortItems = (pro, sortBy, order) => {
+  return pro.sort((a, b) => {
+    if (sortBy === "name") {
+      return order === "asc"
+        ? a.name.localeCompare(b.name)
+        : b.name.localeCompare(a.name);
+    }
+    if (sortBy === "price") {
+      return order === "asc" ? a.price - b.price : b.price - a.price;
+    }
+    return 0;
+  });
+};
+
+export const sortBy = async (req, res) => {
+  try {
+    const { products, sortBy, order } = req.body;
+
+    const sortedItems = sortItems([...products], sortBy, order);
+
+    return res.status(200).json({
+      products: sortedItems,
+      error: false,
+      success: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      error: true,
+      success: false,
+      message: error.message,
+    });
+  }
+};

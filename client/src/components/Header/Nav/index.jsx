@@ -5,7 +5,7 @@ import { TfiAngleDown } from "react-icons/tfi";
 import { Link } from "react-router-dom";
 import { GoRocket } from "react-icons/go";
 import { CategoryPanel } from "./CategoryPanel";
-import {useDispatch, useSelector} from "react-redux"
+import { useDispatch, useSelector } from "react-redux";
 export const Nav = () => {
   const catData = useSelector((state) => state.catData.catData);
   const [isOpenCatPanel, setIsOpenCatPanel] = useState(false);
@@ -37,9 +37,9 @@ export const Nav = () => {
               </li>
               {catData?.length !== 0 &&
                 catData?.map((cat) => (
-                  <li className="relative" key={cat._id}>
+                  <li className="relative" key={cat?._id}>
                     <Link
-                      to="/product-listing"
+                      to={`/product-listing?catId=${cat?._id}`}
                       className="link transition text-[14px]"
                     >
                       {cat.name}
@@ -49,7 +49,9 @@ export const Nav = () => {
                         {cat?.children?.length !== 0 &&
                           cat?.children?.map((subCat) => (
                             <li className="w-full relative" key={subCat._id}>
-                              <Link>
+                              <Link
+                                to={`/product-listing?subCatId=${subCat?._id}`}
+                              >
                                 <Button className="!text-[rgba(0,0,0,0.8)] w-full !justify-start !rounded-none">
                                   {subCat.name}
                                 </Button>
@@ -59,7 +61,9 @@ export const Nav = () => {
                                   {subCat?.children?.length !== 0 &&
                                     subCat?.children?.map((tSubCat) => (
                                       <li key={tSubCat._id} className="w-full">
-                                        <Link>
+                                        <Link
+                                          to={`/product-listing?thirdSubCatId=${tSubCat?._id}`}
+                                        >
                                           <Button className="!text-[rgba(0,0,0,0.8)] w-full !justify-start !rounded-none">
                                             {tSubCat.name}
                                           </Button>

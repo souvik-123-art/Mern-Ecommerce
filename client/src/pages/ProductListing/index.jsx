@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Sidebar } from "../../components/Sidebar";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
@@ -10,9 +10,22 @@ import { IoGrid } from "react-icons/io5";
 import { FaThList } from "react-icons/fa";
 import { ProductItemListView } from "../../components/ProductItemListView";
 import Pagination from "@mui/material/Pagination";
+import ProductListSkeleton from "../../components/ProductSkeleton/listViewSkelton";
+import ProductSkeleton from "../../components/ProductSkeleton";
+import { postData } from "../../utils/api";
+import { useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
 export const ProductListing = () => {
+  const catData = useSelector((state) => state.catData.catData);
+  const location = useLocation();
   const [anchorEl, setAnchorEl] = useState(null);
-  const [itemView, setItemView] = useState("grid");
+  const [itemView, setItemView] = useState("list");
+  const [productsData, setProductsData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [selectSortValue, setSelectSortValue] = useState("Name, A to Z");
+  const [bredcrumb, setBredcrumb] = useState("");
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -20,6 +33,66 @@ export const ProductListing = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const handleSortBy = (name, order, products, value) => {
+    setSelectSortValue(value);
+    postData("/api/product/sortBy", {
+      products,
+      sortBy: name,
+      order: order,
+    }).then((res) => {
+      setProductsData(res?.products);
+      setAnchorEl(null);
+    });
+  };
+  useEffect(() => {
+    const queryParam = new URLSearchParams(location.search);
+    const catId = queryParam.get("catId");
+    const subCatId = queryParam.get("subCatId");
+    const thirdSubCatId = queryParam.get("thirdSubCatId");
+
+    if (catData?.length > 0) {
+      // Case 1: Category
+      if (catId) {
+        const cat = catData.find((c) => c._id === catId);
+        setBredcrumb(cat?.name || "");
+      }
+
+      // Case 2: SubCategory
+      if (subCatId) {
+        const parent = catData.find((c) =>
+          c.children?.some((sc) => sc._id === subCatId)
+        );
+        const subCat = parent?.children?.find((sc) => sc._id === subCatId);
+
+        setBredcrumb(parent && subCat ? `${parent.name} > ${subCat.name}` : "");
+      }
+
+      // Case 3: Third SubCategory
+      if (thirdSubCatId) {
+        const parent = catData.find((c) =>
+          c.children?.some((sc) =>
+            sc.children?.some((t) => t._id === thirdSubCatId)
+          )
+        );
+
+        const subCat = parent?.children?.find((sc) =>
+          sc.children?.some((t) => t._id === thirdSubCatId)
+        );
+
+        const thirdSubCat = subCat?.children?.find(
+          (t) => t._id === thirdSubCatId
+        );
+
+        setBredcrumb(
+          parent && subCat && thirdSubCat
+            ? `${parent.name} > ${subCat.name} > ${thirdSubCat.name}`
+            : ""
+        );
+      }
+    }
+  }, [location, catData]);
+
   return (
     <section className="py-5">
       <div className="container mx-auto">
@@ -36,17 +109,23 @@ export const ProductListing = () => {
             separator="|"
             underline="hover"
             color="inherit"
-            href="/"
             className="link transition"
           >
-            Fashion
+            {bredcrumb}
           </Link>
         </Breadcrumbs>
       </div>
       <div className="bg-white p-2 mt-4">
         <div className="container mx-auto flex gap-3 ">
           <div className="sidebarWrapper w-[20%] h-full">
-            <Sidebar />
+            <Sidebar
+              productsData={productsData}
+              setProductsData={setProductsData}
+              isLoading={isLoading}
+              setIsLoading={setIsLoading}
+              page={page}
+              setTotalPages={setTotalPages}
+            />
           </div>
           <div className="rightCont w-[80%] border border-[#dadada] p-5 rounded-md">
             <div className="bg-[#f1f1f1] p-2 w-full mb-3 rounded-md flex items-center justify-between">
@@ -68,7 +147,9 @@ export const ProductListing = () => {
                   <FaThList className="text-[rgba(0,0,0,0.7)]" />
                 </Button>
                 <span className="text-[14px] font-[500] pl-3 text-[rgba(0,0,0,0.7)]">
-                  There are 27 products
+                  There are{" "}
+                  {productsData?.length !== 0 ? productsData?.length : 0}{" "}
+                  products
                 </span>
               </div>
               <div className="col2 ml-auto flex gap-2 items-center justify-end">
@@ -84,7 +165,7 @@ export const ProductListing = () => {
                     onClick={handleClick}
                     className="!bg-white !text-sm !text-black"
                   >
-                    Relevance
+                    {selectSortValue}
                   </Button>
                   <Menu
                     className="!text-sm"
@@ -104,70 +185,93 @@ export const ProductListing = () => {
                   >
                     <MenuItem
                       className="!text-sm !font-['lexend']"
-                      onClick={handleClose}
+                      onClick={() =>
+                        handleSortBy(
+                          "name",
+                          "asc",
+                          productsData,
+                          "Name, A to Z"
+                        )
+                      }
                     >
-                      Sales, Highest To Lowest
+                      Name, A to Z
                     </MenuItem>
                     <MenuItem
                       className="!text-sm !font-['lexend']"
-                      onClick={handleClose}
+                      onClick={() =>
+                        handleSortBy(
+                          "name",
+                          "desc",
+                          productsData,
+                          "Name, Z to A"
+                        )
+                      }
                     >
-                      Relevance
+                      Name, Z to A
                     </MenuItem>
                     <MenuItem
                       className="!text-sm !font-['lexend']"
-                      onClick={handleClose}
+                      onClick={() =>
+                        handleSortBy(
+                          "price",
+                          "asc",
+                          productsData,
+                          "Price, Low to High"
+                        )
+                      }
                     >
-                      Name, A To Z
+                      Price, Low to High
                     </MenuItem>
                     <MenuItem
                       className="!text-sm !font-['lexend']"
-                      onClick={handleClose}
+                      onClick={() =>
+                        handleSortBy(
+                          "price",
+                          "desc",
+                          productsData,
+                          "Price, High to Low"
+                        )
+                      }
                     >
-                      Name, Z To A
-                    </MenuItem>
-                    <MenuItem
-                      className="!text-sm !font-['lexend']"
-                      onClick={handleClose}
-                    >
-                      Price, Low To High
-                    </MenuItem>
-                    <MenuItem
-                      className="!text-sm !font-['lexend']"
-                      onClick={handleClose}
-                    >
-                      Price, High To Low
+                      Price, High to Low
                     </MenuItem>
                   </Menu>
                 </div>
               </div>
             </div>
             {itemView === "grid" ? (
-              <div className="grid grid-cols-4 gap-4">
-                <ProductItem />
-                <ProductItem />
-                <ProductItem />
-                <ProductItem />
-                <ProductItem />
-                <ProductItem />
-                <ProductItem />
-                <ProductItem />
+              <div className="grid grid-cols-5 gap-4">
+                {isLoading
+                  ? Array.from({ length: 5 }).map((_, i) => (
+                      <ProductSkeleton key={i} />
+                    ))
+                  : productsData?.length !== 0 &&
+                    productsData?.map((item) => (
+                      <ProductItem key={item?._id} data={item} />
+                    ))}
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-4">
-                <ProductItemListView />
-                <ProductItemListView />
-                <ProductItemListView />
-                <ProductItemListView />
-                <ProductItemListView />
-                <ProductItemListView />
-                <ProductItemListView />
-                <ProductItemListView />
+                {isLoading
+                  ? Array.from({ length: 5 }).map((_, i) => (
+                      <ProductListSkeleton key={i} />
+                    ))
+                  : productsData?.length !== 0 &&
+                    productsData?.map((item) => (
+                      <ProductItemListView key={item?._id} data={item} />
+                    ))}
               </div>
             )}
-            <div className="pagination mt-10 flex justify-center">
-              <Pagination size="large" count={10} />
-            </div>
+            {totalPages > 1 && (
+              <div className="pagination mt-10 flex justify-center">
+                <Pagination
+                  size="large"
+                  count={totalPages}
+                  page={page}
+                  onChange={(e) => setPage(e.target.value)}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>

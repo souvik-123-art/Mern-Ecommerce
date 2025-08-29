@@ -9,11 +9,13 @@ const userSchema = mongoose.Schema(
     email: {
       type: String,
       required: [true, "Provide email"],
-      unique: true,
+      // unique: true,
     },
     password: {
       type: String,
-      required: [true, "Provide password"],
+      required: function () {
+        return !this.signUpWithGoogle;
+      },
     },
     avatar: {
       type: String,
@@ -66,6 +68,10 @@ const userSchema = mongoose.Schema(
       type: String,
       enum: ["ADMIN", "USER"],
       default: "USER",
+    },
+    signUpWithGoogle: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }

@@ -12,6 +12,7 @@ import {
   deleteProductRams,
   deleteProductSize,
   deleteProductWgt,
+  filters,
   getAllProductRams,
   getAllProducts,
   getAllProductsByCatId,
@@ -29,6 +30,7 @@ import {
   getSingleProduct,
   productImageController,
   removeImageFromCloudinary,
+  sortBy,
   updateProduct,
   updateProductRam,
   updateProductSize,
@@ -54,6 +56,8 @@ productRouter.post("/size/create", auth, createProductSize);
 productRouter.post("/weight/create", auth, createProductWgt);
 
 productRouter.get("/", getAllProducts);
+productRouter.post("/filters", filters);
+productRouter.post("/sortBy", sortBy);
 productRouter.get("/rams/get", getAllProductRams);
 productRouter.get("/size/get", getAllProductSize);
 productRouter.get("/weight/get", getAllProductWgt);
