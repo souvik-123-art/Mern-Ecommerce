@@ -1,7 +1,9 @@
 import { Router } from "express";
 import {
+  addReview,
   changePassword,
   forgotPasswordController,
+  getReview,
   loginUserController,
   loginWithGoogle,
   logoutController,
@@ -39,5 +41,7 @@ userRouter.post("/forgot-password", forgotPasswordController);
 userRouter.post("/reset-password/:token", resetPassword);
 userRouter.post("/refresh-token", refreshToken);
 userRouter.get("/user-details", auth, userDetails);
+userRouter.get("/getReviews/:id", getReview);
+userRouter.post("/addReview", auth, addReview);
 
 export default userRouter;

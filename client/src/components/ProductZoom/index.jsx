@@ -14,37 +14,51 @@ export const ProductZoom = (props) => {
   };
   return (
     <>
-      <div className="flex gap-3">
-        <div className="slider w-[15%]">
+      <div className="flex flex-col md:flex-row gap-4 w-full max-w-[1200px] mx-auto p-3">
+        {/* Thumbnail Slider */}
+        <div className="md:w-[15%] w-full md:h-[500px]">
           <Swiper
             ref={zoomSliderSml}
-            direction={"vertical"}
             spaceBetween={10}
             slidesPerView={4}
-            className="sliderproductimage h-[400px] overflow-hidden"
+            direction={"vertical"}
+            breakpoints={{
+              0: {
+                direction: "horizontal",
+                slidesPerView: 4,
+                spaceBetween: 8,
+              },
+              768: {
+                direction: "vertical",
+                slidesPerView: 5,
+                spaceBetween: 12,
+              },
+            }}
+            className="h-full"
           >
-            {props?.data?.length !== 0 &&
-              props?.data?.map((img, idx) => (
-                <SwiperSlide key={idx}>
-                  <div
-                    className={`item rounded-md cursor-pointer border overflow-hidden group ${
-                      slideIndex === idx
-                        ? "border-primary shadow-lg scale-[1.03]"
-                        : "border-gray-300 opacity-80 hover:opacity-100 hover:shadow-md"
-                    }`}
-                    onClick={() => goto(idx)}
-                  >
-                    <img
-                      src={img}
-                      className="w-full h-[80px] object-cover group-hover:scale-105 transition bg-white"
-                      alt=""
-                    />
-                  </div>
-                </SwiperSlide>
-              ))}
+            {props?.data?.map((img, idx) => (
+              <SwiperSlide key={idx} className="!h-auto">
+                <div
+                  className={`rounded-lg overflow-hidden border transition-all duration-300 cursor-pointer shadow-sm ${
+                    slideIndex === idx
+                      ? "border-blue-500 shadow-lg scale-[1.03]"
+                      : "border-gray-300 opacity-80 hover:opacity-100 hover:shadow-md"
+                  }`}
+                  onClick={() => goto(idx)}
+                >
+                  <img
+                    src={img}
+                    alt={`Thumbnail ${idx}`}
+                    className="w-full h-20 md:h-24 lg:h-28 object-cover transition-transform duration-300 hover:scale-105"
+                  />
+                </div>
+              </SwiperSlide>
+            ))}
           </Swiper>
         </div>
-        <div className="zoom w-[85%] h-[500px] rounded-md overflow-hidden">
+
+        {/* Main Image Zoom */}
+        <div className="md:w-[85%] w-full border rounded-xl overflow-hidden shadow-lg bg-white">
           <Swiper
             spaceBetween={0}
             slidesPerView={1}
@@ -55,12 +69,19 @@ export const ProductZoom = (props) => {
               zoomSliderSml.current.swiper.slideTo(newIndex);
             }}
           >
-            {props?.data?.length !== 0 &&
-              props?.data?.map((img, idx) => (
-                <SwiperSlide key={idx}>
-                  <InnerImageZoom src={img} zoomType="hover" zoomScale={1} />
-                </SwiperSlide>
-              ))}
+            {props?.data?.map((img, idx) => (
+              <SwiperSlide key={idx}>
+                <div className="flex items-center justify-center bg-gray-50 h-[300px] sm:h-[400px] md:h-[500px]">
+                  <InnerImageZoom
+                    src={img}
+                    zoomType="hover"
+                    zoomScale={1.5}
+                    className="max-h-full max-w-full object-contain"
+                    alt={`Product ${idx}`}
+                  />
+                </div>
+              </SwiperSlide>
+            ))}
           </Swiper>
         </div>
       </div>

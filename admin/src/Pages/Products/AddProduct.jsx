@@ -248,6 +248,8 @@ const AddProduct = () => {
       isDisplayOnHomeBanner: e.target.checked,
     }));
   };
+
+  
   const onChangeRating = (e) => {
     setFormFields((fields) => ({
       ...fields,

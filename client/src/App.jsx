@@ -35,6 +35,7 @@ import AddAddress from "./pages/Address/AddAddress";
 import { setBannerV1, setLgBanners } from "./redux/Slices/HomeBannerSlice";
 import { setCatData } from "./redux/Slices/categoryDataSlice";
 import { setBlogData } from "./redux/Slices/blogSlice";
+import ScrollToTop from "./utils/windowScroll";
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -79,10 +80,10 @@ function App() {
         console.error("Error fetching data:", error);
       });
   }, [dispatch]);
-
   return (
     <>
       <BrowserRouter>
+        <ScrollToTop />
         <Header />
         <Routes>
           <Route path="/" exact={true} element={<Home />} />

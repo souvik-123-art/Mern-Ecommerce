@@ -1,7 +1,7 @@
 import Button from "@mui/material/Button";
 import React, { useState } from "react";
 
-export const QtyBox = () => {
+export const QtyBox = (props) => {
   const [qtyVal, setQtyVal] = useState(1);
   const plusVal = () => {
     setQtyVal(qtyVal + 1);
@@ -14,10 +14,11 @@ export const QtyBox = () => {
   return (
     <div className="qtybox flex items-center gap-1">
       <Button
-        onClick={minusVal} disabled={qtyVal===1 && true}
+        onClick={minusVal}
+        disabled={qtyVal === 1 && true}
         className={`!w-[40px] !min-w-[40px] !rounded-full
                     !text-primary !bg-gray-200
-                   !h-[40px] !text-lg ${qtyVal === 1 && 'opacity-40'}`}
+                   !h-[40px] !text-lg ${qtyVal === 1 && "opacity-40"}`}
       >
         -
       </Button>
@@ -29,10 +30,13 @@ export const QtyBox = () => {
         value={qtyVal}
       />
       <Button
+        disabled={props?.count === qtyVal}
         onClick={plusVal}
-        className="!w-[40px] !min-w-[40px] !rounded-full
+        className={`!w-[40px] !min-w-[40px] !rounded-full
                     !text-primary !bg-gray-200
-                   !h-[40px] !text-lg "
+                   !h-[40px] !text-lg ${
+                     props?.count === qtyVal && "opacity-40"
+                   }`}
       >
         +
       </Button>

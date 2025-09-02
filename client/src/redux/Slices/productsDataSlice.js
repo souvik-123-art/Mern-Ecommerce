@@ -7,6 +7,8 @@ const initialState = {
   // prodWeight: [],
   popularProData: [],
   featuredProData: [],
+  singleProData: null,
+  proReview: [],
 };
 const proDataSlice = createSlice({
   name: "ProData",
@@ -21,6 +23,12 @@ const proDataSlice = createSlice({
     setFeaturedProData: (state, action) => {
       state.featuredProData = action.payload;
     },
+    setSingleProData: (state, action) => {
+      state.singleProData = action.payload;
+    },
+    setProReview: (state, action) => {
+      state.proReview = action.payload;
+    },
 
     // setProdRam: (state, action) => {
     //   state.prodRam = action.payload;
@@ -33,6 +41,11 @@ const proDataSlice = createSlice({
     // },
   },
 });
-export const { setProData, setPopularProData, setFeaturedProData } =
-  proDataSlice.actions;
+export const {
+  setProData,
+  setPopularProData,
+  setFeaturedProData,
+  setSingleProData,
+  setProReview,
+} = proDataSlice.actions;
 export default proDataSlice.reducer;

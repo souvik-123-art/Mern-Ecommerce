@@ -49,16 +49,24 @@ export const ProductItemListView = (props) => {
       </div>
       <div className="info py-3 px-8 w-[80%]">
         <h6 className="text-[15px] mb-2 text-gray-500">
-          <Link to={"/"} className="link transition">
+          <Link
+            to={`/product-details/${props?.data?._id}`}
+            className="link transition"
+          >
             {props?.data?.brand}
           </Link>
         </h6>
         <h3 className="text-[18px] mb-2 title font-[500] text-[rgba(0,0,0,0.8)]">
-          <Link to={"/product-details/1"} className="link transition">
+          <Link
+            to={`/product-details/${props?.data?._id}`}
+            className="link transition"
+          >
             {props?.data?.name}
           </Link>
         </h3>
-        <p className="mb-2 text-[14px] text-black/50">{props?.data?.description}</p>
+        <p className="mb-2 text-[14px] text-black/50">
+          {props?.data?.description}
+        </p>
         <Rating
           name="size-small"
           value={Number(props?.data?.rating)}

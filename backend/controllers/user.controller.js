@@ -14,6 +14,7 @@ import genAccessToken from "../utils/genAccessToken.js";
 import genRefreshToken from "../utils/genRefreshToken.js";
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
+import reviewModel from "../models/reviews.model.js";
 cloudinary.config({
   cloud_name: process.env.cloudinary_Config_Cloud_Name,
   api_key: process.env.cloudinary_Config_api_key,
@@ -658,6 +659,66 @@ export const userDetails = async (req, res) => {
     return res.json({
       message: "user details",
       data: user,
+      error: false,
+      success: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+
+export const addReview = async (req, res) => {
+  try {
+    const { image, userName, review, rating, productId } = req.body;
+    const userId = req.userId;
+    if (!userId) {
+      return res.status(400).json({
+        message: "you need to login first",
+        error: true,
+        success: false,
+      });
+    }
+    const userReview = new reviewModel({
+      image,
+      userName,
+      review,
+      rating,
+      userId,
+      productId,
+    });
+    await userReview.save();
+    return res.status(200).json({
+      message: "review added",
+      error: false,
+      success: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+export const getReview = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const reviews = await reviewModel.find({
+      productId: id,
+    });
+
+    if (!reviews) {
+      return res.status(500).json({
+        error: true,
+        success: false,
+      });
+    }
+    return res.status(200).json({
+      data: reviews,
       error: false,
       success: true,
     });

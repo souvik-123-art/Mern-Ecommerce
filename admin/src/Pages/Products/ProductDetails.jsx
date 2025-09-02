@@ -4,10 +4,13 @@ import { useParams } from "react-router-dom";
 import { fetchDataFromApi } from "../../utils/api";
 import Rating from "@mui/material/Rating";
 import CircularProgress from "@mui/material/CircularProgress";
+import { setProReview } from "../../redux/slices/productsDataSlice";
+import { useSelector, useDispatch } from "react-redux";
 const ProductDetails = () => {
+  const dispatch = useDispatch();
+  const proReview = useSelector((state) => state.proData.proReview);
   const [isLoading, setIsLoading] = useState(false);
   const [singleProData, setSingleProData] = useState(null);
-
   const { id } = useParams();
   useEffect(() => {
     setIsLoading(true);
@@ -18,6 +21,11 @@ const ProductDetails = () => {
           setIsLoading(false);
         }, 1000);
       }
+    });
+  }, []);
+  useEffect(() => {
+    fetchDataFromApi(`/api/user/getReviews/${id}`).then((response) => {
+      dispatch(setProReview(response?.data));
     });
   }, []);
   return (
@@ -56,7 +64,9 @@ const ProductDetails = () => {
               readOnly
               size="small"
             />
-            <span className="text-sm text-gray-700">Reviews (5)</span>
+            <span className="text-sm text-gray-700">
+              Reviews ({proReview?.length})
+            </span>
           </div>
           <div className="flex items-center gap-4 mt-4">
             <span className="oldPrice line-through text-gray-500 text-[20px] font-[500]">
@@ -118,11 +128,7 @@ const ProductDetails = () => {
             <span className="font-[500] flex items-center gap-2 text-lg">
               Review:
               <span className="text-lg font-light">
-                (
-                {singleProData?.reviews?.length > 0
-                  ? singleProData?.reviews?.length
-                  : 0}
-                ) Reviews
+                ({proReview?.length}) Reviews
               </span>
             </span>
           </div>
@@ -146,134 +152,46 @@ const ProductDetails = () => {
               Customer Reviews
             </h2>
             <div className="scroll w-full max-h-[300px] overflow-y-scroll overflow-x-hidden">
-              <div className="review w-full mb-3">
-                <article className="border border-gray-200 p-5 rounded-md">
-                  <div class="flex items-center mb-4">
-                    <img
-                      class="w-10 h-10 me-4 rounded-full"
-                      src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPnE_fy9lLMRP5DLYLnGN0LRLzZOiEpMrU4g&s"
-                      alt=""
-                    />
-                    <div class="font-medium text-black/80">
-                      <p>Jese Leos</p>
+              {proReview?.length !== 0
+                ? [...proReview].reverse().map((review) => (
+                    <div key={review._id} className="review w-full mb-3">
+                      <article className="border border-gray-200 p-5 rounded-md">
+                        <div class="flex items-center mb-4">
+                          <img
+                            class="w-10 h-10 me-4 rounded-full"
+                            src={review?.image}
+                            alt=""
+                          />
+                          <div class="font-medium text-black/80">
+                            <p>{review?.userName}</p>
+                          </div>
+                        </div>
+                        <div class="mb-3 text-sm text-gray-800">
+                          <p className="mb-2">
+                            <time datetime={review.createdAt}>
+                              {new Date(review.createdAt).toLocaleDateString(
+                                "en-US",
+                                {
+                                  year: "numeric",
+                                  month: "long",
+                                  day: "numeric",
+                                }
+                              )}
+                            </time>
+                          </p>
+                          <Rating
+                            name="size-small"
+                            value={Number(review?.rating)}
+                            readOnly
+                            precision={0.5}
+                            size="small"
+                          />
+                        </div>
+                        <p class="mb-2 text-gray-800">{review?.review}</p>
+                      </article>
                     </div>
-                  </div>
-                  <div class="mb-3 text-sm text-gray-800">
-                    <p className="mb-2">
-                      <time datetime="2017-03-03 19:00">March 3, 2017</time>
-                    </p>
-                    <Rating
-                      name="size-small"
-                      defaultValue={4}
-                      readOnly
-                      size="small"
-                    />
-                  </div>
-                  <p class="mb-2 text-gray-800">
-                    This is my third Invicta Pro Diver. They are just fantastic
-                    value for money. This one arrived yesterday and the first
-                    thing I did was set the time, popped on an identical strap
-                    from another Invicta and went in the shower with it to test
-                    the waterproofing.... No problems.
-                  </p>
-                </article>
-              </div>
-              <div className="review w-full mb-3">
-                <article className="border border-gray-200 p-5 rounded-md">
-                  <div class="flex items-center mb-4">
-                    <img
-                      class="w-10 h-10 me-4 rounded-full"
-                      src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPnE_fy9lLMRP5DLYLnGN0LRLzZOiEpMrU4g&s"
-                      alt=""
-                    />
-                    <div class="font-medium text-black/80">
-                      <p>Jese Leos</p>
-                    </div>
-                  </div>
-                  <div class="mb-3 text-sm text-gray-800">
-                    <p className="mb-2">
-                      <time datetime="2017-03-03 19:00">March 3, 2017</time>
-                    </p>
-                    <Rating
-                      name="size-small"
-                      defaultValue={4}
-                      readOnly
-                      size="small"
-                    />
-                  </div>
-                  <p class="mb-2 text-gray-800">
-                    This is my third Invicta Pro Diver. They are just fantastic
-                    value for money. This one arrived yesterday and the first
-                    thing I did was set the time, popped on an identical strap
-                    from another Invicta and went in the shower with it to test
-                    the waterproofing.... No problems.
-                  </p>
-                </article>
-              </div>
-              <div className="review w-full mb-3">
-                <article className="border border-gray-200 p-5 rounded-md">
-                  <div class="flex items-center mb-4">
-                    <img
-                      class="w-10 h-10 me-4 rounded-full"
-                      src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPnE_fy9lLMRP5DLYLnGN0LRLzZOiEpMrU4g&s"
-                      alt=""
-                    />
-                    <div class="font-medium text-black/80">
-                      <p>Jese Leos</p>
-                    </div>
-                  </div>
-                  <div class="mb-3 text-sm text-gray-800">
-                    <p className="mb-2">
-                      <time datetime="2017-03-03 19:00">March 3, 2017</time>
-                    </p>
-                    <Rating
-                      name="size-small"
-                      defaultValue={4}
-                      readOnly
-                      size="small"
-                    />
-                  </div>
-                  <p class="mb-2 text-gray-800">
-                    This is my third Invicta Pro Diver. They are just fantastic
-                    value for money. This one arrived yesterday and the first
-                    thing I did was set the time, popped on an identical strap
-                    from another Invicta and went in the shower with it to test
-                    the waterproofing.... No problems.
-                  </p>
-                </article>
-              </div>
-              <div className="review w-full mb-3">
-                <article className="border border-gray-200 p-5 rounded-md">
-                  <div class="flex items-center mb-4">
-                    <img
-                      class="w-10 h-10 me-4 rounded-full"
-                      src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPnE_fy9lLMRP5DLYLnGN0LRLzZOiEpMrU4g&s"
-                      alt=""
-                    />
-                    <div class="font-medium text-black/80">
-                      <p>Jese Leos</p>
-                    </div>
-                  </div>
-                  <div class="mb-3 text-sm text-gray-800">
-                    <p className="mb-2">
-                      <time datetime="2017-03-03 19:00">March 3, 2017</time>
-                    </p>
-                    <Rating
-                      name="size-small"
-                      defaultValue={4}
-                      readOnly
-                      size="small"
-                    />
-                  </div>
-                  <p class="mb-2 text-gray-800">
-                    This is my third Invicta Pro Diver. They are just fantastic
-                    value for money. This one arrived yesterday and the first
-                    thing I did was set the time, popped on an identical strap
-                    from another Invicta and went in the shower with it to test
-                    the waterproofing.... No problems.
-                  </p>
-                </article>
-              </div>
+                  ))
+                : "No Reviews "}
             </div>
           </div>
         </div>

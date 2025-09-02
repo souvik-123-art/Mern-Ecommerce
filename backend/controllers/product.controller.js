@@ -334,7 +334,6 @@ export const getAllProductsByThirdSubCatId = async (req, res) => {
 };
 export const getAllProductsBySubCatName = async (req, res) => {
   try {
-    console.log(req.query.subCatName);
     const page = parseInt(req.query.page) || 1;
     const perPage = parseInt(req.query.perPage) || 10;
     const totalPosts = await ProductModel.countDocuments();
@@ -343,8 +342,7 @@ export const getAllProductsBySubCatName = async (req, res) => {
       return res
         .status(404)
         .json({ message: "page not found", error: true, success: false });
-    }
-    console.log("subCatName from query: ", req.query.subCatName);
+    }  
     const products = await ProductModel.find({
       subCat: req.query.subCatName,
     })
@@ -376,7 +374,6 @@ export const getAllProductsBySubCatName = async (req, res) => {
 };
 export const getAllProductsByThirdSubCatName = async (req, res) => {
   try {
-    console.log(req.query.subCatName);
     const page = parseInt(req.query.page) || 1;
     const perPage = parseInt(req.query.perPage) || 10;
     const totalPosts = await ProductModel.countDocuments();
@@ -386,7 +383,6 @@ export const getAllProductsByThirdSubCatName = async (req, res) => {
         .status(404)
         .json({ message: "page not found", error: true, success: false });
     }
-    console.log("subCatName from query: ", req.query.subCatName);
     const products = await ProductModel.find({
       thirdSubCat: req.query.thirdSubCat,
     })

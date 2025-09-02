@@ -19,7 +19,7 @@ export default function ProductModal() {
   const [proData, setProData] = useState([]);
   const isOpen = useSelector((state) => state.proModal.productModalOpen.open);
   const id = useSelector((state) => state.proModal.productModalOpen.id);
-
+  const proReview = useSelector((state) => state.proData.proReview);
   useEffect(() => {
     if (isOpen) {
       fetchDataFromApi(`/api/product/get/${id}`).then((res) => {
@@ -80,9 +80,6 @@ export default function ProductModal() {
                 readOnly
                 size="small"
               />
-              <span className="text-xs text-gray-600">
-                ({proData?.reviews ? proData?.reviews : 0}) Reviews
-              </span>
             </div>
             <div className="flex flex-wrap items-center gap-4 mt-2">
               <span className="line-through text-gray-400 text-lg font-medium">
