@@ -80,12 +80,10 @@ const productSchema = mongoose.Schema(
     bannerImages: [
       {
         type: String,
-        reuired: true,
       },
     ],
     bannerTitleName: {
       type: String,
-      required: true,
     },
     isDisplayOnHomeBanner: {
       type: Boolean,

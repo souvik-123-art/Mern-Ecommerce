@@ -36,6 +36,7 @@ const Header = () => {
   const open = Boolean(anchorEl);
   const isLogin = useSelector((state) => state.auth.isLogin);
   const userDetails = useSelector((state) => state.UserDetails.userDetails);
+  const cartData = useSelector((state) => state.cartData.cartData);
   const previews = useSelector((state) => state.userImage.previews);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -58,7 +59,7 @@ const Header = () => {
       }
     });
   };
-  
+
   useEffect(() => {
     const userAvatar = [];
     if (userDetails?.avatar !== "" && userDetails?.avatar !== undefined) {
@@ -67,7 +68,7 @@ const Header = () => {
     }
   }, [userDetails]);
   return (
-    <header className="sticky -top-[125px] left-0 z-[999]">
+    <header className="sticky -top-[40px] left-0 z-[999]">
       <div className="top-strip py-2 bg-gray-900 text-white sticky">
         <div className="container mx-auto">
           <div className="flex items-center justify-between">
@@ -262,7 +263,7 @@ const Header = () => {
                   >
                     <BsCart3 />
                     <CartBadge
-                      badgeContent={2}
+                      badgeContent={cartData.length}
                       color="primary"
                       overlap="circular"
                     />

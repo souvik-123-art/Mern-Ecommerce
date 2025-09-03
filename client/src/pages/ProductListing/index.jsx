@@ -117,15 +117,17 @@ export const ProductListing = () => {
       </div>
       <div className="bg-white p-2 mt-4">
         <div className="container mx-auto flex gap-3 ">
-          <div className="sidebarWrapper w-[20%] h-full">
-            <Sidebar
-              productsData={productsData}
-              setProductsData={setProductsData}
-              isLoading={isLoading}
-              setIsLoading={setIsLoading}
-              page={page}
-              setTotalPages={setTotalPages}
-            />
+          <div className="sidebarWrapper w-[20%] relative">
+            <div className="sticky top-16 max-h-[calc(100vh-40px)] overflow-y-auto">
+              <Sidebar
+                productsData={productsData}
+                setProductsData={setProductsData}
+                isLoading={isLoading}
+                setIsLoading={setIsLoading}
+                page={page}
+                setTotalPages={setTotalPages}
+              />
+            </div>
           </div>
           <div className="rightCont w-[80%] border border-[#dadada] p-5 rounded-md">
             <div className="bg-[#f1f1f1] p-2 w-full mb-3 rounded-md flex items-center justify-between">
@@ -268,7 +270,7 @@ export const ProductListing = () => {
                   size="large"
                   count={totalPages}
                   page={page}
-                  onChange={(e) => setPage(e.target.value)}
+                  onChange={(event, value) => setPage(value)}
                 />
               </div>
             )}

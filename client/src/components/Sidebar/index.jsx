@@ -95,10 +95,21 @@ export const Sidebar = (props) => {
     filters.page = 1;
     filterData();
   }, [location]);
+  // useEffect(() => {
+  //   filters.page = props.page;
+  //   filterData();
+  // }, [filters, props.page]);
   useEffect(() => {
-    filters.page = props.page;
+    setFilters((prev) => ({
+      ...prev,
+      page: props.page,
+    }));
+  }, [props.page]);
+
+  // whenever filters change, fetch products
+  useEffect(() => {
     filterData();
-  }, [filters, props.page]);
+  }, [filters]);
   useEffect(() => {
     setFilters((prev) => ({
       ...prev,

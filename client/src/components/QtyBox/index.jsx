@@ -1,42 +1,46 @@
 import Button from "@mui/material/Button";
-import React, { useState } from "react";
+import React from "react";
 
-export const QtyBox = (props) => {
-  const [qtyVal, setQtyVal] = useState(1);
+export const QtyBox = ({ quantity, setQuantity, count, onUpdate }) => {
   const plusVal = () => {
-    setQtyVal(qtyVal + 1);
-  };
-  const minusVal = () => {
-    if (qtyVal > 1) {
-      setQtyVal(qtyVal - 1);
+    if (quantity < count) {
+      const newQty = quantity + 1;
+      setQuantity(newQty);
+      onUpdate(newQty); 
     }
   };
+
+  const minusVal = () => {
+    if (quantity > 1) {
+      const newQty = quantity - 1;
+      setQuantity(newQty);
+      onUpdate(newQty); 
+    }
+  };
+
   return (
     <div className="qtybox flex items-center gap-1">
       <Button
         onClick={minusVal}
-        disabled={qtyVal === 1 && true}
+        disabled={quantity === 1}
         className={`!w-[40px] !min-w-[40px] !rounded-full
                     !text-primary !bg-gray-200
-                   !h-[40px] !text-lg ${qtyVal === 1 && "opacity-40"}`}
+                   !h-[40px] !text-lg ${quantity === 1 && "opacity-40"}`}
       >
         -
       </Button>
       <input
-        className="outline-none w-14 text-center text-lg"
+        className="outline-none bg-transparent w-14 text-center text-lg"
         type="number"
-        onChange={(e) => setQtyVal(e.target.value)}
         readOnly
-        value={qtyVal}
+        value={quantity}
       />
       <Button
-        disabled={props?.count === qtyVal}
+        disabled={count === quantity}
         onClick={plusVal}
         className={`!w-[40px] !min-w-[40px] !rounded-full
                     !text-primary !bg-gray-200
-                   !h-[40px] !text-lg ${
-                     props?.count === qtyVal && "opacity-40"
-                   }`}
+                   !h-[40px] !text-lg ${count === quantity && "opacity-40"}`}
       >
         +
       </Button>

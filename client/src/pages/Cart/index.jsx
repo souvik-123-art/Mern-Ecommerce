@@ -3,7 +3,9 @@ import { Link } from "react-router-dom";
 import Button from "@mui/material/Button";
 import { MdOutlineShoppingBag } from "react-icons/md";
 import { CartItems } from "./CartItems";
+import { useSelector } from "react-redux";
 export const Cart = () => {
+  const cartData = useSelector((state) => state.cartData.cartData);
   return (
     <section className="py-10 pb-10">
       <div className="container mx-auto flex gap-5">
@@ -12,11 +14,15 @@ export const Cart = () => {
             <div className="py-2 px-3 text-center border-b border-gray-200">
               <h2 className="text-2xl font-bold text-black/70">Your Cart</h2>
               <p className="mt-2 text-lg mb-6 font-light">
-                There are <span className="font-bold text-primary">2 </span>
+                There are{" "}
+                <span className="font-bold text-primary">
+                  {cartData.length}{" "}
+                </span>
                 Products in your cart
               </p>
             </div>
-            <CartItems size={'S'} qty={1}/>
+            {cartData?.length !== 0 &&
+              cartData?.map((item, idx) => <CartItems key={item._id} size={"S"} qty={1} data={item} />)}
           </div>
         </div>
         <div className="rightPart w-[30%]">

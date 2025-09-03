@@ -36,6 +36,7 @@ import { setBannerV1, setLgBanners } from "./redux/Slices/HomeBannerSlice";
 import { setCatData } from "./redux/Slices/categoryDataSlice";
 import { setBlogData } from "./redux/Slices/blogSlice";
 import ScrollToTop from "./utils/windowScroll";
+import { setCartData } from "./redux/Slices/cartSlice";
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -79,7 +80,14 @@ function App() {
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
-  }, [dispatch]);
+    if (isLogin) {
+      fetchDataFromApi("/api/cart").then((response) => {
+        dispatch(setCartData(response?.data));
+      });
+    } else {
+      dispatch(setCartData([]));
+    }
+  }, [dispatch, isLogin]);
   return (
     <>
       <BrowserRouter>

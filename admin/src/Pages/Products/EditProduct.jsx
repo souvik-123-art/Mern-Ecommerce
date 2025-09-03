@@ -334,11 +334,11 @@ const EditProduct = () => {
       setIsLoading(false);
       return false;
     }
-    if (formFields.thirdSubCat === "") {
-      toast.error("please add third sub category name");
-      setIsLoading(false);
-      return false;
-    }
+    // if (formFields.thirdSubCat === "") {
+    //   toast.error("please add third sub category name");
+    //   setIsLoading(false);
+    //   return false;
+    // }
     if (formFields.price === "") {
       toast.error("please add product price");
       setIsLoading(false);

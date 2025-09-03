@@ -26,7 +26,7 @@ export const CartItems = (props) => {
   };
   const handleCloseQty = (qty) => {
     setAnchorElQty(null);
-    if (typeof qty === 'number') {
+    if (typeof qty === "number") {
       setSelectedQty(qty);
     }
   };
@@ -34,20 +34,23 @@ export const CartItems = (props) => {
     <div className="cartItem w-full p-3 flex border-b border-gray-200  gap-4">
       <div className="img w-[10%] rounded-md overflow-hidden">
         <Link to="/product-details/7845">
-          <img
-            src="https://serviceapi.spicezgold.com/download/1742462729829_zoom_1-1673275594.webp"
-            className="w-full"
-            alt=""
-          />
+          <img src={props?.data?.image} className="w-full" alt="" />
         </Link>
       </div>
       <div className="info w-[90%] relative">
-        <IoMdClose className="text-xl link transition" />
-        <span className="text-md font-semibold text-gray-400">Levis</span>
+        <IoMdClose className="text-xl link transition ml-auto" />
+        {/* <span className="text-md font-semibold text-gray-400">
+          {props?.data?.productTitle}
+        </span> */}
         <h3 className="font-semibold text-lg transition link">
-          <Link>A-Line Kurti With Sharara & Dupatta</Link>
+          <Link>{props?.data?.productTitle}</Link>
         </h3>
-        <Rating name="size-small" defaultValue={4} readOnly size="small" />
+        <Rating
+          name="size-small"
+          value={Number(props?.data?.rating)}
+          readOnly
+          size="small"
+        />
         <div className="flex items-center gap-4 mt-2">
           <div className="relative">
             <span

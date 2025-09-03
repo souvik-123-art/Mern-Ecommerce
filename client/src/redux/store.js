@@ -7,6 +7,7 @@ import userImageSlicereducer from "../redux/Slices/userImage";
 import fullScreenPanelSliceReducer from "../redux/Slices/fullScreenPanelSlice";
 import userAddressSlicereducer from "../redux/Slices/userAddressSlice";
 import catDataSliceReducer from "../redux/slices/categoryDataSlice";
+import cartDataSliceReducer from "../redux/slices/cartSlice";
 import homeBannerSliceReducer from "../redux/slices/HomeBannerSlice";
 import proDataSliceReducer from "../redux/slices/productsDataSlice";
 import blogSliceReducer from "../redux/slices/blogSlice";
@@ -19,6 +20,7 @@ export const store = configureStore({
     userImage: userImageSlicereducer,
     userAddress: userAddressSlicereducer,
     catData: catDataSliceReducer,
+    cartData: cartDataSliceReducer,
     fullScreenPanel: fullScreenPanelSliceReducer,
     homeBannerData: homeBannerSliceReducer,
     proData: proDataSliceReducer,

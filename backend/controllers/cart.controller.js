@@ -1,10 +1,33 @@
 import CartProductModel from "../models/cartProduct.model.js";
-import UserModel from "../models/user.model.js";
+// import UserModel from "../models/user.model.js";
 
 export const addToCartItemController = async (req, res) => {
   try {
     const userId = req.userId;
-    const { productId } = req.body;
+    const {
+      productId,
+      qty,
+      image,
+      productTitle,
+      brand,
+      rating,
+      countInStock,
+      price,
+      oldPrice,
+      discount,
+      size,
+      ram,
+      weight,
+      subtotal,
+    } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({
+        message: "you need to login first",
+        error: true,
+        success: false,
+      });
+    }
     if (!productId) {
       return res.status(402).json({
         message: "provide productId",
@@ -12,6 +35,7 @@ export const addToCartItemController = async (req, res) => {
         success: false,
       });
     }
+
     const checkItemCart = await CartProductModel.findOne({
       userId,
       productId,
@@ -22,19 +46,31 @@ export const addToCartItemController = async (req, res) => {
       });
     }
     const cartItem = new CartProductModel({
-      quantity: 1,
+      quantity: qty || 1,
       userId: userId,
       productId: productId,
+      image,
+      productTitle,
+      brand,
+      rating,
+      countInStock,
+      price,
+      oldPrice,
+      discount,
+      size,
+      ram,
+      weight,
+      subtotal,
     });
     const save = await cartItem.save();
-    const updateAddressUser = await UserModel.updateOne(
-      { _id: userId },
-      {
-        $push: {
-          shopping_cart: productId,
-        },
-      }
-    );
+    // const updateAddressUser = await UserModel.updateOne(
+    //   { _id: userId },
+    //   {
+    //     $push: {
+    //       shopping_cart: productId,
+    //     },
+    //   }
+    // );
     return res.status(200).json({
       data: save,
       message: "Item added successfully in your cart",
@@ -52,11 +88,11 @@ export const addToCartItemController = async (req, res) => {
 export const getCartItemController = async (req, res) => {
   try {
     const userId = req.userId;
-    const cartItem = await CartProductModel.find({
+    const cartItems = await CartProductModel.find({
       userId: userId,
-    }).populate("productId");
+    });
     return res.status(200).json({
-      data: cartItem,
+      data: cartItems,
       error: false,
       success: true,
     });
@@ -71,19 +107,21 @@ export const getCartItemController = async (req, res) => {
 export const updateCartItemController = async (req, res) => {
   try {
     const userId = req.userId;
-    const { _id, qty } = req.body;
-    if (!_id || !qty) {
+    const id = req.params.id;
+    const { qty, subtotal } = req.body;
+    if (!id) {
       return res.status(400).json({
-        message: "provide _id, qty",
+        message: "cart product not found",
       });
     }
     const updateCartItem = await CartProductModel.updateOne(
       {
-        _id: _id,
+        _id: id,
         userId: userId,
       },
       {
         quantity: qty,
+        subtotal,
       }
     );
     return res.json({
@@ -103,14 +141,14 @@ export const updateCartItemController = async (req, res) => {
 export const deleteCartItemController = async (req, res) => {
   try {
     const userId = req.userId;
-    const { _id, productId } = req.body;
-    if (!_id) {
+    const id = req.params.id;
+    if (!id) {
       return res.status(400).json({
         message: "provide _id",
       });
     }
     const deleteCartItem = await CartProductModel.deleteOne({
-      _id: _id,
+      _id: id,
       userId: userId,
     });
     if (!deleteCartItem) {
@@ -120,15 +158,18 @@ export const deleteCartItemController = async (req, res) => {
         success: false,
       });
     }
-    const user = await UserModel.findOne({
-      _id: userId
-    })
-    const cartItems = user?.shopping_cart
+    // const user = await UserModel.findOne({
+    //   _id: userId,
+    // });
+    // const cartItems = user?.shopping_cart;
 
-    const updatedUserCart = [...cartItems.slice(0, cartItems.indexOf(productId)), ...cartItems.slice(cartItems.indexOf(productId) + 1)]
-    user.shopping_cart = updatedUserCart
+    // const updatedUserCart = [
+    //   ...cartItems.slice(0, cartItems.indexOf(productId)),
+    //   ...cartItems.slice(cartItems.indexOf(productId) + 1),
+    // ];
+    // user.shopping_cart = updatedUserCart;
 
-    await user.save()
+    // await user.save();
     return res.json({
       message: "cart item deleted",
       error: false,

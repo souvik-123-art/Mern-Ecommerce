@@ -32,7 +32,6 @@ export const ProductDetails = () => {
   const relatedProds = relatedProduct.filter(
     (p) => p._id !== singleProData?._id
   );
-
   useEffect(() => {
     setIsLoading(true);
     fetchDataFromApi(`/api/product/get/${id}`).then((res) => {
@@ -213,7 +212,7 @@ export const ProductDetails = () => {
                 <QtyBox count={singleProData?.countInStock} />
               </div>
             </div>
-            <Button className="!px-4 !ml-1 !mb-6 !py-2 !bg-primary !text-white !transition hover:!bg-gray-900 flex items-center gap-1">
+            <Button onClick={cartSubmit} className="!px-4 !ml-1 !mb-6 !py-2 !bg-primary !text-white !transition hover:!bg-gray-900 flex items-center gap-1">
               <FaOpencart className="text-xl" /> Add To Cart
             </Button>
             <div className="flex items-center gap-4">
