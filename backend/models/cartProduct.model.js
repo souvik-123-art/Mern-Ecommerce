@@ -51,6 +51,9 @@ const cartProductSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: "User",
     },
+    productRam: [{ type: String, default: null }],
+    productSize: [{ type: String, default: null }],
+    productWeight: [{ type: String, default: null }],
   },
   { timestamps: true }
 );

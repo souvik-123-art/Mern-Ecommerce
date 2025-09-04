@@ -1,12 +1,20 @@
 import Button from "@mui/material/Button";
 import React from "react";
 
-export const QtyBox = ({ quantity, setQuantity, count, onUpdate }) => {
+export const QtyBox = ({
+  quantity,
+  setQuantity,
+  count,
+  onUpdate,
+  component,
+}) => {
   const plusVal = () => {
     if (quantity < count) {
       const newQty = quantity + 1;
       setQuantity(newQty);
-      onUpdate(newQty); 
+      if (component === "proItem") {
+        onUpdate(newQty);
+      }
     }
   };
 
@@ -14,7 +22,9 @@ export const QtyBox = ({ quantity, setQuantity, count, onUpdate }) => {
     if (quantity > 1) {
       const newQty = quantity - 1;
       setQuantity(newQty);
-      onUpdate(newQty); 
+      if (component === "proItem") {
+        onUpdate(newQty);
+      }
     }
   };
 

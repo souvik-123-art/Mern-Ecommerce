@@ -19,6 +19,9 @@ export const addToCartItemController = async (req, res) => {
       ram,
       weight,
       subtotal,
+      productRam,
+      productSize,
+      productWeight,
     } = req.body;
 
     if (!userId) {
@@ -61,6 +64,9 @@ export const addToCartItemController = async (req, res) => {
       ram,
       weight,
       subtotal,
+      productRam,
+      productSize,
+      productWeight,
     });
     const save = await cartItem.save();
     // const updateAddressUser = await UserModel.updateOne(
@@ -108,7 +114,7 @@ export const updateCartItemController = async (req, res) => {
   try {
     const userId = req.userId;
     const id = req.params.id;
-    const { qty, subtotal } = req.body;
+    const { qty, size, ram, weight, subtotal } = req.body;
     if (!id) {
       return res.status(400).json({
         message: "cart product not found",
@@ -121,6 +127,9 @@ export const updateCartItemController = async (req, res) => {
       },
       {
         quantity: qty,
+        size,
+        ram,
+        weight,
         subtotal,
       }
     );

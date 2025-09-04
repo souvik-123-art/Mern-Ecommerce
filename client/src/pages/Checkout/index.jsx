@@ -203,7 +203,7 @@ export const Checkout = () => {
             <hr className="my-4" />
             <Link className="block w-full" to="/cart">
               <Button className="!px-4 !w-full !py-2 !bg-primary !text-white !transition hover:!bg-gray-900 flex items-center gap-1">
-                <BsFillBagCheckFill className="text-lg" /> Checkout
+                <BsFillBagCheckFill className="text-lg" /> Place Order
               </Button>
             </Link>
           </div>

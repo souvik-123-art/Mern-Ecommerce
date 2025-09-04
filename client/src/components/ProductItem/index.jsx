@@ -12,10 +12,13 @@ import { editData, fetchDataFromApi, postData } from "../../utils/api";
 import toast from "react-hot-toast";
 import { setCartData } from "../../redux/Slices/cartSlice";
 import { QtyBox } from "../QtyBox";
+import { IoMdClose } from "react-icons/io";
 export const ProductItem = (props) => {
   const [quantity, setQuantity] = useState(1);
   const [isAddedToCart, setIsAddedToCart] = useState(false);
-  const [productActionIndex, setProductActionIndex] = useState(null);
+  const [sizeIndex, setSizeIndex] = useState(null);
+  const [ramIndex, setRamIndex] = useState(null);
+  const [weightIndex, setWeightIndex] = useState(null);
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedRam, setSelectedRam] = useState("");
   const [selectedWeight, setSelectedWeight] = useState("");
@@ -24,21 +27,6 @@ export const ProductItem = (props) => {
   const cartData = useSelector((state) => state.cartData.cartData);
   const [isShowTabs, setIsShowTabs] = useState(false);
   const dispatch = useDispatch();
-  useEffect(() => {
-    const added = cartData.find((p) => p.productId === props?.data?._id);
-    if (added) {
-      setIsAddedToCart(true);
-      setCartItem(added);
-      setQuantity(added.quantity);
-    } else {
-      setIsAddedToCart(false);
-      setCartItem(null);
-      setQuantity(1);
-      setSelectedSize("");
-      setSelectedRam("");
-      setSelectedWeight("");
-    }
-  }, [cartData]);
 
   const addToCart = (pro, qty) => {
     if (!isLogin) {
@@ -72,6 +60,9 @@ export const ProductItem = (props) => {
       size: selectedSize,
       ram: selectedRam,
       weight: selectedWeight,
+      productRam: pro?.productRam,
+      productSize: pro?.size,
+      productWeight: pro?.productWeight,
     };
 
     postData("/api/cart/add", data, { credentials: true }).then((res) => {
@@ -84,7 +75,9 @@ export const ProductItem = (props) => {
 
           // reset states
           setIsShowTabs(false);
-          setProductActionIndex(null);
+          setSizeIndex(null);
+          setRamIndex(null);
+          setWeightIndex(null);
           setSelectedSize("");
           setSelectedRam("");
           setSelectedWeight("");
@@ -97,7 +90,21 @@ export const ProductItem = (props) => {
       }
     });
   };
-
+  useEffect(() => {
+    const added = cartData.find((p) => p.productId === props?.data?._id);
+    if (added) {
+      setIsAddedToCart(true);
+      setCartItem(added);
+      setQuantity(added.quantity);
+    } else {
+      setIsAddedToCart(false);
+      setCartItem(null);
+      setQuantity(1);
+      setSelectedSize("");
+      setSelectedRam("");
+      setSelectedWeight("");
+    }
+  }, [cartData]);
   return (
     <div className="productItem rounded-xl overflow-hidden border">
       <div className="imgWrapper group relative w-full overflow-hidden">
@@ -113,24 +120,28 @@ export const ProductItem = (props) => {
         </Link>
         {isShowTabs && (
           <div className="flex items-center justify-center absolute top-0 left-0 w-full h-full bg-[rgba(0,0,0,0.7)] z-[60] p-3 gap-2">
-            {props?.data?.size?.length !== 0 && (
-              <div className="flex items-center gap-3 mt-5">
+            {props?.data?.size?.length > 0 && (
+              <div className="flex items-center flex-col justify-center gap-3 mt-5">
+                <IoMdClose
+                  onClick={() => setIsShowTabs(false)}
+                  className="ml-auto text-lg text-white link transition"
+                />
                 <div className="flex gap-2">
                   {props?.data?.size?.map((size, idx) => (
                     <Button
                       key={size}
                       onClick={() => {
-                        productActionIndex === idx
-                          ? setProductActionIndex(null)
-                          : setProductActionIndex(idx);
-
-                        setSelectedSize(size);
+                        sizeIndex === idx
+                          ? setSizeIndex(null)
+                          : setSizeIndex(idx);
+                        sizeIndex !== idx
+                          ? setSelectedSize(size)
+                          : setSelectedSize("");
                       }}
-                      onDoubleClickCapture={() => setProductActionIndex(null)}
                       className={`!w-10 !min-w-10 !h-10 !rounded-full text-lg ${
-                        productActionIndex === idx
+                        sizeIndex === idx
                           ? "!bg-primary !text-white"
-                          : "!text-gray-700 !bg-white/80"
+                          : "!text-gray-700 !bg-white"
                       }`}
                     >
                       {size}
@@ -139,23 +150,27 @@ export const ProductItem = (props) => {
                 </div>
               </div>
             )}
-            {props?.data?.productRam?.length !== 0 && (
-              <div className="flex items-center gap-3 mt-5">
+
+            {props?.data?.productRam?.length > 0 && (
+              <div className="flex items-center flex-col justify-center gap-3 mt-5">
+                <IoMdClose
+                  onClick={() => setIsShowTabs(false)}
+                  className="ml-auto text-lg text-white link transition"
+                />
                 <div className="flex gap-2">
                   {props?.data?.productRam?.map((ram, idx) => (
                     <Button
                       key={ram}
                       onClick={() => {
-                        productActionIndex === idx
-                          ? setProductActionIndex(null)
-                          : setProductActionIndex(idx);
-
-                        setSelectedRam(ram);
+                        ramIndex === idx ? setRamIndex(null) : setRamIndex(idx);
+                        ramIndex !== idx
+                          ? setSelectedRam(ram)
+                          : setSelectedRam("");
                       }}
                       className={`!w-10 !min-w-10 !h-10 !rounded-full text-lg ${
-                        productActionIndex === idx
+                        ramIndex === idx
                           ? "!bg-primary !text-white"
-                          : "!text-gray-700 !bg-white/80"
+                          : "!text-gray-700 !bg-white"
                       }`}
                     >
                       {ram}
@@ -164,23 +179,29 @@ export const ProductItem = (props) => {
                 </div>
               </div>
             )}
-            {props?.data?.productWeight?.length !== 0 && (
-              <div className="flex items-center gap-3 mt-5">
+
+            {props?.data?.productWeight?.length > 0 && (
+              <div className="flex items-center flex-col justify-center gap-3 mt-5">
+                <IoMdClose
+                  onClick={() => setIsShowTabs(false)}
+                  className="ml-auto text-lg text-white link transition"
+                />
                 <div className="flex gap-2">
                   {props?.data?.productWeight?.map((wgt, idx) => (
                     <Button
                       key={wgt}
                       onClick={() => {
-                        productActionIndex === idx
-                          ? setProductActionIndex(null)
-                          : setProductActionIndex(idx);
-
-                        setSelectedWeight(wgt);
+                        weightIndex === idx
+                          ? setWeightIndex(null)
+                          : setWeightIndex(idx);
+                        weightIndex !== idx
+                          ? setSelectedWeight(wgt)
+                          : setSelectedWeight("");
                       }}
                       className={`!w-10 !min-w-10 !h-10 !rounded-full text-lg ${
-                        productActionIndex === idx
+                        weightIndex === idx
                           ? "!bg-primary !text-white"
-                          : "!text-gray-700 !bg-white/80"
+                          : "!text-gray-700 !bg-white"
                       }`}
                     >
                       {wgt}
@@ -255,6 +276,7 @@ export const ProductItem = (props) => {
               quantity={quantity}
               setQuantity={setQuantity}
               count={props?.data?.countInStock}
+              component={"proItem"}
               onUpdate={(newQty) => {
                 editData(`/api/cart/update-cart/${cartItem?._id}`, {
                   qty: newQty,

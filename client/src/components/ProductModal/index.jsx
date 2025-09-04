@@ -11,15 +11,111 @@ import DialogContent from "@mui/material/DialogContent";
 import { useSelector, useDispatch } from "react-redux";
 import { productModal } from "../../redux/Slices/productModalSlice";
 import { IoMdClose } from "react-icons/io";
-import { fetchDataFromApi } from "../../utils/api";
+import { deleteData, fetchDataFromApi, postData } from "../../utils/api";
 import { setProData } from "../../redux/Slices/productsDataSlice";
+import { setCartData } from "../../redux/Slices/cartSlice";
+import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
+import { BsBag } from "react-icons/bs";
+import { MdDeleteOutline } from "react-icons/md";
 export default function ProductModal() {
-  const [productActionIndex, setProductActionIndex] = useState(null);
   const dispatch = useDispatch();
+  const cartData = useSelector((state) => state.cartData.cartData);
+  const isLogin = useSelector((state) => state.auth.isLogin);
+  const [sizeIndex, setSizeIndex] = useState(null);
+  const [ramIndex, setRamIndex] = useState(null);
+  const [weightIndex, setWeightIndex] = useState(null);
+  const [activeTab, setActiveTab] = useState(1);
+  const [isAddedToCart, setIsAddedToCart] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedSize, setSelectedSize] = useState("");
+  const [selectedRam, setSelectedRam] = useState("");
+  const [selectedWeight, setSelectedWeight] = useState("");
+  const [quantity, setQuantity] = useState(1);
+  const [relatedProduct, setRelatedProduct] = useState([]);
   const [proData, setProData] = useState([]);
   const isOpen = useSelector((state) => state.proModal.productModalOpen.open);
   const id = useSelector((state) => state.proModal.productModalOpen.id);
   const proReview = useSelector((state) => state.proData.proReview);
+
+  const addToCart = (pro, qty) => {
+    if (!isLogin) {
+      toast.error("you need to login first");
+      return;
+    }
+    if (pro.size.length && !selectedSize) {
+      toast.error("you need to select size first");
+      return;
+    }
+    if (pro.productRam.length && !selectedRam) {
+      toast.error("you need to select ram first");
+      return;
+    }
+    if (pro.productWeight.length && !selectedWeight) {
+      toast.error("you need to select weight first");
+      return;
+    }
+    const data = {
+      productTitle: pro?.name,
+      image: pro?.images[0],
+      rating: pro?.rating,
+      countInStock: pro?.countInStock,
+      price: pro?.price,
+      oldPrice: pro?.oldPrice,
+      qty: qty,
+      subtotal: parseInt(pro?.price) * qty,
+      productId: pro?._id,
+      brand: pro?.brand,
+      discount: pro?.discount,
+      size: selectedSize,
+      ram: selectedRam,
+      weight: selectedWeight,
+      productRam: pro?.productRam,
+      productSize: pro?.size,
+      productWeight: pro?.productWeight,
+    };
+
+    postData("/api/cart/add", data, { credentials: true }).then((res) => {
+      try {
+        if (!res?.error) {
+          toast.success(res?.message);
+          fetchDataFromApi("/api/cart").then((response) => {
+            dispatch(setCartData(response?.data));
+          });
+          setSizeIndex(null);
+          setRamIndex(null);
+          setWeightIndex(null);
+          setSelectedSize("");
+          setSelectedRam("");
+          setSelectedWeight("");
+          setQuantity(1);
+        } else {
+          toast.error(res?.message);
+        }
+      } catch (error) {
+        toast.error(error.message);
+      }
+    });
+  };
+
+  const deleteCartItem = () => {
+    const added = cartData.find((p) => p.productId === proData._id);
+
+    deleteData(`/api/cart/delete-cart-item/${added._id}`).then((res) => {
+      try {
+        if (!res?.error) {
+          toast.success(res?.data?.message);
+          fetchDataFromApi("/api/cart").then((response) => {
+            dispatch(setCartData(response?.data));
+          });
+        } else {
+          toast.error(res?.data?.message);
+        }
+      } catch (error) {
+        toast.error(error.message);
+      }
+    });
+  };
   useEffect(() => {
     if (isOpen) {
       fetchDataFromApi(`/api/product/get/${id}`).then((res) => {
@@ -27,6 +123,17 @@ export default function ProductModal() {
       });
     }
   }, [isOpen, id]);
+  useEffect(() => {
+    fetchDataFromApi("/api/cart").then((response) => {
+      dispatch(setCartData(response?.data));
+    });
+    const added = cartData.find((p) => p.productId === proData?._id);
+    if (added) {
+      setIsAddedToCart(true);
+    } else {
+      setIsAddedToCart(false);
+    }
+  }, [cartData]);
   return (
     <Dialog
       open={isOpen}
@@ -53,7 +160,9 @@ export default function ProductModal() {
                 id: "",
               })
             );
-            setProductActionIndex(null);
+            setSizeIndex(null);
+            setRamIndex(null);
+            setWeightIndex(null);
           }}
         >
           <IoMdClose />
@@ -99,21 +208,24 @@ export default function ProductModal() {
             <p className="mt-4 text-sm text-gray-600 leading-relaxed">
               {proData?.description}
             </p>
-            {proData?.size?.length !== 0 && (
+            {proData?.size?.length > 0 && (
               <div className="flex items-center gap-3 mt-5">
                 <span className="text-sm font-medium">Size:</span>
                 <div className="flex gap-2">
                   {proData?.size?.map((size, idx) => (
                     <Button
+                      disabled={isAddedToCart}
                       key={size}
-                      onClick={() =>
-                        productActionIndex === idx
-                          ? setProductActionIndex(null)
-                          : setProductActionIndex(idx)
-                      }
-                      onDoubleClickCapture={() => setProductActionIndex(null)}
+                      onClick={() => {
+                        sizeIndex === idx
+                          ? setSizeIndex(null)
+                          : setSizeIndex(idx);
+                        sizeIndex !== idx
+                          ? setSelectedSize(size)
+                          : setSelectedSize("");
+                      }}
                       className={`!w-10 !min-w-10 !h-10 !rounded-full text-lg ${
-                        productActionIndex === idx
+                        sizeIndex === idx
                           ? "!bg-primary !text-white"
                           : "!text-gray-700"
                       }`}
@@ -124,20 +236,23 @@ export default function ProductModal() {
                 </div>
               </div>
             )}
-            {proData?.productRam?.length !== 0 && (
+
+            {proData?.productRam?.length > 0 && (
               <div className="flex items-center gap-3 mt-5">
                 <span className="text-sm font-medium">Ram:</span>
                 <div className="flex gap-2">
                   {proData?.productRam?.map((ram, idx) => (
                     <Button
+                      disabled={isAddedToCart}
                       key={ram}
-                      onClick={() =>
-                        productActionIndex === idx
-                          ? setProductActionIndex(null)
-                          : setProductActionIndex(idx)
-                      }
+                      onClick={() => {
+                        ramIndex === idx ? setRamIndex(null) : setRamIndex(idx);
+                        ramIndex !== idx
+                          ? setSelectedRam(ram)
+                          : setSelectedRam("");
+                      }}
                       className={`!w-10 !min-w-10 !h-10 !rounded-full text-lg ${
-                        productActionIndex === idx
+                        ramIndex === idx
                           ? "!bg-primary !text-white"
                           : "!text-gray-700"
                       }`}
@@ -148,20 +263,25 @@ export default function ProductModal() {
                 </div>
               </div>
             )}
-            {proData?.productWeight?.length !== 0 && (
+
+            {proData?.productWeight?.length > 0 && (
               <div className="flex items-center gap-3 mt-5">
                 <span className="text-sm font-medium">Weight:</span>
                 <div className="flex gap-2">
                   {proData?.productWeight?.map((wgt, idx) => (
                     <Button
                       key={wgt}
-                      onClick={() =>
-                        productActionIndex === idx
-                          ? setProductActionIndex(null)
-                          : setProductActionIndex(idx)
-                      }
+                      disabled={isAddedToCart}
+                      onClick={() => {
+                        weightIndex === idx
+                          ? setWeightIndex(null)
+                          : setWeightIndex(idx);
+                        weightIndex !== idx
+                          ? setSelectedWeight(wgt)
+                          : setSelectedWeight("");
+                      }}
                       className={`!w-10 !min-w-10 !h-10 !rounded-full text-lg ${
-                        productActionIndex === idx
+                        weightIndex === idx
                           ? "!bg-primary !text-white"
                           : "!text-gray-700"
                       }`}
@@ -178,10 +298,45 @@ export default function ProductModal() {
             </p>
 
             <div className="flex items-center mt-2 mb-6 gap-4 flex-wrap">
-              <QtyBox />
-              <Button className="!px-6 !py-2 !bg-primary !text-white hover:!bg-gray-900 transition-all flex items-center gap-2">
-                <FaOpencart className="text-xl" /> Add To Cart
-              </Button>
+              <QtyBox
+                count={proData?.countInStock}
+                quantity={quantity}
+                setQuantity={setQuantity}
+                component={"proDetails"}
+              />
+              {isAddedToCart ? (
+                <div className="flex items-center gap-4 mt-5">
+                  <Link to={"/cart"}>
+                    <Button
+                      onClick={() => {
+                        dispatch(
+                          productModal({
+                            open: false,
+                            id: "",
+                          })
+                        );
+                      }}
+                      className="!px-4 !ml-1 !mb-6 !py-2 !bg-green-500 !text-white !transition hover:!bg-gray-900 flex items-center gap-1"
+                    >
+                      <BsBag className="text-xl" /> View In Cart
+                    </Button>
+                  </Link>
+
+                  <Button
+                    onClick={deleteCartItem}
+                    className="!px-4 !ml-1 !mb-6 !py-2 !bg-red-500 !text-white !transition hover:!opacity-80 flex items-center gap-1"
+                  >
+                    <MdDeleteOutline className="text-xl" /> Remove From Cart
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  onClick={() => addToCart(proData, quantity)}
+                  className="!px-4 !mt-5 !ml-1 !mb-6 !py-2 !bg-primary !text-white !transition hover:!bg-gray-900 flex items-center gap-1"
+                >
+                  <FaOpencart className="text-xl" /> Add To Cart
+                </Button>
+              )}
             </div>
             <div className="flex flex-wrap items-center gap-6 text-sm text-gray-600">
               <span className="flex items-center gap-2 cursor-pointer hover:text-primary transition">
