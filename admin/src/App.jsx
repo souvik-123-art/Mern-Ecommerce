@@ -33,6 +33,7 @@ import AddSize from "./Pages/Products/addSize.jsx";
 import AddWeight from "./Pages/Products/addWeight.jsx";
 import { setCatData } from "./redux/slices/categoryDataSlice.js";
 import BlogList from "./Pages/Blog/index.jsx";
+import { setOrderData, setOrdersCount } from "./redux/slices/orderSlice.js";
 function App() {
   const isLogin = useSelector((state) => state.auth.isLogin);
   const dispatch = useDispatch();
@@ -56,6 +57,12 @@ function App() {
   useEffect(() => {
     fetchDataFromApi("/api/category").then((res) => {
       dispatch(setCatData(res?.data));
+    });
+  }, []);
+  useEffect(() => {
+    fetchDataFromApi("/api/order/orderList").then((res) => {
+      dispatch(setOrderData(res?.data));
+      dispatch(setOrdersCount(res?.totalOrder));
     });
   }, []);
   const router = createBrowserRouter([

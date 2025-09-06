@@ -22,6 +22,7 @@ import { IoLogOut } from "react-icons/io5";
 import { fetchDataFromApi } from "../../utils/api";
 import { setIsLogin } from "../../redux/Slices/authSlice";
 import { setPreviews } from "../../redux/Slices/userImage";
+import toast from "react-hot-toast";
 const CartBadge = styled(Badge)`
   & .${badgeClasses.badge} {
     top: -12px;
@@ -37,6 +38,7 @@ const Header = () => {
   const isLogin = useSelector((state) => state.auth.isLogin);
   const userDetails = useSelector((state) => state.UserDetails.userDetails);
   const cartData = useSelector((state) => state.cartData.cartData);
+  const myListData = useSelector((state) => state.myListData.myListData);
   const previews = useSelector((state) => state.userImage.previews);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -231,7 +233,7 @@ const Header = () => {
                   </Link>
                 </li>
               )}
-              <li>
+              {/* <li>
                 <Tooltip title="Compare">
                   <IconButton className="!text-white hover:!text-primary">
                     <GoGitCompare />
@@ -242,13 +244,20 @@ const Header = () => {
                     />
                   </IconButton>
                 </Tooltip>
-              </li>
+              </li> */}
               <li>
                 <Tooltip title="Wishlist">
-                  <IconButton className="!text-white hover:!text-primary">
+                  <IconButton
+                    onClick={() => {
+                      !isLogin
+                        ? toast.error("you need to login first")
+                        : navigate("/my-list");
+                    }}
+                    className="!text-white hover:!text-primary"
+                  >
                     <FaRegHeart />
                     <CartBadge
-                      badgeContent={2}
+                      badgeContent={myListData?.length}
                       color="primary"
                       overlap="circular"
                     />

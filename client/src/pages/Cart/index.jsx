@@ -1,11 +1,19 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import { MdOutlineShoppingBag } from "react-icons/md";
 import { CartItems } from "./CartItems";
 import { useSelector } from "react-redux";
 export const Cart = () => {
   const cartData = useSelector((state) => state.cartData.cartData);
+  const navigate = useNavigate();
+  const userDetails = useSelector((state) => state.UserDetails.userDetails);
+   useEffect(() => {
+      const token = localStorage.getItem("accesstoken");
+      if (token === undefined || token === null || token === "") {
+        navigate("/");
+      }
+    }, [userDetails]);
   return (
     <section className="py-10 pb-10">
       <div className="container mx-auto flex gap-5">
@@ -90,7 +98,7 @@ export const Cart = () => {
                 })}
               </span>
             </div>
-            <Link className="block w-full" to="/cart">
+            <Link className="block w-full" to="/checkout">
               <Button className="!px-4 !w-full !py-2 !bg-primary !text-white !transition hover:!bg-gray-900 flex items-center gap-1">
                 <MdOutlineShoppingBag className="text-xl" /> Checkout
               </Button>

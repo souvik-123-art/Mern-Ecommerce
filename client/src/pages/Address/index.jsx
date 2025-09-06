@@ -6,15 +6,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { deleteData, fetchDataFromApi } from "../../utils/api";
 import toast from "react-hot-toast";
 import { setAddress } from "../../redux/slices/userAddressSlice";
-import { IoMdClose } from "react-icons/io";
+import { HiBuildingOffice } from "react-icons/hi2";
+
+import { IoIosCall, IoMdClose, IoMdHome } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 const Address = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const address = useSelector((state) => state.userAddress.address);
-  useEffect(() => {
-    fetchDataFromApi("/api/address").then((res) => {
-      dispatch(setAddress(res?.data));
-    });
-  }, []);
+  const userDetails = useSelector((state) => state.UserDetails.userDetails);
   const removeAddress = (id) => {
     deleteData(`/api/address/delete/${id}`, {
       withCredentials: true,
@@ -33,6 +33,12 @@ const Address = () => {
       }
     });
   };
+  useEffect(() => {
+    const token = localStorage.getItem("accesstoken");
+    if (token === undefined || token === null || token === "") {
+      navigate("/");
+    }
+  }, [userDetails]);
   return (
     <section className="myAccountSec py-10 w-full">
       <div className="container mx-auto flex gap-5">
@@ -66,17 +72,29 @@ const Address = () => {
             {address.map((add) => (
               <label
                 key={add._id}
-                className="address w-full flex text-gray-600 items-center justify-center cursor-pointer bg-[#f1f1f1] p-3 rounded-md mb-2 relative"
+                className="address w-full flex flex-col text-gray-600 border-dashed border-gray-300  gap-4 cursor-pointer bg-[#f1f1f1] p-3 rounded-md mb-2 relative"
               >
-                {/* <Radio
-                            checked={selectedValue === add._id}
-                            onChange={handleChangeAddress}
-                            value={add._id}
-                            {...label}
-                            size="small"
-                          /> */}
+                {add.addressType === "Home" ? (
+                  <span className="p-2 self-start flex items-center text-sm gap-2 bg-gray-600 text-white rounded-md">
+                    <IoMdHome className="text-white" /> {add.addressType}
+                  </span>
+                ) : (
+                  <span className="p-2 self-start flex items-center text-sm gap-2 bg-gray-600 text-white rounded-md">
+                    <HiBuildingOffice className="text-white" />{" "}
+                    {add.addressType}
+                  </span>
+                )}
+
+                <span className="text-xl font-semibold text-black/80 flex flex-col gap-4">
+                  <span>{userDetails?.name}</span>
+                  <span className="text-sm flex items-start gap-1">
+                    <IoIosCall className="text-lg" />
+                    <span>+{add?.mobile}</span>
+                  </span>
+                </span>
                 <span>
-                  {add.address_line}, {add.city}, {add.state}, {add.country},
+                  {add.address_line}, {add.city},{" "}
+                  {add?.landmark && add?.landmark} {add.state}, {add.country},
                   {add.pincode}
                 </span>
                 <IoMdClose

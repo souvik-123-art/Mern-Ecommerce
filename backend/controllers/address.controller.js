@@ -11,6 +11,8 @@ export const addAddressController = async (req, res) => {
       country,
       mobile,
       status,
+      landmark,
+      addressType,
       selected,
     } = req.body;
     const userId = req.userId;
@@ -29,8 +31,8 @@ export const addAddressController = async (req, res) => {
       pincode,
       country,
       mobile,
-      status,
-      selected,
+      landmark,
+      addressType,
       userId,
     });
     const saveAddress = await address.save();
@@ -126,4 +128,3 @@ export const deleteAddressController = async (req, res) => {
     });
   }
 };
-

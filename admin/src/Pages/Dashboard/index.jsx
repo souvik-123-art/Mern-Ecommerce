@@ -45,6 +45,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { setUsers } from "../../redux/slices/userDetailsSlice";
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
 const columns = [
   { id: "product", label: "PRODUCT", minWidth: 150 },
@@ -87,6 +88,10 @@ export const Dashboard = () => {
   const [selectedCatObject, setSelectedCatObject] = useState(null);
   const [selectedSubCatObject, setSelectedSubCatObject] = useState(null);
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [orderCount, setOrderCount] = useState(null);
+  const [proCount, setProCount] = useState(null);
+  const [usersCount, setUsersCount] = useState(null);
   // Helper function to initialize product data with 'checked' property
   const initializeProductsWithChecked = (products) => {
     return (
@@ -389,12 +394,14 @@ export const Dashboard = () => {
     Promise.all([
       fetchDataFromApi("/api/product"),
       fetchDataFromApi("/api/category"),
+      fetchDataFromApi("/api/user/users"),
     ])
-      .then(([productsRes, categoriesRes]) => {
+      .then(([productsRes, categoriesRes, usersRes]) => {
         if (!productsRes?.error) {
           dispatch(
             setProData(initializeProductsWithChecked(productsRes?.data))
           );
+          setProCount(productsRes?.totalPosts);
         } else {
           toast.error("Failed to fetch initial products.");
         }
@@ -402,6 +409,15 @@ export const Dashboard = () => {
           dispatch(setCatData(categoriesRes?.data));
         } else {
           toast.error("Failed to fetch categories.");
+        }
+        if (!usersRes?.error) {
+          const filterdUsers = usersRes?.data?.filter(
+            (user) => user?.role === "USER"
+          );
+          dispatch(setUsers(filterdUsers));
+          setUsersCount(filterdUsers?.length || []);
+        } else {
+          toast.error("Failed to fetch users.");
         }
       })
       .catch((error) => {
@@ -440,10 +456,13 @@ export const Dashboard = () => {
         </div>
         <img src="/shop-illustration.png" className="w-[350px]" alt="" />
       </div>
-      <DashboardBoxes />
+      <DashboardBoxes usersCount={usersCount} proCount={proCount} />
       <div className="card my-4 mt-5 shadow-md sm:rounded-lg bg-white overflow-hidden">
         <div className="flex items-center justify-between p-5">
           <h2 className="text-xl font-bold">Recent Orders</h2>
+          <div className="w-[40%]">
+            <SearchBox />
+          </div>
         </div>
         <div className="relative overflow-x-auto mt-1 pb-5">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500">

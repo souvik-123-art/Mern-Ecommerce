@@ -8,14 +8,23 @@ import { GoGitCompare } from "react-icons/go";
 import { MdZoomOutMap } from "react-icons/md";
 import { productModal } from "../../redux/Slices/productModalSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { editData, fetchDataFromApi, postData } from "../../utils/api";
+import {
+  deleteData,
+  editData,
+  fetchDataFromApi,
+  postData,
+} from "../../utils/api";
 import toast from "react-hot-toast";
 import { setCartData } from "../../redux/Slices/cartSlice";
 import { QtyBox } from "../QtyBox";
 import { IoMdClose } from "react-icons/io";
+import { setMyListData } from "../../redux/Slices/myListSlice";
+import { FaHeart } from "react-icons/fa";
+
 export const ProductItem = (props) => {
   const [quantity, setQuantity] = useState(1);
   const [isAddedToCart, setIsAddedToCart] = useState(false);
+  const [isAddedToList, setIsAddedToList] = useState(false);
   const [sizeIndex, setSizeIndex] = useState(null);
   const [ramIndex, setRamIndex] = useState(null);
   const [weightIndex, setWeightIndex] = useState(null);
@@ -23,8 +32,10 @@ export const ProductItem = (props) => {
   const [selectedRam, setSelectedRam] = useState("");
   const [selectedWeight, setSelectedWeight] = useState("");
   const [cartItem, setCartItem] = useState(null);
+  const [listItem, setListItem] = useState(null);
   const isLogin = useSelector((state) => state.auth.isLogin);
   const cartData = useSelector((state) => state.cartData.cartData);
+  const myListData = useSelector((state) => state.myListData.myListData);
   const [isShowTabs, setIsShowTabs] = useState(false);
   const dispatch = useDispatch();
 
@@ -90,6 +101,58 @@ export const ProductItem = (props) => {
       }
     });
   };
+
+  const handleAddToMyList = (pro) => {
+    if (!isLogin) {
+      toast.error("you need to login first");
+      return;
+    }
+
+    const data = {
+      productTitle: pro?.name,
+      image: pro?.images[0],
+      rating: pro?.rating,
+      price: pro?.price,
+      oldPrice: pro?.oldPrice,
+      brand: pro?.brand,
+      discount: pro?.discount,
+      productId: pro?._id,
+    };
+
+    postData("/api/myList/add", data, { credentials: true }).then((res) => {
+      if (!res?.error) {
+        toast.success(res?.message);
+        fetchDataFromApi("/api/myList").then((response) => {
+          if (!response?.error) {
+            dispatch(setMyListData(response?.data));
+          }
+        });
+      } else {
+        toast.error(res?.message);
+      }
+    });
+  };
+  const handleRemoveToMyList = () => {
+    if (!isLogin) {
+      toast.error("you need to login first");
+      return;
+    }
+
+    deleteData(`/api/myList/${listItem._id}`, {
+      credentials: true,
+    }).then((res) => {
+      if (!res?.error) {
+        toast.success(res?.data?.message);
+        fetchDataFromApi("/api/myList").then((response) => {
+          if (!response?.error) {
+            dispatch(setMyListData(response?.data));
+          }
+        });
+      } else {
+        toast.error(res?.data?.message);
+      }
+    });
+  };
   useEffect(() => {
     const added = cartData.find((p) => p.productId === props?.data?._id);
     if (added) {
@@ -105,6 +168,16 @@ export const ProductItem = (props) => {
       setSelectedWeight("");
     }
   }, [cartData]);
+  useEffect(() => {
+    const added = myListData.find((p) => p.productId === props?.data?._id);
+    if (added) {
+      setIsAddedToList(true);
+      setListItem(added);
+    } else {
+      setIsAddedToList(false);
+      setListItem(null);
+    }
+  }, [myListData]);
   return (
     <div className="productItem rounded-xl overflow-hidden border">
       <div className="imgWrapper group relative w-full overflow-hidden">
@@ -217,8 +290,19 @@ export const ProductItem = (props) => {
           {props?.data?.discount}%
         </span>
         <div className="actions group-hover:top-[15px] transition-all duration-500 absolute top-[-200px] right-[15px] z-50 flex items-center flex-col gap-2">
-          <Button className="!bg-white hover:!bg-primary !min-w-10 h-10 hover:!text-white !text-primary !rounded-full">
-            <FaRegHeart className="text-[18px] pointer-events-none " />
+          <Button
+            onClick={() => {
+              !isAddedToList
+                ? handleAddToMyList(props?.data)
+                : handleRemoveToMyList();
+            }}
+            className="!bg-white hover:!bg-primary !min-w-10 h-10 hover:!text-white !text-primary !rounded-full"
+          >
+            {isAddedToList ? (
+              <FaHeart className="text-[18px] pointer-events-none " />
+            ) : (
+              <FaRegHeart className="text-[18px] pointer-events-none " />
+            )}
           </Button>
           <Button className="!bg-white hover:!bg-primary !min-w-10 h-10 hover:!text-white !text-primary !rounded-full">
             <GoGitCompare className="text-[18px] pointer-events-none " />

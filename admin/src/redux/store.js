@@ -9,6 +9,7 @@ import catDataSliceReducer from "../redux/slices/categoryDataSlice";
 import proDataSliceReducer from "../redux/slices/productsDataSlice";
 import homeBannerSliceReducer from "../redux/slices/HomeBannerSlice";
 import blogSliceReducer from "../redux/slices/blogSlice";
+import orderDataSliceReducer from "../redux/slices/orderSlice";
 export const store = configureStore({
   reducer: {
     sidePanel: sidePanelSliceReducer,
@@ -21,5 +22,6 @@ export const store = configureStore({
     blogData: blogSliceReducer,
     proData: proDataSliceReducer,
     homeBannerData: homeBannerSliceReducer,
+    orderData: orderDataSliceReducer,
   },
 });

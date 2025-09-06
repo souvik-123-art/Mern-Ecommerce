@@ -1,10 +1,12 @@
 import React from "react";
-import { IoClose } from "react-icons/io5";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormControl from "@mui/material/FormControl";
+import FormLabel from "@mui/material/FormLabel";
 import Button from "@mui/material/Button";
 import { BsCloudUpload } from "react-icons/bs";
 import { PhoneInput } from "react-international-phone";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
 import { fetchDataFromApi, postData } from "../../utils/api";
 import { useDispatch } from "react-redux";
 import { setIsOpenFullScreenPanel } from "../../redux/Slices/fullScreenPanelSlice";
@@ -22,7 +24,8 @@ const AddAddress = () => {
     pincode: "",
     country: "",
     mobile: "",
-    status: status,
+    landmark: "",
+    addressType: "",
     selected: false,
   });
   const onChangeInput = (e) => {
@@ -34,12 +37,11 @@ const AddAddress = () => {
       };
     });
   };
-  const handleChangeStatus = (event) => {
-    setStatus(event.target.value);
-    setFormFields({
-      ...formFields,
-      status: event.target.value,
-    });
+  const handleChangeAddressType = (val) => {
+    setFormFields((prev) => ({
+      ...prev,
+      addressType: val,
+    }));
   };
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -71,6 +73,11 @@ const AddAddress = () => {
     }
     if (formFields.mobile === "") {
       toast.error("enter your mobile no.");
+      setIsLoading(false);
+      return false;
+    }
+    if (formFields.addressType === "") {
+      toast.error("select your address type");
       setIsLoading(false);
       return false;
     }
@@ -129,6 +136,16 @@ const AddAddress = () => {
               />
             </div>
             <div className="col w-full">
+              <h3 className="text-lg font-[500] mb-1">Landmark (optional)</h3>
+              <input
+                type="text"
+                name="landmark"
+                className="w-full h-[40px] border border-black/30 outline-none focus:border-black/50 rounded-md p-3 text-sm"
+                onChange={onChangeInput}
+                value={formFields.landmark}
+              />
+            </div>
+            <div className="col w-full">
               <h3 className="text-lg font-[500] mb-1">State</h3>
               <input
                 type="text"
@@ -174,24 +191,33 @@ const AddAddress = () => {
               />
             </div>
             <div className="col w-full">
-              <h3 className="text-lg font-[500] mb-1">Status</h3>
-              <Select
-                name="status"
-                className="focus:!outline-black/50 !w-full"
-                size="small"
-                id="status"
-                value={status}
-                onChange={handleChangeStatus}
-              >
-                <MenuItem value={true}>True</MenuItem>
-                <MenuItem value={false}>False</MenuItem>
-              </Select>
+              <FormControl>
+                <FormLabel
+                  id="demo-row-radio-buttons-group-label"
+                  className="!text-lg !font-[600] !font-['lexend'] !text-black/90"
+                >
+                  Address Type
+                </FormLabel>
+                <RadioGroup
+                  onChange={(e, value) => handleChangeAddressType(value)}
+                  row
+                  aria-labelledby="demo-row-radio-buttons-group-label"
+                  name="row-radio-buttons-group"
+                >
+                  <FormControlLabel
+                    value="Home"
+                    control={<Radio />}
+                    label="Home"
+                  />
+                  <FormControlLabel
+                    value="Work"
+                    control={<Radio />}
+                    label="Work"
+                  />
+                </RadioGroup>
+              </FormControl>
             </div>
           </div>
-          {/* <h3 className="text-lg font-[500] mb-2">Category Image</h3>
-          <div className="grid grid-cols-7 gap-4">
-            
-          </div> */}
         </div>
         <Button type="submit" className=" !p-3 btn-blue w-full !mt-8">
           <BsCloudUpload className="mr-2 text-xl" />

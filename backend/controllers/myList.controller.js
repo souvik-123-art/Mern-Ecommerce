@@ -12,6 +12,7 @@ export const addToMyListController = async (req, res) => {
       oldPrice,
       discount,
       rating,
+      brand,
     } = req.body;
     const item = await myListModel.findOne({
       userId,
@@ -29,6 +30,7 @@ export const addToMyListController = async (req, res) => {
       price,
       oldPrice,
       discount,
+      brand,
       rating,
       userId,
     });
@@ -38,7 +40,7 @@ export const addToMyListController = async (req, res) => {
     return res.status(200).json({
       error: false,
       success: true,
-      message: "product added in the my list",
+      message: "product added in your list",
     });
   } catch (error) {
     return res.status(500).json({
@@ -50,27 +52,25 @@ export const addToMyListController = async (req, res) => {
 };
 export const deleteToMyListController = async (req, res) => {
   try {
-    const myListItem = await myListModel.findById(req.params.id);
-    if (!myListItem) {
-      return res.status(404).json({
-        message: "Item not found",
-        error: true,
-        success: false,
-      });
-    }
-    const deletedItem = await myListItem.findByIdAndDelete(req.params.id);
+    const userId = req.userId;
+    const deletedItem = await myListModel.findOneAndDelete({
+      _id: req.params.id,
+      userId: userId,
+    });
+
     if (!deletedItem) {
-      return res.status(400).json({
-        message: "Item not deleted",
+      return res.status(404).json({
+        message: "Item not found in your list",
         error: true,
         success: false,
       });
     }
+
     return res.status(200).json({
       error: false,
       success: true,
-      message: "product removed succesfully from my list",
-    }); 
+      message: "Product successfully removed from your list",
+    });
   } catch (error) {
     return res.status(500).json({
       message: error.message || error,
@@ -79,12 +79,13 @@ export const deleteToMyListController = async (req, res) => {
     });
   }
 };
+
 export const getMyListController = async (req, res) => {
   try {
     const userId = req.userId;
     const myListItem = await myListModel.find({
       userId: userId,
-    })
+    });
     return res.status(200).json({
       data: myListItem,
       error: false,

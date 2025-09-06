@@ -11,6 +11,8 @@ import cartDataSliceReducer from "../redux/slices/cartSlice";
 import homeBannerSliceReducer from "../redux/slices/HomeBannerSlice";
 import proDataSliceReducer from "../redux/slices/productsDataSlice";
 import blogSliceReducer from "../redux/slices/blogSlice";
+import myListDataSliceReducer from "../redux/slices/myListSlice";
+import orderDataSliceReducer from "../redux/slices/orderSlice";
 export const store = configureStore({
   reducer: {
     proModal: productModalSlicereducer,
@@ -25,5 +27,7 @@ export const store = configureStore({
     homeBannerData: homeBannerSliceReducer,
     proData: proDataSliceReducer,
     blogData: blogSliceReducer,
+    myListData: myListDataSliceReducer,
+    orderData: orderDataSliceReducer,
   },
 });

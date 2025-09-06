@@ -37,6 +37,9 @@ import { setCatData } from "./redux/Slices/categoryDataSlice";
 import { setBlogData } from "./redux/Slices/blogSlice";
 import ScrollToTop from "./utils/windowScroll";
 import { setCartData } from "./redux/Slices/cartSlice";
+import { setMyListData } from "./redux/Slices/myListSlice";
+import { setAddress } from "./redux/slices/userAddressSlice";
+import { setOrderData } from "./redux/Slices/orderSlice";
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -54,12 +57,14 @@ function App() {
           localStorage.removeItem("accesstoken");
           localStorage.removeItem("removetoken");
           toast.error("your session is expired. Login again");
+          dispatch(setUserDetails([]));
           dispatch(setIsLogin(false));
         }
         dispatch(setUserDetails(res.data));
         dispatch(setIsLogin(true));
       });
     } else {
+      dispatch(setUserDetails([]));
       dispatch(setIsLogin(false));
     }
   }, [isLogin]);
@@ -78,14 +83,28 @@ function App() {
         dispatch(setBlogData(blogRes?.data));
       })
       .catch((error) => {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching public data:", error);
       });
+
     if (isLogin) {
-      fetchDataFromApi("/api/cart").then((response) => {
-        dispatch(setCartData(response?.data));
-      });
+      Promise.all([
+        fetchDataFromApi("/api/cart"),
+        fetchDataFromApi("/api/myList"),
+        fetchDataFromApi("/api/address"),
+        fetchDataFromApi("/api/order"),
+      ])
+        .then(([cartRes, myListRes, addRes, orderRes]) => {
+          dispatch(setCartData(cartRes?.data || []));
+          dispatch(setMyListData(myListRes?.data || []));
+          dispatch(setAddress(addRes?.data || []));
+          dispatch(setOrderData(orderRes?.data || []));
+        })
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
+        });
     } else {
       dispatch(setCartData([]));
+      dispatch(setMyListData([]));
     }
   }, [dispatch, isLogin]);
   return (

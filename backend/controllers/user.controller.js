@@ -670,6 +670,27 @@ export const userDetails = async (req, res) => {
     });
   }
 };
+export const allUserDetails = async (req, res) => {
+  try {
+    const users = await UserModel.find()
+      .select("-password -refresh_token")
+      .populate("address_details");
+    const usersCount = await UserModel.countDocuments();
+    return res.json({
+      message: "user details",
+      data: users,
+      usersCount,
+      error: false,
+      success: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
 
 export const addReview = async (req, res) => {
   try {

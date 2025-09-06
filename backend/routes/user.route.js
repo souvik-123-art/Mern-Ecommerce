@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   addReview,
+  allUserDetails,
   changePassword,
   forgotPasswordController,
   getReview,
@@ -41,6 +42,7 @@ userRouter.post("/forgot-password", forgotPasswordController);
 userRouter.post("/reset-password/:token", resetPassword);
 userRouter.post("/refresh-token", refreshToken);
 userRouter.get("/user-details", auth, userDetails);
+userRouter.get("/users", auth, allUserDetails);
 userRouter.get("/getReviews/:id", getReview);
 userRouter.post("/addReview", auth, addReview);
 

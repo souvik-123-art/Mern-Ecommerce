@@ -6,18 +6,48 @@ const orderSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: "User",
     },
-    orderId: {
+    products: [
+      {
+        productTitle: {
+          type: String,
+        },
+        image: {
+          type: String,
+        },
+
+        price: {
+          type: Number,
+        },
+        size: {
+          type: String,
+        },
+        ram: {
+          type: String,
+        },
+        weight: {
+          type: String,
+        },
+        subtotal: {
+          type: Number,
+          required: true,
+        },
+        productId: {
+          type: mongoose.Schema.ObjectId,
+          ref: "product",
+        },
+        quantity: {
+          type: Number,
+        },
+      },
+    ],
+    // orderId: {
+    //   type: String,
+    //   required: [true, "Provide orderId"],
+    //   unique: true,
+    // },
+    order_status: {
       type: String,
-      required: [true, "Provide orderId"],
-      unique: true,
-    },
-    productId: {
-      type: mongoose.Schema.ObjectId,
-      ref: "product",
-    },
-    product_details: {
-      name: String,
-      image: Array,
+      default: "pending"
     },
     paymentId: {
       type: String,
@@ -27,21 +57,13 @@ const orderSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    payment_status: {
+    delivery_address: {
       type: mongoose.Schema.ObjectId,
       ref: "address",
-    },
-    subTotalAmt: {
-      type: Number,
-      default: 0,
     },
     totalAmt: {
       type: Number,
       default: 0,
-    },
-    invoice_receipt: {
-      type: String,
-      default: "",
     },
   },
   { timestamps: true }

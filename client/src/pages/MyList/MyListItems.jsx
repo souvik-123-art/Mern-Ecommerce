@@ -1,41 +1,62 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import Rating from "@mui/material/Rating";
-import { Link } from "react-router-dom";
-import Button from "@mui/material/Button";
-import { FaOpencart } from "react-icons/fa";
-export const MyListItems = () => {
+import { Link, useNavigate } from "react-router-dom";
+import { deleteData, fetchDataFromApi } from "../../utils/api";
+import { setMyListData } from "../../redux/Slices/myListSlice";
+import { useDispatch, useSelector } from "react-redux";
+import toast from "react-hot-toast";
+
+export const MyListItems = ({ data }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const handleRemoveToMyList = () => {
+    deleteData(`/api/myList/${data._id}`, {
+      credentials: true,
+    }).then((res) => {
+      if (!res?.error) {
+        toast.success(res?.data?.message);
+        fetchDataFromApi("/api/myList").then((response) => {
+          if (!response?.error) {
+            dispatch(setMyListData(response?.data));
+          }
+        });
+      } else {
+        toast.error(res?.data?.message);
+      }
+    });
+  };
   return (
     <div className="cartItem w-full p-3 flex border-b border-gray-200  gap-4">
       <div className="img w-[10%] rounded-md overflow-hidden">
-        <Link to="/product-details/7845">
-          <img
-            src="https://serviceapi.spicezgold.com/download/1742462729829_zoom_1-1673275594.webp"
-            className="w-full"
-            alt=""
-          />
+        <Link to={`/product-details/${data?.productId}`}>
+          <img src={data?.image} className="w-full" alt="" />
         </Link>
       </div>
       <div className="info w-[90%] relative">
-        <IoMdClose className="absolute right-0 text-xl cursor-pointer link transition" />
-        <span className="text-md font-semibold text-gray-400">Levis</span>
+        <IoMdClose
+          onClick={handleRemoveToMyList}
+          className="absolute right-0 text-xl cursor-pointer link transition"
+        />
+        <span className="text-md font-semibold text-gray-400">
+          {data?.brand}
+        </span>
         <h3 className="font-semibold text-lg transition link">
-          <Link>A-Line Kurti With Sharara & Dupatta</Link>
+          <Link to={`/product-details/${data?.productId}`}>
+            {data?.productTitle}
+          </Link>
         </h3>
         <Rating name="size-small" defaultValue={4} readOnly size="small" />
         <div className="flex items-center gap-4 mt-2">
           <span className="price text-primary text-[14px] font-[600]">
-            $58.00
+            ₹ {data?.price.toLocaleString("en-IN")}
           </span>
           <span className="oldPrice line-through text-gray-500 text-[14px] font-[500]">
-            $58.00
+            ₹ {data?.oldPrice.toLocaleString("en-IN")}
           </span>
           <span className="price text-primary text-[14px] font-[600]">
-            50% OFF
+            {data?.discount}% OFF
           </span>
-          <Button className="!px-4 !py-2 !bg-primary !text-white !transition hover:!bg-gray-900 flex items-center gap-1">
-            <FaOpencart className="text-xl" /> Add To Cart
-          </Button>
         </div>
       </div>
     </div>

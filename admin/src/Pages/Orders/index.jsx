@@ -1,323 +1,317 @@
-import Badge from "@mui/material/Badge";
+import Badge from "../../Components/Badge";
 import Button from "@mui/material/Button";
 import React, { useState } from "react";
 import { TfiAngleDown } from "react-icons/tfi";
 import SearchBox from "../../Components/SearchBox";
-
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { Collapse } from "react-collapse";
+import MenuItem from "@mui/material/MenuItem";
+import toast from "react-hot-toast";
+import Select from "@mui/material/Select";
+import { editData, fetchDataFromApi } from "../../utils/api";
+import { setOrderData } from "../../redux/slices/orderSlice";
 const Orders = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const orders = useSelector((state) => state.orderData.orderData);
   const [isOpenOrderProduct, setIsOpenOrderProduct] = useState(null);
-  const isShowOrderProduct = (index) => {
-    if (isOpenOrderProduct === index) {
-      setIsOpenOrderProduct(null);
-    } else {
-      setIsOpenOrderProduct(index);
-    }
+  const [searchQuery, setSearchQuery] = useState("");
+  const userDetails = useSelector((state) => state.UserDetails.userDetails);
+  const [allOrders, setAllOrders] = useState([]);
+
+
+  const getHighlightedText = (text, highlight) => {
+    if (!highlight) return text;
+
+    const regex = new RegExp(`(${highlight})`, "gi");
+    const parts = text.split(regex);
+
+    return parts.map((part, index) =>
+      regex.test(part) ? (
+        <mark key={index} className="bg-gray-100 font-semibold">
+          {part}
+        </mark>
+      ) : (
+        part
+      )
+    );
   };
+  const handleChange = (event, orderId) => {
+    const val = event.target.value;
+    editData(
+      `/api/order/${orderId}`,
+      {
+        orderStatus: val,
+      },
+      { credentials: true }
+    ).then((res) => {
+      try {
+        if (!res?.data?.error) {
+          toast.success(res?.data?.message);
+          fetchDataFromApi("/api/order/orderList").then((response) => {
+            dispatch(setOrderData(response?.data));
+          });
+        } else {
+          toast.error(res?.data?.message);
+        }
+      } catch (error) {
+        toast.error(error.message);
+      }
+    });
+  };
+
+  const toggleOrderProduct = (idx) => {
+    setIsOpenOrderProduct((prev) => (prev === idx ? null : idx));
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem("accesstoken");
+    if (token === undefined || token === null || token === "") {
+      navigate("/");
+    }
+  }, [userDetails]);
+
+  useEffect(() => {
+    // On component mount, fetch all orders and set both allOrders and Redux store
+    fetchDataFromApi("/api/order/orderList").then((response) => {
+      setAllOrders(response?.data || []);
+      dispatch(setOrderData(response?.data || []));
+    });
+  }, []);
+
+  useEffect(() => {
+    if (searchQuery !== "") {
+      const filteredOrders = allOrders.filter(
+        (order) =>
+          order?._id?.toLowerCase().includes(searchQuery?.toLowerCase()) ||
+          order?.userId?.name
+            .toLowerCase()
+            .includes(searchQuery?.toLowerCase()) ||
+          order?.userId?.email
+            .toLowerCase()
+            .includes(searchQuery?.toLowerCase()) ||
+          order?.createdAt.includes(searchQuery)
+      );
+      dispatch(setOrderData(filteredOrders));
+    } else {
+      dispatch(setOrderData(allOrders));
+    }
+  }, [searchQuery, allOrders]);
+
   return (
     <div className="card my-4 mt-5 shadow-md sm:rounded-lg bg-white overflow-hidden">
       <div className="flex items-center justify-between p-5">
         <h2 className="text-xl font-bold">Recent Orders</h2>
         <div className="w-[40%]">
-            <SearchBox/>
+          <SearchBox
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+          />
         </div>
       </div>
       <div className="relative overflow-x-auto mt-1 pb-5">
-        <table className="w-full text-sm text-left rtl:text-right text-gray-500">
-          <thead className="text-xs text-gray-600 uppercase bg-gray-100 border border-gray-100">
-            <tr>
-              <th scope="col" className="px-6 py-3">
-                &nbsp;
-              </th>
-              <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                Order Id
-              </th>
-              <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                Payment Id
-              </th>
-              <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                Name
-              </th>
-              <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                Phone Number
-              </th>
-              <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                Address
-              </th>
-              <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                Pincode
-              </th>
-              <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                Total Amount
-              </th>
-              <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                Email
-              </th>
-              <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                User Id
-              </th>
-              <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                Order Status
-              </th>
-              <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                Date
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr className="bg-white border border-gray-200">
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
-              >
-                <Button
-                  onClick={() => isShowOrderProduct(0)}
-                  className={`!w-[35px] !h-[35px] !min-w-[35px] !duration-300 !rounded-full !bg-[#f1f1f1] !text-black !transition-all ${
-                    isOpenOrderProduct === 0 ? "-rotate-180" : ""
-                  }`}
-                >
-                  <TfiAngleDown className="text-[14px]" />
-                </Button>
-              </th>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <span className="text-primary">6464654646546</span>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <span className="text-primary">6464654646546</span>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">Souvik Sarkar</td>
-              <td className="px-6 py-4 whitespace-nowrap">7000494543</td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                sdfsdfisdifshdifhsidhfsdhfsdifisdhfisdifisdfsdifisdfidsifisd
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">700049</td>
-              <td className="px-6 py-4 whitespace-nowrap">2499/-</td>
-              <td className="px-6 py-4 whitespace-nowrap">Souvik@gmail.com</td>
-              <td className="px-6 py-4 whitespace-nowrap">sda344dfsdsdf</td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <Badge status="pending" />
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">23.01.2025</td>
-            </tr>
-            {isOpenOrderProduct === 0 && (
+        {orders?.length !== 0 && (
+          <table className="w-full text-sm text-left text-gray-500 border border-gray-300 rounded-md shadow-md">
+            <thead className="text-xs text-white uppercase bg-gray-800">
               <tr>
-                <td colSpan={6} className="pl-20">
-                  <div className="relative overflow-x-scroll">
-                    <table className="w-full text-sm text-left rtl:text-right text-gray-500">
-                      <thead className="text-xs text-gray-600 uppercase bg-gray-100 border border-gray-100">
-                        <tr>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 whitespace-nowrap"
-                          >
-                            Product Id
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 whitespace-nowrap"
-                          >
-                            Product Title
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 whitespace-nowrap"
-                          >
-                            Image
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 whitespace-nowrap"
-                          >
-                            Quantity
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 whitespace-nowrap"
-                          >
-                            Price
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 whitespace-nowrap"
-                          >
-                            Subtotal
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr className=" bg-white border border-gray-200">
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className="text-gray-700">6464654646546</span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className="text-gray-700">
-                              A-Line Kurti With Sharara & Dupatta
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <img
-                              src="https://serviceapi.spicezgold.com/download/1742463096960_hbhb3.jpg"
-                              className="w-[40px] h-[40px] object-cover rounded-md"
-                              alt=""
-                            />
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">2</td>
-                          <td className="px-6 py-4 whitespace-nowrap">$25</td>
-                          <td className="px-6 py-4 whitespace-nowrap">$25</td>
-                        </tr>
-                        <tr className=" bg-white border border-gray-200">
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className="text-gray-700">6464654646546</span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className="text-gray-700">
-                              A-Line Kurti With Sharara & Dupatta
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <img
-                              src="https://serviceapi.spicezgold.com/download/1742463096960_hbhb3.jpg"
-                              className="w-[40px] h-[40px] object-cover rounded-md"
-                              alt=""
-                            />
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">2</td>
-                          <td className="px-6 py-4 whitespace-nowrap">$25</td>
-                          <td className="px-6 py-4 whitespace-nowrap">$25</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </td>
+                <th className="px-6 py-3">&nbsp;</th>
+                <th className="px-6 py-3 whitespace-nowrap">Order Id</th>
+                <th className="px-6 py-3 whitespace-nowrap">Payment Id</th>
+                <th className="px-6 py-3 whitespace-nowrap">Payment Status</th>
+                <th className="px-6 py-3 whitespace-nowrap">Name</th>
+                <th className="px-6 py-3 whitespace-nowrap">Phone Number</th>
+                <th className="px-6 py-3 w-[200px]">Address</th>
+                <th className="px-6 py-3 whitespace-nowrap">Address Type</th>
+                <th className="px-6 py-3 whitespace-nowrap">Pincode</th>
+                <th className="px-6 py-3 whitespace-nowrap">Total Amount</th>
+                <th className="px-6 py-3 whitespace-nowrap">Email</th>
+                <th className="px-6 py-3 whitespace-nowrap">User Id</th>
+                <th className="px-6 py-3 whitespace-nowrap">Order Status</th>
+                <th className="px-6 py-3 whitespace-nowrap">Date</th>
               </tr>
-            )}
-            <tr className="bg-white border border-gray-200">
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
-              >
-                <Button
-                  onClick={() => isShowOrderProduct(1)}
-                  className={`!w-[35px] !h-[35px] !min-w-[35px] !duration-300 !rounded-full !bg-[#f1f1f1] !text-black !transition-all ${
-                    isOpenOrderProduct === 1 ? "-rotate-180" : ""
-                  }`}
-                >
-                  <TfiAngleDown className="text-[14px]" />
-                </Button>
-              </th>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <span className="text-primary">6464654646546</span>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <span className="text-primary">6464654646546</span>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">Souvik Sarkar</td>
-              <td className="px-6 py-4 whitespace-nowrap">7000494543</td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                sdfsdfisdifshdifhsidhfsdhfsdifisdhfisdifisdfsdifisdfidsifisd
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">700049</td>
-              <td className="px-6 py-4 whitespace-nowrap">2499/-</td>
-              <td className="px-6 py-4 whitespace-nowrap">Souvik@gmail.com</td>
-              <td className="px-6 py-4 whitespace-nowrap">sda344dfsdsdf</td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <Badge status="delivered" />
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap">23.01.2025</td>
-            </tr>
-            {isOpenOrderProduct === 1 && (
-              <tr>
-                <td colSpan={6} className="pl-20">
-                  <div className="relative overflow-x-scroll">
-                    <table className="w-full text-sm text-left rtl:text-right text-gray-500">
-                      <thead className="text-xs text-gray-600 uppercase bg-gray-100 border border-gray-100">
-                        <tr>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 whitespace-nowrap"
-                          >
-                            Product Id
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 whitespace-nowrap"
-                          >
-                            Product Title
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 whitespace-nowrap"
-                          >
-                            Image
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 whitespace-nowrap"
-                          >
-                            Quantity
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 whitespace-nowrap"
-                          >
-                            Price
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 whitespace-nowrap"
-                          >
-                            Subtotal
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr className=" bg-white border border-gray-200">
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className="text-gray-700">6464654646546</span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className="text-gray-700">
-                              A-Line Kurti With Sharara & Dupatta
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <img
-                              src="https://serviceapi.spicezgold.com/download/1742463096960_hbhb3.jpg"
-                              className="w-[40px] h-[40px] object-cover rounded-md"
-                              alt=""
-                            />
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">2</td>
-                          <td className="px-6 py-4 whitespace-nowrap">$25</td>
-                          <td className="px-6 py-4 whitespace-nowrap">$25</td>
-                        </tr>
-                        <tr className=" bg-white border border-gray-200">
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className="text-gray-700">6464654646546</span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className="text-gray-700">
-                              A-Line Kurti With Sharara & Dupatta
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <img
-                              src="https://serviceapi.spicezgold.com/download/1742463096960_hbhb3.jpg"
-                              className="w-[40px] h-[40px] object-cover rounded-md"
-                              alt=""
-                            />
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">2</td>
-                          <td className="px-6 py-4 whitespace-nowrap">$25</td>
-                          <td className="px-6 py-4 whitespace-nowrap">$25</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+              {orders?.map((order, idx) => (
+                <React.Fragment key={order?._id}>
+                  <tr className="bg-white border-b hover:bg-gray-50 transition">
+                    <th className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                      {order?.products?.length !== 0 ? (
+                        <Button
+                          onClick={() => toggleOrderProduct(idx)}
+                          className={`!w-[35px] !h-[35px] !rounded-full bg-gray-200 transition ${
+                            isOpenOrderProduct === idx ? "-rotate-180" : ""
+                          }`}
+                        >
+                          <TfiAngleDown className="text-lg" />
+                        </Button>
+                      ) : (
+                        <span>&nbsp;</span>
+                      )}
+                    </th>
+                    <td className="px-6 py-4 text-primary font-semibold">
+                      {getHighlightedText(order._id, searchQuery)}
+                    </td>
+                    <td className="px-6 py-4 text-primary font-semibold">
+                      {order?.paymentId ? order?.paymentId : "null"}
+                    </td>
+                    <td className="px-6 py-4 text-green-500 font-semibold whitespace-nowrap">
+                      {order?.payment_status}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {getHighlightedText(order.userId.name, searchQuery)}
+                    </td>
+                    <td className="px-6 py-4">
+                      +{order?.delivery_address?.mobile}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {order?.delivery_address?.landmark},{" "}
+                      {order?.delivery_address?.address_line},{" "}
+                      {order?.delivery_address?.city},{" "}
+                      {order?.delivery_address?.state},
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {order?.delivery_address?.addressType}
+                    </td>
+                    <td className="px-6 py-4">
+                      {order?.delivery_address?.pincode}
+                    </td>
+                    <td className="px-6 py-4 font-semibold text-primary">
+                      ₹ {order?.totalAmt.toLocaleString("en-IN")}
+                    </td>
+                    <td className="px-6 py-4">
+                      {getHighlightedText(order.userId.email, searchQuery)}
+                    </td>
+                    <td className="px-6 py-4">{order?.userId?._id}</td>
+                    <td className="px-6 py-4">
+                      <Select
+                        size="small"
+                        value={order?.order_status}
+                        onChange={(e) => handleChange(e, order?._id)}
+                        displayEmpty
+                        inputProps={{ "aria-label": "Without label" }}
+                      >
+                        <MenuItem value={"pending"}>Pending</MenuItem>
+                        <MenuItem value={"confirmed"}>Confirmed</MenuItem>
+                        <MenuItem value={"dispatched"}>Dispatched</MenuItem>
+                        <MenuItem value={"out for delivery"}>
+                          Out For Delivery
+                        </MenuItem>
+                        <MenuItem value={"delivered"}>Delivered</MenuItem>
+                        <MenuItem value={"cancelled"}>Canceled</MenuItem>
+                      </Select>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {new Date(order?.createdAt).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "2-digit",
+                        year: "numeric",
+                      })}
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td colSpan={13} className="pl-12">
+                      <Collapse
+                        isOpened={isOpenOrderProduct === idx}
+                        unmountOnExit
+                      >
+                        <div className="overflow-x-auto py-4">
+                          {order?.products?.length !== 0 && (
+                            <table className="w-[1200px] text-sm text-left text-gray-500 border border-gray-300 rounded-md table-fixed">
+                              <thead className="bg-gray-800 text-white">
+                                <tr>
+                                  <th className="px-3 py-2 w-[150px]">
+                                    Product Id
+                                  </th>
+                                  <th className="px-3 py-2 w-[150px]">
+                                    Product Title
+                                  </th>
+                                  <th className="px-3 py-2 w-[60px]">Image</th>
+                                  <th className="px-3 py-2 w-[60px]">
+                                    Quantity
+                                  </th>
+                                  {order.products.some(
+                                    (prod) => prod?.size
+                                  ) && (
+                                    <th className="px-3 py-2 w-[60px]">Size</th>
+                                  )}
+                                  {order.products.some((prod) => prod?.ram) && (
+                                    <th className="px-3 py-2 w-[60px]">Ram</th>
+                                  )}
+                                  {order.products.some(
+                                    (prod) => prod?.weight
+                                  ) && (
+                                    <th className="px-3 py-2 w-[60px]">
+                                      Weight
+                                    </th>
+                                  )}
+                                  <th className="px-3 py-2 w-[80px]">Price</th>
+                                  <th className="px-3 py-2 w-[80px]">
+                                    Subtotal
+                                  </th>
+                                </tr>
+                              </thead>
+
+                              <tbody>
+                                {order.products.map((prod, index) => (
+                                  <tr
+                                    key={index}
+                                    className="bg-white border-b hover:bg-gray-100"
+                                  >
+                                    <td className="px-3 py-2 truncate">
+                                      {prod?.productId}
+                                    </td>
+                                    <td className="px-3 py-2 truncate max-w-[150px]">
+                                      {prod?.productTitle}
+                                    </td>
+                                    <td className="px-3 py-2">
+                                      <img
+                                        src={prod?.image}
+                                        alt="product"
+                                        className="w-[40px] h-[40px] object-cover rounded-md"
+                                      />
+                                    </td>
+                                    <td className="px-3 py-2">
+                                      {prod?.quantity}
+                                    </td>
+                                    {order.products.some((p) => p?.size) && (
+                                      <td className="px-3 py-2">
+                                        {prod?.size || "-"}
+                                      </td>
+                                    )}
+                                    {order.products.some((p) => p?.ram) && (
+                                      <td className="px-3 py-2">
+                                        {prod?.ram || "-"}
+                                      </td>
+                                    )}
+                                    {order.products.some((p) => p?.weight) && (
+                                      <td className="px-3 py-2">
+                                        {prod?.weight || "-"}
+                                      </td>
+                                    )}
+                                    <td className="px-3 py-2">
+                                      ₹{prod?.price.toLocaleString("en-IN")}
+                                    </td>
+                                    <td className="px-3 py-2">
+                                      ₹{prod?.subtotal.toLocaleString("en-IN")}
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          )}
+                        </div>
+                      </Collapse>
+                    </td>
+                  </tr>
+                </React.Fragment>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );

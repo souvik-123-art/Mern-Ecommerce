@@ -79,7 +79,7 @@ export const AccountSidebar = () => {
     });
   };
   return (
-    <div className="card sticky top-2.5 bg-white shadow-md rounded-md overflow-hidden ">
+    <div className="card sticky top-[150px] bg-white shadow-md rounded-md overflow-hidden ">
       <div className="w-full py-3 flex items-center justify-center flex-col">
         <div className="mb-4 group w-[110px] h-[110px] rounded-full overflow-hidden relative flex items-center justify-center bg-gray-200">
           {uploading ? (

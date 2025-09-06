@@ -193,3 +193,33 @@ export const deleteCartItemController = async (req, res) => {
     });
   }
 };
+export const emptyCartItemController = async (req, res) => {
+  try {
+    const userId = req.userId;
+    if (!userId) {
+      return res.status(400).json({
+        message: "you need to login",
+      });
+    }
+    const deleteCartItem = await CartProductModel.deleteMany({
+      userId: userId,
+    });
+    if (!deleteCartItem) {
+      return res.status(400).json({
+        message: "cart item not deleted",
+        error: true,
+        success: false,
+      });
+    }
+    return res.json({
+      error: false,
+      success: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};

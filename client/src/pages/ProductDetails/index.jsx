@@ -5,7 +5,7 @@ import { ProductZoom } from "../../components/ProductZoom";
 import Rating from "@mui/material/Rating";
 import Button from "@mui/material/Button";
 import { QtyBox } from "../../components/QtyBox";
-import { FaOpencart } from "react-icons/fa";
+import { FaHeart, FaOpencart } from "react-icons/fa";
 import { FaRegHeart } from "react-icons/fa";
 import { GoGitCompare } from "react-icons/go";
 import { ProductSlider } from "../../components/ProductSlider";
@@ -23,16 +23,20 @@ import { deleteData, postData } from "../../utils/api";
 import toast from "react-hot-toast";
 import { setCartData } from "../../redux/Slices/cartSlice";
 import { MdDeleteOutline } from "react-icons/md";
+import { setMyListData } from "../../redux/Slices/myListSlice";
 export const ProductDetails = () => {
   const dispatch = useDispatch();
   const proReview = useSelector((state) => state.proData.proReview);
   const cartData = useSelector((state) => state.cartData.cartData);
+  const myListData = useSelector((state) => state.myListData.myListData);
   const isLogin = useSelector((state) => state.auth.isLogin);
+  const [listItem, setListItem] = useState(null);
   const [sizeIndex, setSizeIndex] = useState(null);
   const [ramIndex, setRamIndex] = useState(null);
   const [weightIndex, setWeightIndex] = useState(null);
   const [activeTab, setActiveTab] = useState(1);
   const [isAddedToCart, setIsAddedToCart] = useState(false);
+  const [isAddedToList, setIsAddedToList] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedRam, setSelectedRam] = useState("");
@@ -123,6 +127,59 @@ export const ProductDetails = () => {
       }
     });
   };
+
+  const handleAddToMyList = (pro) => {
+    if (!isLogin) {
+      toast.error("you need to login first");
+      return;
+    }
+
+    const data = {
+      productTitle: pro?.name,
+      image: pro?.images[0],
+      rating: pro?.rating,
+      price: pro?.price,
+      oldPrice: pro?.oldPrice,
+      brand: pro?.brand,
+      discount: pro?.discount,
+      productId: pro?._id,
+    };
+
+    postData("/api/myList/add", data, { credentials: true }).then((res) => {
+      if (!res?.error) {
+        toast.success(res?.message);
+        fetchDataFromApi("/api/myList").then((response) => {
+          if (!response?.error) {
+            dispatch(setMyListData(response?.data));
+          }
+        });
+      } else {
+        toast.error(res?.message);
+      }
+    });
+  };
+  const handleRemoveToMyList = () => {
+    if (!isLogin) {
+      toast.error("you need to login first");
+      return;
+    }
+
+    deleteData(`/api/myList/${listItem._id}`, {
+      credentials: true,
+    }).then((res) => {
+      if (!res?.error) {
+        toast.success(res?.data?.message);
+        fetchDataFromApi("/api/myList").then((response) => {
+          if (!response?.error) {
+            dispatch(setMyListData(response?.data));
+          }
+        });
+      } else {
+        toast.error(res?.data?.message);
+      }
+    });
+  };
+
   useEffect(() => {
     setIsLoading(true);
     fetchDataFromApi(`/api/product/get/${id}`).then((res) => {
@@ -143,16 +200,23 @@ export const ProductDetails = () => {
     });
   }, []);
   useEffect(() => {
-    fetchDataFromApi("/api/cart").then((response) => {
-      dispatch(setCartData(response?.data));
-    });
     const added = cartData.find((p) => p.productId === singleProData?._id);
     if (added) {
       setIsAddedToCart(true);
     } else {
       setIsAddedToCart(false);
     }
-  }, [cartData]);
+  }, [cartData, singleProData]);
+  useEffect(() => {
+    const added = myListData.find((p) => p.productId === singleProData?._id);
+    if (added) {
+      setIsAddedToList(true);
+      setListItem(added);
+    } else {
+      setIsAddedToList(false);
+      setListItem(null);
+    }
+  }, [myListData, singleProData]);
   return (
     <section className="py-5">
       <div className="container mx-auto">
@@ -357,9 +421,23 @@ export const ProductDetails = () => {
             )}
 
             <div className="flex items-center gap-4">
-              <span className="flex link transition cursor-pointer gap-2 items-center">
-                <FaRegHeart className="text-lg" /> Add To Wishlist
-              </span>
+              {!isAddedToList ? (
+                <span
+                  onClick={() => handleAddToMyList(singleProData)}
+                  className="flex hover:text-green-500 transition cursor-pointer gap-2 items-center"
+                >
+                  <FaRegHeart className="text-lg" /> Add To Wishlist
+                </span>
+              ) : (
+                <span
+                  onClick={handleRemoveToMyList}
+                  className="flex link transition cursor-pointer gap-2 items-center"
+                >
+                  <FaHeart className="text-lg text-red-500" /> Remove From
+                  Wishlist
+                </span>
+              )}
+
               <span className="flex link transition cursor-pointer gap-2 items-center">
                 <GoGitCompare className="text-lg" /> Add To Compare
               </span>

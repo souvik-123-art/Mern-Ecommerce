@@ -161,6 +161,7 @@ export const getAllProducts = async (req, res) => {
       data: products,
       error: false,
       success: true,
+      totalPosts,
       totalPages,
       page,
     });
@@ -342,7 +343,7 @@ export const getAllProductsBySubCatName = async (req, res) => {
       return res
         .status(404)
         .json({ message: "page not found", error: true, success: false });
-    }  
+    }
     const products = await ProductModel.find({
       subCat: req.query.subCatName,
     })
