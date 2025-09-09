@@ -30,6 +30,7 @@ import {
   getSingleProduct,
   productImageController,
   removeImageFromCloudinary,
+  searchProductController,
   sortBy,
   updateProduct,
   updateProductRam,
@@ -56,6 +57,7 @@ productRouter.post("/size/create", auth, createProductSize);
 productRouter.post("/weight/create", auth, createProductWgt);
 
 productRouter.get("/", getAllProducts);
+productRouter.post("/search", searchProductController);
 productRouter.post("/filters", filters);
 productRouter.post("/sortBy", sortBy);
 productRouter.get("/rams/get", getAllProductRams);

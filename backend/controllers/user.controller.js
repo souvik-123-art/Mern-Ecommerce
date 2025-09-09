@@ -751,3 +751,160 @@ export const getReview = async (req, res) => {
     });
   }
 };
+
+export const totalUsersController = async (req, res) => {
+  try {
+    const users = await UserModel.aggregate([
+      {
+        $group: {
+          _id: {
+            year: { $year: "$createdAt" },
+            month: { $month: "$createdAt" },
+          },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { "_id.year": 1, "_id.month": 1 },
+      },
+    ]);
+
+    let monthlyUsers = [
+      {
+        name: "JAN",
+        totalUsers: 0,
+      },
+      {
+        name: "FEB",
+        totalUsers: 0,
+      },
+      {
+        name: "MAR",
+        totalUsers: 0,
+      },
+      {
+        name: "APR",
+        totalUsers: 0,
+      },
+      {
+        name: "MAY",
+        totalUsers: 0,
+      },
+      {
+        name: "JUN",
+        totalUsers: 0,
+      },
+      {
+        name: "JUL",
+        totalUsers: 0,
+      },
+      {
+        name: "AUG",
+        totalUsers: 0,
+      },
+      {
+        name: "SEP",
+        totalUsers: 0,
+      },
+      {
+        name: "OCT",
+        totalUsers: 0,
+      },
+      {
+        name: "NOV",
+        totalUsers: 0,
+      },
+      {
+        name: "DEC",
+        totalUsers: 0,
+      },
+    ];
+
+    for (let i = 0; i < users.length; i++) {
+      if (users[i]?._id?.month === 1) {
+        monthlyUsers[0] = {
+          name: "JAN",
+          totalUsers: users[i].count,
+        };
+      }
+      if (users[i]?._id?.month === 2) {
+        monthlyUsers[1] = {
+          name: "FEB",
+          totalUsers: users[i].count,
+        };
+      }
+      if (users[i]?._id?.month === 3) {
+        monthlyUsers[2] = {
+          name: "MAR",
+          totalUsers: users[i].count,
+        };
+      }
+      if (users[i]?._id?.month === 4) {
+        monthlyUsers[3] = {
+          name: "APR",
+          totalUsers: users[i].count,
+        };
+      }
+      if (users[i]?._id?.month === 5) {
+        monthlyUsers[4] = {
+          name: "MAY",
+          totalUsers: users[i].count,
+        };
+      }
+      if (users[i]?._id?.month === 6) {
+        monthlyUsers[5] = {
+          name: "JUN",
+          totalUsers: users[i].count,
+        };
+      }
+      if (users[i]?._id?.month === 7) {
+        monthlyUsers[6] = {
+          name: "JUL",
+          totalUsers: users[i].count,
+        };
+      }
+      if (users[i]?._id?.month === 8) {
+        monthlyUsers[7] = {
+          name: "AUG",
+          totalUsers: users[i].count,
+        };
+      }
+      if (users[i]?._id?.month === 9) {
+        monthlyUsers[8] = {
+          name: "SEP",
+          totalUsers: users[i].count,
+        };
+      }
+      if (users[i]?._id?.month === 10) {
+        monthlyUsers[9] = {
+          name: "OCT",
+          totalUsers: users[i].count,
+        };
+      }
+      if (users[i]?._id?.month === 11) {
+        monthlyUsers[10] = {
+          name: "NOV",
+          totalUsers: users[i].count,
+        };
+      }
+      if (users[i]?._id?.month === 12) {
+        monthlyUsers[11] = {
+          name: "DEC",
+          totalUsers: users[i].count,
+        };
+      }
+    }
+
+    return res.status(200).json({
+      totalUsers: monthlyUsers,
+      error: false,
+      success: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};

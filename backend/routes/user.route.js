@@ -13,6 +13,7 @@ import {
   registerWithGoogle,
   removeImageFromCloudinary,
   resetPassword,
+  totalUsersController,
   updateUserDetails,
   userAvatarController,
   userDetails,
@@ -45,5 +46,6 @@ userRouter.get("/user-details", auth, userDetails);
 userRouter.get("/users", auth, allUserDetails);
 userRouter.get("/getReviews/:id", getReview);
 userRouter.post("/addReview", auth, addReview);
+userRouter.get("/totalUsers", auth, totalUsersController);
 
 export default userRouter;

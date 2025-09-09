@@ -9,6 +9,7 @@ const initialState = {
   featuredProData: [],
   singleProData: null,
   proReview: [],
+  searchData: [],
 };
 const proDataSlice = createSlice({
   name: "ProData",
@@ -29,6 +30,9 @@ const proDataSlice = createSlice({
     setProReview: (state, action) => {
       state.proReview = action.payload;
     },
+    setSearchData: (state, action) => {
+      state.searchData = action.payload;
+    },
 
     // setProdRam: (state, action) => {
     //   state.prodRam = action.payload;
@@ -47,5 +51,6 @@ export const {
   setFeaturedProData,
   setSingleProData,
   setProReview,
+  setSearchData,
 } = proDataSlice.actions;
 export default proDataSlice.reducer;

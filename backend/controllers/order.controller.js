@@ -26,12 +26,14 @@ export const createOrderController = async (req, res) => {
           countInStock: parseInt(
             req.body.products[i].countInStock - req.body.products[i].quantity
           ),
+          sale: parseInt(req.body.products[i].quantity),
         },
         { new: true }
       );
     }
 
     order = await order.save();
+
     return res.status(200).json({
       message: "Order Placed",
       error: false,
@@ -130,6 +132,54 @@ export const updateOrderDetailsController = async (req, res) => {
     }
     return res.status(200).json({
       message: "order status updated",
+      error: false,
+      success: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+
+export const totalSalesController = async (req, res) => {
+  try {
+    const currentYear = new Date().getFullYear();
+    const orderList = await OrderModel.find();
+
+    let totalSales = 0;
+    let monthlySales = [
+      { name: "JAN", totalSales: 0 },
+      { name: "FEB", totalSales: 0 },
+      { name: "MAR", totalSales: 0 },
+      { name: "APR", totalSales: 0 },
+      { name: "MAY", totalSales: 0 },
+      { name: "JUN", totalSales: 0 },
+      { name: "JUL", totalSales: 0 },
+      { name: "AUG", totalSales: 0 },
+      { name: "SEP", totalSales: 0 },
+      { name: "OCT", totalSales: 0 },
+      { name: "NOV", totalSales: 0 },
+      { name: "DEC", totalSales: 0 },
+    ];
+
+    for (let i = 0; i < orderList.length; i++) {
+      totalSales += parseInt(orderList[i].totalAmt);
+
+      const orderDate = new Date(orderList[i].createdAt);
+      const year = orderDate.getFullYear();
+      const month = orderDate.getMonth() + 1;
+
+      if (currentYear === year) {
+        monthlySales[month - 1].totalSales += parseInt(orderList[i].totalAmt);
+      }
+    }
+
+    return res.status(200).json({
+      monthlySales: monthlySales,
+      totalSales: totalSales,
       error: false,
       success: true,
     });

@@ -3,7 +3,8 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { AiTwotoneGift } from "react-icons/ai";
 import { IoStatsChartSharp } from "react-icons/io5";
 import { AiOutlinePieChart } from "react-icons/ai";
-import { BsBank } from "react-icons/bs";
+import { FiUsers } from "react-icons/fi";
+
 import { LiaDropbox } from "react-icons/lia";
 import { useSelector } from "react-redux";
 // Import Swiper styles
@@ -36,19 +37,19 @@ const DashboardBoxes = (props) => {
             <AiOutlinePieChart className="text-[40px] text-green-700" />
             <div className="info w-[70%]">
               <h3 className="text-md text-black/50">Sales</h3>
-              <b className="text-lg">$57,890</b>
+              <b className="text-lg">
+                ₹ {(props?.sales).toLocaleString("en-IN")}
+              </b>
             </div>
             <IoStatsChartSharp className="text-[50px] text-green-700" />
           </div>
         </SwiperSlide>
         <SwiperSlide>
           <div className="box p-5 cursor-pointer hover:bg-[#f1faff] rounded-md border border-gray-200 flex items-center gap-4 bg-white">
-            <BsBank className="text-[35px] text-violet-700" />
+            <FiUsers className="text-[35px] text-violet-700" />
             <div className="info w-[70%]">
               <h3 className="text-md text-black/50">Users</h3>
-              <b className="text-lg">
-                {props?.usersCount}
-              </b>
+              <b className="text-lg">{props?.usersCount}</b>
             </div>
             <IoStatsChartSharp className="text-[50px] text-violet-700" />
           </div>
@@ -58,9 +59,7 @@ const DashboardBoxes = (props) => {
             <LiaDropbox className="text-[40px] text-[#ff1b85c7]" />
             <div className="info w-[70%]">
               <h3 className="text-md text-black/50">Total Products</h3>
-              <b className="text-lg">
-                {props?.proCount}
-              </b>
+              <b className="text-lg">{props?.proCount}</b>
             </div>
             <IoStatsChartSharp className="text-[50px] text-[#ff1b85c7]" />
           </div>

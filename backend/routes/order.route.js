@@ -4,6 +4,7 @@ import {
   createOrderController,
   getAllOrderDetailsController,
   getOrderDetailsController,
+  totalSalesController,
   updateOrderDetailsController,
 } from "../controllers/order.controller.js";
 
@@ -13,5 +14,6 @@ orderRouter.post("/create", auth, createOrderController);
 orderRouter.get("/", auth, getOrderDetailsController);
 orderRouter.get("/orderList", auth, getAllOrderDetailsController);
 orderRouter.put("/:id", auth, updateOrderDetailsController);
+orderRouter.get("/totalSales", auth, totalSalesController);
 
 export default orderRouter;

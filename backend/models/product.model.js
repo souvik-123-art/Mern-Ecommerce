@@ -77,6 +77,9 @@ const productSchema = mongoose.Schema(
       type: Number,
       required: true,
     },
+    sale: {
+      type: Number,
+    },
     bannerImages: [
       {
         type: String,

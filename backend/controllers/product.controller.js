@@ -1154,3 +1154,41 @@ export const sortBy = async (req, res) => {
     });
   }
 };
+
+export const searchProductController = async (req, res) => {
+  try {
+    const { query } = req.body;
+    if (!query) {
+      return res.status(400).json({
+        message: "Query is required",
+        error: true,
+        success: false,
+      });
+    }
+    const items = await ProductModel.find({
+      $or: [
+        { name: { $regex: query, $options: "i" } },
+        { brand: { $regex: query, $options: "i" } },
+        { catName: { $regex: query, $options: "i" } },
+        { subCat: { $regex: query, $options: "i" } },
+        { thirdSubCat: { $regex: query, $options: "i" } },
+        { description: { $regex: `\\b${query}\\b`, $options: "i" } },
+      ],
+    })
+      .populate("category")
+
+    const total = await items?.length;
+    return res.status(200).json({
+      data: items,
+      error: false,
+      success: true,
+      total: total,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};

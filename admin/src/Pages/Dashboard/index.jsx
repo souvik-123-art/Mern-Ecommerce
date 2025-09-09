@@ -44,6 +44,8 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  BarChart,
+  Bar,
 } from "recharts";
 import { setUsers } from "../../redux/slices/userDetailsSlice";
 const label = { inputProps: { "aria-label": "Checkbox demo" } };
@@ -80,18 +82,21 @@ export const Dashboard = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [isLoading, setIsLoading] = useState(true);
-
+  const [totalSales, setTotalSales] = useState(0);
   const [proCat, setProCat] = useState("All");
   const [proSubCat, setProSubCat] = useState("");
   const [proTSubCat, setTProSubCat] = useState("");
-
+  const orders = useSelector((state) => state.orderData.orderData);
   const [selectedCatObject, setSelectedCatObject] = useState(null);
   const [selectedSubCatObject, setSelectedSubCatObject] = useState(null);
-
+  const [chartData, setChartData] = useState([]);
+  const [year, setYear] = useState(new Date().getFullYear());
+  const [isOpenOrderProduct, setIsOpenOrderProduct] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [orderCount, setOrderCount] = useState(null);
   const [proCount, setProCount] = useState(null);
   const [usersCount, setUsersCount] = useState(null);
+  const [categoryFilterVal, setCategoryFilterVal] = useState("");
   // Helper function to initialize product data with 'checked' property
   const initializeProductsWithChecked = (products) => {
     return (
@@ -309,79 +314,10 @@ export const Dashboard = () => {
   };
 
   // ...........................................>
-  const [categoryFilterVal, setCategoryFilterVal] = useState("");
   const handleChangeCatFilter = (event) => {
     setCategoryFilterVal(event.target.value);
   };
-  const [chart1Data, setChart1Data] = useState([
-    {
-      month: "Jan",
-      TotalUsers: 4000,
-      TotalSales: 2400,
-      amt: 2400,
-    },
-    {
-      month: "Feb",
-      TotalUsers: 3000,
-      TotalSales: 1398,
-      amt: 2210,
-    },
-    {
-      month: "Mar",
-      TotalUsers: 2000,
-      TotalSales: 9800,
-      amt: 2290,
-    },
-    {
-      month: "Apr",
-      TotalUsers: 2780,
-      TotalSales: 3908,
-      amt: 2000,
-    },
-    {
-      month: "Jun",
-      TotalUsers: 1890,
-      TotalSales: 4800,
-      amt: 2181,
-    },
-    {
-      month: "Jul",
-      TotalUsers: 2390,
-      TotalSales: 3800,
-      amt: 2500,
-    },
-    {
-      month: "Aug",
-      TotalUsers: 6490,
-      TotalSales: 300,
-      amt: 2100,
-    },
-    {
-      month: "Sep",
-      TotalUsers: 1290,
-      TotalSales: 3300,
-      amt: 2100,
-    },
-    {
-      month: "Oct",
-      TotalUsers: 3490,
-      TotalSales: 1300,
-      amt: 2100,
-    },
-    {
-      month: "Nov",
-      TotalUsers: 2490,
-      TotalSales: 4300,
-      amt: 2100,
-    },
-    {
-      month: "Dec",
-      TotalUsers: 3490,
-      TotalSales: 2300,
-      amt: 2100,
-    },
-  ]);
-  const [isOpenOrderProduct, setIsOpenOrderProduct] = useState(null);
+
   const isShowOrderProduct = (index) => {
     if (isOpenOrderProduct === index) {
       setIsOpenOrderProduct(null);
@@ -389,7 +325,45 @@ export const Dashboard = () => {
       setIsOpenOrderProduct(index);
     }
   };
+
+  const getTotalUsersByYear = () => {
+    fetchDataFromApi("/api/user/totalUsers").then((res) => {
+      const users = [];
+      res?.totalUsers?.length !== 0 &&
+        res?.totalUsers?.map((user) => {
+          users.push({
+            name: user?.name,
+            totalUsers: parseInt(user?.totalUsers),
+          });
+        });
+
+      const uniqueArr = users.filter(
+        (obj, idx, self) => idx === self.findIndex((t) => t.name === obj.name)
+      );
+      setChartData(uniqueArr);
+    });
+  };
+
+  const getTotalSalesByYear = () => {
+    fetchDataFromApi("/api/order/totalSales").then((res) => {
+      const sales = [];
+      res?.monthlySales?.length !== 0 &&
+        res?.monthlySales?.map((item) => {
+          sales.push({
+            name: item?.name,
+            totalSales: parseInt(item?.totalSales),
+          });
+        });
+
+      const uniqueArr = sales.filter(
+        (obj, idx, self) => idx === self.findIndex((t) => t.name === obj.name)
+      );
+      setChartData(uniqueArr);
+    });
+  };
+
   useEffect(() => {
+    getTotalSalesByYear();
     // Initial data fetch on component mount
     Promise.all([
       fetchDataFromApi("/api/product"),
@@ -427,6 +401,16 @@ export const Dashboard = () => {
         setIsLoading(false); // Stop loading after all initial fetches
       });
   }, []);
+
+  useEffect(() => {
+    let total = 0;
+
+    orders?.forEach((order) => {
+      total += order?.totalAmt || 0;
+    });
+
+    setTotalSales(total);
+  }, [orders]);
   return (
     <>
       <div className="w-full py-5 px-8 border border-gray-200 flex items-center justify-between gap-8 mb-5 rounded-md bg-[#f1faff]">
@@ -456,7 +440,11 @@ export const Dashboard = () => {
         </div>
         <img src="/shop-illustration.png" className="w-[350px]" alt="" />
       </div>
-      <DashboardBoxes usersCount={usersCount} proCount={proCount} />
+      <DashboardBoxes
+        sales={totalSales}
+        usersCount={usersCount}
+        proCount={proCount}
+      />
       <div className="card my-4 mt-5 shadow-md sm:rounded-lg bg-white overflow-hidden">
         <div className="flex items-center justify-between p-5">
           <h2 className="text-xl font-bold">Recent Orders</h2>
@@ -1138,9 +1126,11 @@ export const Dashboard = () => {
                           <TableCell style={{ minWidth: columns.minWidth }}>
                             <div className="flex gap-2 text-[16px]">
                               <span className="line-through text-gray-500">
-                                ${pro.oldPrice}
+                                ₹{pro.oldPrice.toLocaleString("en-IN")}
                               </span>
-                              <span className="text-primary">${pro.price}</span>
+                              <span className="text-primary">
+                                ₹{pro.price.toLocaleString("en-IN")}
+                              </span>
                             </div>
                           </TableCell>
                           <TableCell style={{ minWidth: columns.minWidth }}>
@@ -1219,46 +1209,44 @@ export const Dashboard = () => {
           Total Users & Total Sales
         </h2>
         <div className="indicator flex items-center gap-5 mb-8">
-          <span className="flex items-center gap-2 text-sm text-green-700">
+          <span
+            onClick={getTotalUsersByYear}
+            className="flex cursor-pointer items-center gap-2 text-sm text-green-700"
+          >
             <span className="block w-2 h-2 rounded-full bg-green-500"></span>{" "}
             Total Users
           </span>
-          <span className="flex items-center gap-2 text-sm text-blue-700">
+          <span
+            onClick={getTotalSalesByYear}
+            className="flex cursor-pointer items-center gap-2 text-sm text-blue-700"
+          >
             <span className="block w-2 h-2 rounded-full bg-blue-500"></span>{" "}
             Total Sales
           </span>
         </div>
         <div className="graph overflow-x-scroll overflow-y-hidden">
-          <LineChart
-            width={1200}
-            height={500}
-            data={chart1Data}
-            margin={{
-              top: 5,
-              right: 30,
-              left: 20,
-              bottom: 5,
-            }}
-          >
-            <CartesianGrid strokeDasharray="3 3" stroke="none" />
-            <XAxis dataKey="month" tick={{ fontSize: 12 }} />
-            <YAxis tick={{ fontSize: 12 }} />
-            <Tooltip />
-            <Legend />
-            <Line
-              type="monotone"
-              dataKey="TotalSales"
-              stroke="#8884d8"
-              activeDot={{ r: 8 }}
-              strokeWidth={3}
-            />
-            <Line
-              type="monotone"
-              dataKey="TotalUsers"
-              stroke="#82ca9d"
-              strokeWidth={3}
-            />
-          </LineChart>
+          {chartData?.length !== 0 && (
+            <BarChart
+              width={1200}
+              height={500}
+              data={chartData}
+              margin={{
+                top: 5,
+                right: 30,
+                left: 20,
+                bottom: 5,
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="none" />
+              <XAxis dataKey="name" tick={{ fontSize: 12 }} />{" "}
+              {/* Fixed here */}
+              <YAxis tick={{ fontSize: 12 }} />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="totalSales" fill="#8884d8" barSize={30} />
+              <Bar dataKey="totalUsers" fill="#82ca9d" barSize={30} />
+            </BarChart>
+          )}
         </div>
       </div>
     </>

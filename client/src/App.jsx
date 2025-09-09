@@ -40,6 +40,7 @@ import { setCartData } from "./redux/Slices/cartSlice";
 import { setMyListData } from "./redux/Slices/myListSlice";
 import { setAddress } from "./redux/slices/userAddressSlice";
 import { setOrderData } from "./redux/Slices/orderSlice";
+import { SearchPage } from "./pages/SearchPage";
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -119,6 +120,7 @@ function App() {
             exact={true}
             element={<ProductListing />}
           />
+          <Route path="/search" exact={true} element={<SearchPage />} />
           <Route
             path="/product-details/:id"
             exact={true}

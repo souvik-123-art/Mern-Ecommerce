@@ -9,15 +9,18 @@ import Button from "@mui/material/Button";
 import RangeSlider from "react-range-slider-input";
 import "react-range-slider-input/dist/style.css";
 import Rating from "@mui/material/Rating";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { postData } from "../../utils/api";
+import { setSearchData } from "../../redux/Slices/productsDataSlice";
 export const Sidebar = (props) => {
+  const dispatch = useDispatch();
   const [isCatOpen, setIsCatOpen] = useState(true);
   const location = useLocation();
   const [isAvaOpen, setIsAvaOpen] = useState(true);
   const [isSizeOpen, setIsSizeOpen] = useState(true);
   const catData = useSelector((state) => state.catData.catData);
+  const searchData = useSelector((state) => state.proData.searchData);
   const [filters, setFilters] = useState({
     catId: [],
     subCatId: [],
@@ -31,6 +34,7 @@ export const Sidebar = (props) => {
   const [price, setPrice] = useState([0, 60000]);
 
   const handleCheckboxChange = (field, value) => {
+    dispatch(setSearchData([]));
     const currentVal = filters[field] || [];
     const updatedVal = currentVal?.includes(value)
       ? currentVal.filter((item) => item !== value)
@@ -49,23 +53,31 @@ export const Sidebar = (props) => {
   };
   const filterData = () => {
     props?.setIsLoading(true);
-    postData(`/api/product/filters`, filters).then((res) => {
-      postData("/api/product/sortBy", {
-        products: res?.products,
-        sortBy: "name",
-        order: "asc",
-      }).then((response) => {
-        props?.setProductsData(response?.products);
-      });
+    if (searchData?.data?.length > 0) {
+      props?.setProductsData(searchData?.data);
       props?.setIsLoading(false);
-      props?.setTotalPages(res?.totalPages);
+      props?.setTotalPages(searchData?.totalPages);
       window.scrollTo(0, 0);
-    });
+    } else {
+      postData(`/api/product/filters`, filters).then((res) => {
+        postData("/api/product/sortBy", {
+          products: res?.products,
+          sortBy: "name",
+          order: "asc",
+        }).then((response) => {
+          props?.setProductsData(response?.products);
+        });
+        props?.setIsLoading(false);
+        props?.setTotalPages(res?.totalPages);
+        window.scrollTo(0, 0);
+      });
+    }
   };
   useEffect(() => {
     const url = window.location.href;
     const queryParam = new URLSearchParams(location.search);
     if (url.includes("catId")) {
+      dispatch(setSearchData([]));
       const categoryId = queryParam.get("catId");
       const catArr = [];
       catArr.push(categoryId);
@@ -75,6 +87,7 @@ export const Sidebar = (props) => {
       filters.rating = [];
     }
     if (url.includes("subCatId")) {
+      dispatch(setSearchData([]));
       const categoryId = queryParam.get("subCatId");
       const catArr = [];
       catArr.push(categoryId);
@@ -84,6 +97,7 @@ export const Sidebar = (props) => {
       filters.rating = [];
     }
     if (url.includes("thirdSubCatId")) {
+      dispatch(setSearchData([]));
       const categoryId = queryParam.get("thirdSubCatId");
       const catArr = [];
       catArr.push(categoryId);
