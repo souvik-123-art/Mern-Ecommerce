@@ -39,12 +39,10 @@ const BannerV1List = () => {
   }, []);
   return (
     <>
-      <div className="py-3 flex items-center">
-        <h2 className="text-3xl font-bold">Home Slider Banners</h2>
-        <div className="col ml-auto flex items-center gap-3">
-          <Button className="btn !bg-green-600 !text-white hover:!bg-green-400">
-            Export
-          </Button>
+      <div className="py-3 flex flex-col sm:flex-row items-start sm:items-center">
+        <h2 className="text-2xl sm:text-3xl font-bold">Home Slider Banners</h2>
+
+        <div className="ml-auto flex flex-wrap gap-3 mt-3 sm:mt-0">
           <Button
             className="btn-blue btn !flex !items-center !gap-1"
             onClick={() =>
@@ -62,98 +60,100 @@ const BannerV1List = () => {
         </div>
       </div>
 
-      <div className="card my-4 p-5 mt-5 shadow-md sm:rounded-lg bg-white overflow-hidden relative">
+      <div className="card my-4 p-4 sm:p-5 mt-5 shadow-md sm:rounded-lg bg-white overflow-auto relative">
         <div
           className={`absolute inset-0 bg-white/40 ${
             isLoading ? "flex" : "hidden"
-          } justify-center items-center z-50 left-0 top-0`}
+          } justify-center items-center z-50`}
         >
           <CircularProgress className="!text-primary" />
         </div>
+
         {bannerV1?.length !== 0 ? (
-          <>
-            <TableContainer sx={{ maxHeight: 640 }}>
-              <Table stickyHeader aria-label="sticky table">
-                <TableHead>
-                  <TableRow>
-                    {columns.map((column) => (
-                      <TableCell
-                        key={column.id}
-                        align={column.align}
-                        width={column.minWidth}
-                      >
-                        {column.label}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {bannerV1?.map((banner) => (
-                    <TableRow key={banner?._id}>
-                      <TableCell width={200}>
-                        <div className="flex items-center w-[200px]">
-                          <div className="img w-full rounded-md overflow-hidden">
-                            <img
-                              src={banner?.images[0]}
-                              className="w-full"
-                              alt=""
-                            />
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell className="!text-lg" width={100}>
-                        {banner.bannerTitle}
-                      </TableCell>
-                      <TableCell className="!text-lg" width={100}>
-                        ₹ {banner.price}
-                      </TableCell>
-                      <TableCell width={100}>
-                        <TooltipMUI title="Edit Banner Image" placement="top">
-                          <Button
-                            onClick={() =>
-                              dispatch(
-                                setIsOpenFullScreenPanel({
-                                  open: true,
-                                  model: "Edit Banner V1",
-                                  id: banner._id,
-                                })
-                              )
-                            }
-                            className="!w-8 !bg-green-500 !mr-2 !h-8 !min-w-8 !text-[#f1f1f1] !rounded-full"
-                          >
-                            <FiEdit2 className="text-lg" />
-                          </Button>
-                        </TooltipMUI>
-                        <TooltipMUI title="Delete Banner Image" placement="top">
-                          <Button
-                            onClick={() => {
-                              setIsLoading(true);
-                              deleteData(
-                                `/api/bannerV1/deleteBannerV1/${banner._id}`,
-                                { credentials: true }
-                              ).then((res) => {
-                                fetchDataFromApi("/api/bannerV1").then(
-                                  (res) => {
-                                    dispatch(setBannerV1(res?.data));
-                                    setIsLoading(false);
-                                  }
-                                );
-                              });
-                            }}
-                            className="!w-8 !bg-red-500 !text-lg !mr-2 !h-8 !min-w-8 !text-[#f1f1f1] !rounded-full"
-                          >
-                            <RiDeleteBin6Line />
-                          </Button>
-                        </TooltipMUI>
-                      </TableCell>
-                    </TableRow>
+          <TableContainer sx={{ maxHeight: 640 }}>
+            <Table stickyHeader aria-label="sticky table" size="small">
+              <TableHead>
+                <TableRow>
+                  {columns.map((column) => (
+                    <TableCell
+                      key={column.id}
+                      align={column.align}
+                      width={column.minWidth}
+                    >
+                      {column.label}
+                    </TableCell>
                   ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </>
+                </TableRow>
+              </TableHead>
+
+              <TableBody>
+                {bannerV1?.map((banner) => (
+                  <TableRow key={banner?._id}>
+                    <TableCell width={150}>
+                      <div className="flex items-center w-[150px] h-[80px]">
+                        <div className="img w-full rounded-md overflow-hidden">
+                          <img
+                            src={banner?.images[0]}
+                            className="w-full h-full object-cover"
+                            alt="Banner"
+                          />
+                        </div>
+                      </div>
+                    </TableCell>
+
+                    <TableCell className="!text-base sm:!text-lg" width={120}>
+                      {banner.bannerTitle}
+                    </TableCell>
+
+                    <TableCell className="!text-base sm:!text-lg" width={120}>
+                      ₹ {banner.price}
+                    </TableCell>
+
+                    <TableCell width={100}>
+                      <TooltipMUI title="Edit Banner Image" placement="top">
+                        <Button
+                          onClick={() =>
+                            dispatch(
+                              setIsOpenFullScreenPanel({
+                                open: true,
+                                model: "Edit Banner V1",
+                                id: banner._id,
+                              })
+                            )
+                          }
+                          className="!w-8 !bg-green-500 !mr-2 !h-8 !min-w-8 !text-white !rounded-full"
+                        >
+                          <FiEdit2 className="text-lg" />
+                        </Button>
+                      </TooltipMUI>
+
+                      <TooltipMUI title="Delete Banner Image" placement="top">
+                        <Button
+                          onClick={() => {
+                            setIsLoading(true);
+                            deleteData(
+                              `/api/bannerV1/deleteBannerV1/${banner._id}`,
+                              { credentials: true }
+                            ).then(() => {
+                              fetchDataFromApi("/api/bannerV1").then((res) => {
+                                dispatch(setBannerV1(res?.data));
+                                setIsLoading(false);
+                              });
+                            });
+                          }}
+                          className="!w-8 !bg-red-500 !text-lg !mr-2 !h-8 !min-w-8 !text-white !rounded-full"
+                        >
+                          <RiDeleteBin6Line />
+                        </Button>
+                      </TooltipMUI>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
+          <div className="w-full h-[300px] flex items-center justify-center">
             <span className="text-xl font-light text-black/60">
               No Banner Images Available
             </span>

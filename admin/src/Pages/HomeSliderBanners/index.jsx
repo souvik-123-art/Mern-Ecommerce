@@ -37,14 +37,13 @@ const HomeSliderBanners = () => {
   }, []);
   return (
     <>
-      <div className="py-3 flex items-center">
-        <h2 className="text-3xl font-bold">Home Slider Banners</h2>
-        <div className="col ml-auto flex items-center gap-3">
-          <Button className="btn !bg-green-600 !text-white hover:!bg-green-400">
-            Export
-          </Button>
+      <div className="py-3 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-0">
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold">
+          Home Slider Banners
+        </h2>
+        <div className="col w-full sm:ml-auto flex items-center gap-2 sm:gap-3 flex-wrap">
           <Button
-            className="btn-blue btn !flex !items-center !gap-1"
+            className="btn-blue btn !flex !items-center !gap-1 !text-xs sm:!text-sm !px-2 sm:!px-3 !py-1 sm:!py-2"
             onClick={() =>
               dispatch(
                 setIsOpenFullScreenPanel({
@@ -54,13 +53,13 @@ const HomeSliderBanners = () => {
               )
             }
           >
-            <FaPlus />
+            <FaPlus className="text-sm sm:text-base" />
             Add Home Slide
           </Button>
         </div>
       </div>
 
-      <div className="card my-4 p-5 mt-5 shadow-md sm:rounded-lg bg-white overflow-hidden relative">
+      <div className="card my-4 p-3 sm:p-4 md:p-5 mt-5 shadow-md sm:rounded-lg bg-white overflow-hidden relative">
         <div
           className={`absolute inset-0 bg-white/40 ${
             isLoading ? "flex" : "hidden"
@@ -70,73 +69,74 @@ const HomeSliderBanners = () => {
         </div>
         {lgBanners?.length !== 0 ? (
           <>
-            <TableContainer sx={{ maxHeight: 640 }}>
-              <Table stickyHeader aria-label="sticky table">
-                <TableHead>
-                  <TableRow>
-                    {columns.map((column) => (
-                      <TableCell
-                        key={column.id}
-                        align={column.align}
-                        width={column.minWidth}
-                      >
-                        {column.label}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {lgBanners?.map((banner) => (
+            <div className="overflow-x-auto">
+              <TableContainer sx={{ maxHeight: 640 }}>
+                <Table stickyHeader aria-label="sticky table" size="small">
+                  <TableHead>
                     <TableRow>
-                      <TableCell width={300}>
-                        <div className="flex items-center gap-4 w-[300px]">
-                          <div className="img w-full rounded-md overflow-hidden">
-                            <img
-                              src={banner?.images}
-                              className="w-full"
-                              alt=""
-                            />
-                          </div>
-                        </div>
-                      </TableCell>
-
-                      <TableCell width={100}>
-                        {/* <TooltipMUI title="Edit Banner Image" placement="top">
-                          <Button className="!w-8 !bg-green-500 !mr-2 !h-8 !min-w-8 !text-[#f1f1f1] !rounded-full">
-                            <FiEdit2 className="text-lg" />
-                          </Button>
-                        </TooltipMUI> */}
-                        <TooltipMUI title="Delete Banner Image" placement="top">
-                          <Button
-                            onClick={() => {
-                              setIsLoading(true);
-                              deleteData(
-                                `/api/homeBanners/deleteLgHomeBanner/${banner._id}`,
-                                { credentials: true }
-                              ).then((res) => {
-                                fetchDataFromApi("/api/homeBanners").then(
-                                  (res) => {
-                                    dispatch(setLgBanners(res?.data));
-                                    setIsLoading(false);
-                                  }
-                                );
-                              });
-                            }}
-                            className="!w-8 !bg-red-500 !text-lg !mr-2 !h-8 !min-w-8 !text-[#f1f1f1] !rounded-full"
-                          >
-                            <RiDeleteBin6Line />
-                          </Button>
-                        </TooltipMUI>
-                      </TableCell>
+                      {columns.map((column) => (
+                        <TableCell
+                          key={column.id}
+                          align={column.align}
+                          width={column.minWidth}
+                          className="!whitespace-nowrap !text-xs sm:!text-sm"
+                        >
+                          {column.label}
+                        </TableCell>
+                      ))}
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+                  </TableHead>
+                  <TableBody>
+                    {lgBanners?.map((banner) => (
+                      <TableRow key={banner._id}>
+                        <TableCell width={200} className="!p-2 sm:!p-3">
+                          <div className="flex items-center gap-2 sm:gap-4 w-full max-w-[200px] sm:max-w-[300px]">
+                            <div className="img w-full rounded-md overflow-hidden">
+                              <img
+                                src={banner?.images}
+                                className="w-full h-auto"
+                                alt="Banner"
+                              />
+                            </div>
+                          </div>
+                        </TableCell>
+
+                        <TableCell width={80} className="!p-2 sm:!p-3">
+                          <TooltipMUI
+                            title="Delete Banner Image"
+                            placement="top"
+                          >
+                            <Button
+                              onClick={() => {
+                                setIsLoading(true);
+                                deleteData(
+                                  `/api/homeBanners/deleteLgHomeBanner/${banner._id}`,
+                                  { credentials: true }
+                                ).then((res) => {
+                                  fetchDataFromApi("/api/homeBanners").then(
+                                    (res) => {
+                                      dispatch(setLgBanners(res?.data));
+                                      setIsLoading(false);
+                                    }
+                                  );
+                                });
+                              }}
+                              className="!w-6 !h-6 sm:!w-8 sm:!h-8 !min-w-0 !bg-red-500 !text-sm sm:!text-lg !text-[#f1f1f1] !rounded-full"
+                            >
+                              <RiDeleteBin6Line />
+                            </Button>
+                          </TooltipMUI>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </div>
           </>
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <span className="text-xl font-light text-black/60">
+          <div className="w-full h-40 flex items-center justify-center">
+            <span className="text-base sm:text-xl font-light text-black/60 text-center px-4">
               No Banner Images Available
             </span>
           </div>

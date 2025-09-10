@@ -231,18 +231,23 @@ const Profile = () => {
   };
   return (
     <>
-      <div className="card my-4 p-5 mt-5 shadow-md sm:rounded-lg bg-white overflow-hidden h-auto w-[75%]">
-        <div className="flex items-center pb-0">
-          <h2 className="pb-3 text-2xl font-semibold">My Profile</h2>
+      {/* Profile Card */}
+      <div className="card my-4 p-5 mt-5 shadow-md sm:rounded-lg bg-white overflow-hidden h-auto w-full md:w-[85%] lg:w-[75%]">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center pb-0 gap-3">
+          <h2 className="pb-3 sm:pb-0 text-xl sm:text-2xl font-semibold">
+            My Profile
+          </h2>
           <Button
-            className="!ml-auto !text-primary"
+            className="sm:!ml-auto !text-primary"
             onClick={() => setPassOpen(true)}
           >
             Change Password
           </Button>
         </div>
+
+        {/* Avatar */}
         <div className="w-full py-3 flex items-center justify-center flex-col">
-          <div className="mb-4 group w-[110px] h-[110px] rounded-full overflow-hidden relative flex items-center justify-center bg-gray-200">
+          <div className="mb-4 group w-[100px] h-[100px] sm:w-[110px] sm:h-[110px] rounded-full overflow-hidden relative flex items-center justify-center bg-gray-200">
             {uploading ? (
               <CircularProgress
                 className="!w-[25px] !h-[25px]"
@@ -251,16 +256,14 @@ const Profile = () => {
             ) : (
               <>
                 {previews?.length !== 0 ? (
-                  previews?.map((img) => {
-                    return (
-                      <img
-                        src={img}
-                        key={img}
-                        alt=""
-                        className="w-full h-full object-cover"
-                      />
-                    );
-                  })
+                  previews?.map((img) => (
+                    <img
+                      src={img}
+                      key={img}
+                      alt=""
+                      className="w-full h-full object-cover"
+                    />
+                  ))
                 ) : (
                   <img
                     src="https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1095249842.jpg"
@@ -271,71 +274,81 @@ const Profile = () => {
               </>
             )}
 
+            {/* Upload overlay */}
             <div className="overlay transition-all duration-200 opacity-0 group-hover:opacity-100 absolute top-0 left-0 w-full h-full z-10 bg-black/40 flex items-center justify-center cursor-pointer">
               <FaCloudUploadAlt className="text-white text-2xl cursor-pointer" />
               <input
                 type="file"
                 name="avatar"
                 accept="image/*"
-                className="absolute inset-0 opacity-0  cursor-pointer"
+                className="absolute inset-0 opacity-0 cursor-pointer"
                 onChange={(e) => onChangeFile(e, "/api/user/user-avatar")}
               />
             </div>
           </div>
-          <h4 className="text-2xl font-semibold">{userDetails?.name}</h4>
+          <h4 className="text-xl sm:text-2xl font-semibold">
+            {userDetails?.name}
+          </h4>
           <p className="text-sm">{userDetails?.email}</p>
         </div>
-        <form className="mt-8" onSubmit={handleSubmit}>
-          <div className="flex items-center gap-5">
-            <div className="w-1/2">
-              <div className="">
-                <h3 className="text-lg font-[500] mb-1">Full Name</h3>
-                <input
-                  type="text"
-                  className="w-full h-[40px] border border-black/30 outline-none focus:border-black/50 rounded-sm p-3 text-sm"
-                  name="name"
-                  placeholder="enter full name"
-                  disabled={isLoading ? true : false}
-                  onChange={onChangeInput}
-                  value={formFields.name}
-                />
-              </div>
+
+        {/* Profile Form */}
+        <form className="mt-6 sm:mt-8" onSubmit={handleSubmit}>
+          <div className="flex flex-col sm:flex-row gap-5">
+            <div className="w-full sm:w-1/2">
+              <h3 className="text-base sm:text-lg font-[500] mb-1">
+                Full Name
+              </h3>
+              <input
+                type="text"
+                className="w-full h-[40px] border border-black/30 outline-none focus:border-black/50 rounded-sm px-3 text-sm"
+                name="name"
+                placeholder="Enter full name"
+                disabled={isLoading}
+                onChange={onChangeInput}
+                value={formFields.name}
+              />
             </div>
-            <div className="w-1/2">
-              <div className="">
-                <h3 className="text-lg font-[500] mb-1">Email Address</h3>
-                <input
-                  type="email"
-                  className="w-full h-[40px] border border-black/30 outline-none focus:border-black/50 rounded-sm p-3 text-sm"
-                  name="email"
-                  placeholder="enter email address"
-                  disabled={isLoading ? true : false}
-                  onChange={onChangeInput}
-                  value={formFields.email}
-                />
-              </div>
+            <div className="w-full sm:w-1/2">
+              <h3 className="text-base sm:text-lg font-[500] mb-1">
+                Email Address
+              </h3>
+              <input
+                type="email"
+                className="w-full h-[40px] border border-black/30 outline-none focus:border-black/50 rounded-sm px-3 text-sm"
+                name="email"
+                placeholder="Enter email address"
+                disabled={isLoading}
+                onChange={onChangeInput}
+                value={formFields.email}
+              />
             </div>
           </div>
-          <div className="flex items-center gap-5 mt-4">
-            <div className="">
-              <h3 className="text-lg font-[500] mb-1">Mobile No.</h3>
+
+          {/* Mobile number */}
+          <div className="flex flex-col sm:flex-row gap-5 mt-4">
+            <div className="w-full sm:w-1/2">
+              <h3 className="text-base sm:text-lg font-[500] mb-1">
+                Mobile No.
+              </h3>
               <PhoneInput
                 defaultCountry="in"
                 value={String(formFields.mobile)}
                 name="mobile"
-                disabled={isLoading ? true : false}
-                onChange={(phone) => {
+                disabled={isLoading}
+                onChange={(phone) =>
                   setFormFields({
                     ...formFields,
                     mobile: phone,
-                  });
-                }}
+                  })
+                }
               />
             </div>
           </div>
-          <br />
+
+          {/* Add Address */}
           <div
-            className="flex items-center justify-center p-5 border border-dashed border-black/30 bg-[#f1fafa] hover:bg-[#e1f3f3] cursor-pointer transition duration-200 rounded-md mb-5"
+            className="flex items-center justify-center p-4 sm:p-5 border border-dashed border-black/30 bg-[#f1fafa] hover:bg-[#e1f3f3] cursor-pointer transition duration-200 rounded-md mt-5 mb-5"
             onClick={() =>
               dispatch(
                 setIsOpenFullScreenPanel({
@@ -346,33 +359,28 @@ const Profile = () => {
             }
           >
             <span className="text-sm font-semibold flex gap-2 items-center">
-              {" "}
-              <FaPlus />
-              Add Address
+              <FaPlus /> Add Address
             </span>
           </div>
+
+          {/* Addresses */}
           {address.map((add) => (
             <label
               key={add._id}
-              className="address w-full flex text-gray-600 items-center justify-center cursor-pointer bg-[#f1f1f1] p-3 rounded-md mb-2 relative"
+              className="address w-full flex text-gray-600 items-center justify-between cursor-pointer bg-[#f1f1f1] p-3 rounded-md mb-2 relative"
             >
-              {/* <Radio
-                checked={selectedValue === add._id}
-                onChange={handleChangeAddress}
-                value={add._id}
-                {...label}
-                size="small"
-              /> */}
-              <span>
-                {add.address_line}, {add.city}, {add.state}, {add.country},
+              <span className="text-sm sm:text-base">
+                {add.address_line}, {add.city}, {add.state}, {add.country},{" "}
                 {add.pincode}
               </span>
               <IoMdClose
                 onClick={() => removeAddress(add._id)}
-                className="text-2xl hover:text-red-400 transition absolute z-10 right-3"
+                className="text-xl sm:text-2xl hover:text-red-400 transition cursor-pointer"
               />
             </label>
           ))}
+
+          {/* Save button */}
           <div className="flex items-center">
             <Button
               type="submit"
@@ -381,7 +389,7 @@ const Profile = () => {
             >
               {isLoading ? (
                 <CircularProgress
-                  className="!w-[25px] !h-[25px]"
+                  className="!w-[22px] !h-[22px]"
                   color="inherit"
                 />
               ) : (
@@ -391,41 +399,44 @@ const Profile = () => {
           </div>
         </form>
       </div>
-      <Collapse isOpened={passOpen}>
-        <div className="card bg-white p-5 shadow-md rounded-md w-[75%]">
-          <div className="flex items-center pb-3">
-            <h2 className="pb-0">Change Password</h2>
 
+      {/* Change Password Collapse */}
+      <Collapse isOpened={passOpen}>
+        <div className="card bg-white p-5 shadow-md rounded-md w-full md:w-[85%] lg:w-[75%] mt-4">
+          <div className="flex items-center pb-3">
+            <h2 className="pb-0 text-lg sm:text-xl font-semibold">
+              Change Password
+            </h2>
             <IoMdClose
               onClick={() => setPassOpen(false)}
-              className="text-2xl ml-auto cursor-pointer text-black link transition"
+              className="text-xl sm:text-2xl ml-auto cursor-pointer text-black link transition"
             />
           </div>
           <hr />
-          <form className="mt-8" onSubmit={handleSubmitPasswordChange}>
-            <div className="flex items-center gap-5">
-              <div className="w-1/2">
+          <form className="mt-6 sm:mt-8" onSubmit={handleSubmitPasswordChange}>
+            <div className="flex flex-col sm:flex-row gap-5">
+              <div className="w-full sm:w-1/2">
                 <TextField
                   label="Old Password"
-                  type="text"
+                  type="password"
                   variant="outlined"
                   size="small"
                   className="w-full"
                   name="oldPassword"
-                  disabled={isLoading2 ? true : false}
+                  disabled={isLoading2}
                   onChange={onChangeInput}
                   value={changePassword.oldPassword}
                 />
               </div>
-              <div className="w-1/2">
+              <div className="w-full sm:w-1/2">
                 <TextField
                   label="New Password"
-                  type="text"
+                  type="password"
                   variant="outlined"
                   size="small"
                   className="w-full"
                   name="newPassword"
-                  disabled={isLoading2 ? true : false}
+                  disabled={isLoading2}
                   onChange={onChangeInput}
                   value={changePassword.newPassword}
                 />
@@ -439,7 +450,7 @@ const Profile = () => {
               >
                 {isLoading2 ? (
                   <CircularProgress
-                    className="!w-[25px] !h-[25px]"
+                    className="!w-[22px] !h-[22px]"
                     color="inherit"
                   />
                 ) : (

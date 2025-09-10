@@ -21,7 +21,6 @@ const Orders = () => {
   const userDetails = useSelector((state) => state.UserDetails.userDetails);
   const [allOrders, setAllOrders] = useState([]);
 
-
   const getHighlightedText = (text, highlight) => {
     if (!highlight) return text;
 
@@ -102,9 +101,9 @@ const Orders = () => {
 
   return (
     <div className="card my-4 mt-5 shadow-md sm:rounded-lg bg-white overflow-hidden">
-      <div className="flex items-center justify-between p-5">
+      <div className="flex flex-col md:flex-row gap-4 md:gap-0 items-center justify-between p-5">
         <h2 className="text-xl font-bold">Recent Orders</h2>
-        <div className="w-[40%]">
+        <div className="md:w-[40%] w-full">
           <SearchBox
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}

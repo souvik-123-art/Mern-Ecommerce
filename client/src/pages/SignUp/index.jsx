@@ -14,7 +14,7 @@ import { setIsLogin } from "../../redux/Slices/authSlice";
 const auth = getAuth(firebaseApp);
 const provider = new GoogleAuthProvider();
 export const SignUp = () => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [isLoading2, setIsLoading2] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -134,14 +134,15 @@ export const SignUp = () => {
   };
 
   return (
-    <section className="login py-10">
-      <div className="container mx-auto">
-        <div className="card shadow-md w-[500px] m-auto rounded-md bg-white p-5 px-10">
-          <h3 className="text-center text-2xl font-bold text-gray-700">
+    <section className="login py-6 md:py-10 px-4">
+      <div className="container mx-auto max-w-md md:max-w-lg">
+        <div className="card shadow-md w-full m-auto rounded-md bg-white p-4 md:p-6 lg:p-8">
+          <h3 className="text-center text-xl md:text-2xl font-bold text-gray-700 mb-4 md:mb-6">
             Sign Up
           </h3>
-          <form className="w-full mt-5" onSubmit={handleSubmit}>
-            <div className="form-group w-full mb-5">
+
+          <form className="w-full mt-3 md:mt-5" onSubmit={handleSubmit}>
+            <div className="form-group w-full mb-4 md:mb-5">
               <TextField
                 type="text"
                 id="username"
@@ -151,10 +152,12 @@ export const SignUp = () => {
                 className="w-full"
                 name="name"
                 onChange={onChangeInput}
-                disabled={isLoading ? true : false}
+                disabled={isLoading}
+                size="small"
               />
             </div>
-            <div className="form-group w-full mb-5">
+
+            <div className="form-group w-full mb-4 md:mb-5">
               <TextField
                 type="number"
                 id="mobileNo"
@@ -164,10 +167,12 @@ export const SignUp = () => {
                 className="w-full"
                 name="mobile"
                 onChange={onChangeInput}
-                disabled={isLoading ? true : false}
+                disabled={isLoading}
+                size="small"
               />
             </div>
-            <div className="form-group w-full mb-5">
+
+            <div className="form-group w-full mb-4 md:mb-5">
               <TextField
                 type="email"
                 id="email"
@@ -177,10 +182,12 @@ export const SignUp = () => {
                 className="w-full"
                 name="email"
                 onChange={onChangeInput}
-                disabled={isLoading ? true : false}
+                disabled={isLoading}
+                size="small"
               />
             </div>
-            <div className="form-group w-full mb-5 relative">
+
+            <div className="form-group w-full mb-4 md:mb-5 relative">
               <TextField
                 type={showPassword ? "text" : "password"}
                 id="password"
@@ -190,18 +197,20 @@ export const SignUp = () => {
                 className="w-full"
                 name="password"
                 onChange={onChangeInput}
-                disabled={isLoading ? true : false}
+                disabled={isLoading}
+                size="small"
               />
               <Button
                 onClick={() => setShowPassword(!showPassword)}
                 className="!w-[40px] !min-w-[40px] !rounded-full
-                    !text-black !bg-transparent
-                   !h-[40px] !text-xl !absolute !z-5 !right-2 !top-2 opacity-75 hover:!text-primary !transition"
+                  !text-black !bg-transparent
+                  !h-[40px] !text-xl !absolute !z-5 !right-1 !top-1 opacity-75 hover:!text-primary !transition"
               >
                 {showPassword ? <IoMdEyeOff /> : <IoMdEye />}
               </Button>
             </div>
-            <div className="form-group w-full mb-3 relative">
+
+            <div className="form-group w-full mb-4 relative">
               <TextField
                 type={showConPassword ? "text" : "password"}
                 id="conPassword"
@@ -211,21 +220,24 @@ export const SignUp = () => {
                 className="w-full"
                 name="conPassword"
                 onChange={onChangeInput}
-                disabled={isLoading ? true : false}
+                disabled={isLoading}
+                size="small"
               />
               <Button
                 onClick={() => setShowConPassword(!showConPassword)}
                 className="!w-[40px] !min-w-[40px] !rounded-full
-                    !text-black !bg-transparent
-                   !h-[40px] !text-xl !absolute !z-5 !right-2 !top-2 opacity-75 hover:!text-primary !transition"
+                  !text-black !bg-transparent
+                  !h-[40px] !text-xl !absolute !z-5 !right-1 !top-1 opacity-75 hover:!text-primary !transition"
               >
                 {showConPassword ? <IoMdEyeOff /> : <IoMdEye />}
               </Button>
             </div>
+
             <Button
               type="submit"
-              disabled={!validValue}
-              className="!px-6 !mt-5 !w-full !flex !py-2 !bg-primary !text-white hover:!bg-gray-900 transition-all"
+              disabled={!validValue || isLoading}
+              className="!px-6 !mt-4 !w-full !flex !py-2 !bg-primary !text-white hover:!bg-gray-900 transition-all !h-12"
+              variant="contained"
             >
               {isLoading ? (
                 <CircularProgress
@@ -237,19 +249,33 @@ export const SignUp = () => {
               )}
             </Button>
           </form>
-          <p className="mt-6 text-center text-md font-light">
+
+          <p className="mt-5 md:mt-6 text-center text-sm md:text-md font-light">
             Already have an account?&nbsp;
-            <Link className="link transition font-semibold" to="/login">
+            <Link
+              className="link transition font-semibold text-primary"
+              to="/login"
+            >
               Login
             </Link>
           </p>
-          <hr className="mt-3" />
-          <p className="text-center font-semibold text-sm mt-4">
-            Or create with social account
-          </p>
+
+          <div className="relative my-5 md:my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-white text-gray-500">
+                Or create with
+              </span>
+            </div>
+          </div>
+
           <Button
             onClick={authWithGoogle}
-            className="!bg-gray-700 !text-white !font-medium !rounded !transition !text-sm !px-5 !py-2.5 !flex !items-center !mt-3 !justify-center w-full !mb-2 hover:!bg-gray-600"
+            disabled={isLoading2}
+            className="!bg-gray-700 !text-white !font-medium !rounded !transition !text-sm !px-5 !py-2.5 !flex !items-center !mt-2 !justify-center w-full !mb-2 hover:!bg-gray-600 !h-12"
+            variant="contained"
           >
             {isLoading2 ? (
               <CircularProgress
@@ -270,7 +296,7 @@ export const SignUp = () => {
                     d="M8.842 18.083a8.8 8.8 0 0 1-8.65-8.948 8.841 8.841 0 0 1 8.8-8.652h.153a8.464 8.464 0 0 1 5.7 2.257l-2.193 2.038A5.27 5.27 0 0 0 9.09 3.4a5.882 5.882 0 0 0-.2 11.76h.124a5.091 5.091 0 0 0 5.248-4.057L14.3 11H9V8h8.34c.066.543.095 1.09.088 1.636-.086 5.053-3.463 8.449-8.4 8.449l-.186-.002Z"
                     clipRule="evenodd"
                   />
-                </svg>{" "}
+                </svg>
                 Sign up with Google
               </>
             )}
@@ -280,4 +306,3 @@ export const SignUp = () => {
     </section>
   );
 };
-

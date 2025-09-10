@@ -201,29 +201,18 @@ export default function ProductModal() {
   return (
     <Dialog
       open={isOpen}
-      onClose={() =>
-        dispatch(
-          productModal({
-            open: false,
-            id: "",
-          })
-        )
-      }
+      onClose={() => dispatch(productModal({ open: false, id: "" }))}
       maxWidth="lg"
       fullWidth
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogContent className="!relative bg-white !p-6 sm:!p-10">
+      <DialogContent className="relative bg-white p-6 sm:p-10">
+        {/* Close Button */}
         <Button
-          className="!absolute !top-4 !right-4 !w-10 !min-w-10 !h-10 !rounded-full !text-2xl !text-black/80 z-10"
+          className="!absolute !top-4 !right-4 !w-10 !h-10 !rounded-full !text-2xl !text-black/80 !z-10"
           onClick={() => {
-            dispatch(
-              productModal({
-                open: false,
-                id: "",
-              })
-            );
+            dispatch(productModal({ open: false, id: "" }));
             setSizeIndex(null);
             setRamIndex(null);
             setWeightIndex(null);
@@ -231,38 +220,45 @@ export default function ProductModal() {
         >
           <IoMdClose />
         </Button>
-        <div className="flex flex-col lg:flex-row gap-8">
-          <div className="w-full lg:w-[40%] overflow-hidden">
+
+        {/* Main Content */}
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Image Zoom Section */}
+          <div className="w-full lg:w-1/2 overflow-hidden">
             <ProductZoom data={proData?.images} />
           </div>
-          <div className="w-full lg:w-[60%] flex flex-col justify-center px-2 sm:px-4">
+
+          {/* Info Section */}
+          <div className="w-full lg:w-1/2 flex flex-col justify-center px-2 sm:px-4">
             <h1 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-2 leading-snug">
               {proData?.name}
             </h1>
-            <div className="flex items-center gap-3 text-sm text-gray-500 mb-2">
+
+            <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500 mb-2">
               <span>
-                Brands:{" "}
+                Brand:{" "}
                 <span className="font-medium text-gray-800">
                   {proData?.brand}
                 </span>
               </span>
               <Rating
-                name="size-small"
+                name="read-only"
                 value={Number(proData?.rating)}
                 precision={0.5}
                 readOnly
                 size="small"
               />
             </div>
+
             <div className="flex flex-wrap items-center gap-4 mt-2">
               <span className="line-through text-gray-400 text-lg font-medium">
-                ₹{proData?.oldPrice}
+                ₹{(proData?.oldPrice || 0).toLocaleString("en-IN")}
               </span>
               <span className="text-primary text-xl font-bold">
-                ₹{proData?.price}
+                ₹{(proData?.price || 0).toLocaleString("en-IN")}
               </span>
               <span className="text-sm">
-                Available:&nbsp;
+                Available:{" "}
                 <span className="text-green-600 font-semibold">
                   {proData?.countInStock} Items
                 </span>
@@ -272,88 +268,84 @@ export default function ProductModal() {
             <p className="mt-4 text-sm text-gray-600 leading-relaxed">
               {proData?.description}
             </p>
+
+            {/* Select Options */}
             {proData?.size?.length > 0 && (
-              <div className="flex items-center gap-3 mt-5">
+              <div className="flex items-center gap-3 mt-5 flex-wrap">
                 <span className="text-sm font-medium">Size:</span>
-                <div className="flex gap-2">
-                  {proData?.size?.map((size, idx) => (
-                    <Button
-                      disabled={isAddedToCart}
-                      key={size}
-                      onClick={() => {
-                        sizeIndex === idx
-                          ? setSizeIndex(null)
-                          : setSizeIndex(idx);
-                        sizeIndex !== idx
-                          ? setSelectedSize(size)
-                          : setSelectedSize("");
-                      }}
-                      className={`!w-10 !min-w-10 !h-10 !rounded-full text-lg ${
-                        sizeIndex === idx
-                          ? "!bg-primary !text-white"
-                          : "!text-gray-700"
-                      }`}
-                    >
-                      {size}
-                    </Button>
-                  ))}
-                </div>
+                {proData.size.map((size, idx) => (
+                  <Button
+                    disabled={isAddedToCart}
+                    key={size}
+                    onClick={() => {
+                      sizeIndex === idx
+                        ? setSizeIndex(null)
+                        : setSizeIndex(idx);
+                      sizeIndex !== idx
+                        ? setSelectedSize(size)
+                        : setSelectedSize("");
+                    }}
+                    className={`!w-10 !h-10 !rounded-full ${
+                      sizeIndex === idx
+                        ? "!bg-primary !text-white"
+                        : "!bg-white !text-gray-700"
+                    }`}
+                  >
+                    {size}
+                  </Button>
+                ))}
               </div>
             )}
 
             {proData?.productRam?.length > 0 && (
-              <div className="flex items-center gap-3 mt-5">
+              <div className="flex items-center gap-3 mt-5 flex-wrap">
                 <span className="text-sm font-medium">Ram:</span>
-                <div className="flex gap-2">
-                  {proData?.productRam?.map((ram, idx) => (
-                    <Button
-                      disabled={isAddedToCart}
-                      key={ram}
-                      onClick={() => {
-                        ramIndex === idx ? setRamIndex(null) : setRamIndex(idx);
-                        ramIndex !== idx
-                          ? setSelectedRam(ram)
-                          : setSelectedRam("");
-                      }}
-                      className={`!w-10 !min-w-10 !h-10 !rounded-full text-lg ${
-                        ramIndex === idx
-                          ? "!bg-primary !text-white"
-                          : "!text-gray-700"
-                      }`}
-                    >
-                      {ram}
-                    </Button>
-                  ))}
-                </div>
+                {proData.productRam.map((ram, idx) => (
+                  <Button
+                    disabled={isAddedToCart}
+                    key={ram}
+                    onClick={() => {
+                      ramIndex === idx ? setRamIndex(null) : setRamIndex(idx);
+                      ramIndex !== idx
+                        ? setSelectedRam(ram)
+                        : setSelectedRam("");
+                    }}
+                    className={`!w-10 !h-10 !rounded-full ${
+                      ramIndex === idx
+                        ? "!bg-primary !text-white"
+                        : "!bg-white !text-gray-700"
+                    }`}
+                  >
+                    {ram}
+                  </Button>
+                ))}
               </div>
             )}
 
             {proData?.productWeight?.length > 0 && (
-              <div className="flex items-center gap-3 mt-5">
+              <div className="flex items-center gap-3 mt-5 flex-wrap">
                 <span className="text-sm font-medium">Weight:</span>
-                <div className="flex gap-2">
-                  {proData?.productWeight?.map((wgt, idx) => (
-                    <Button
-                      key={wgt}
-                      disabled={isAddedToCart}
-                      onClick={() => {
-                        weightIndex === idx
-                          ? setWeightIndex(null)
-                          : setWeightIndex(idx);
-                        weightIndex !== idx
-                          ? setSelectedWeight(wgt)
-                          : setSelectedWeight("");
-                      }}
-                      className={`!w-10 !min-w-10 !h-10 !rounded-full text-lg ${
-                        weightIndex === idx
-                          ? "!bg-primary !text-white"
-                          : "!text-gray-700"
-                      }`}
-                    >
-                      {wgt}
-                    </Button>
-                  ))}
-                </div>
+                {proData.productWeight.map((wgt, idx) => (
+                  <Button
+                    disabled={isAddedToCart}
+                    key={wgt}
+                    onClick={() => {
+                      weightIndex === idx
+                        ? setWeightIndex(null)
+                        : setWeightIndex(idx);
+                      weightIndex !== idx
+                        ? setSelectedWeight(wgt)
+                        : setSelectedWeight("");
+                    }}
+                    className={`!w-10 !h-10 !rounded-full ${
+                      weightIndex === idx
+                        ? "!bg-primary !text-white"
+                        : "!bg-white !text-gray-700"
+                    }`}
+                  >
+                    {wgt}
+                  </Button>
+                ))}
               </div>
             )}
 
@@ -361,66 +353,65 @@ export default function ProductModal() {
               Free Shipping (Est. Delivery Time 2-3 Days)
             </p>
 
-            <div className="flex items-center mt-2 mb-6 gap-4 flex-wrap">
+            {/* Quantity and Cart Actions */}
+            <div className="flex items-center flex-wrap gap-4 mt-2 mb-6">
               <QtyBox
                 count={proData?.countInStock}
                 quantity={quantity}
                 setQuantity={setQuantity}
-                component={"proDetails"}
+                component="proDetails"
               />
+
               {isAddedToCart ? (
-                <div className="flex items-center gap-4 mt-5">
-                  <Link to={"/cart"}>
+                <>
+                  <Link to="/cart">
                     <Button
-                      onClick={() => {
-                        dispatch(
-                          productModal({
-                            open: false,
-                            id: "",
-                          })
-                        );
-                      }}
-                      className="!px-4 !ml-1 !mb-6 !py-2 !bg-green-500 !text-white !transition hover:!bg-gray-900 flex items-center gap-1"
+                      onClick={() =>
+                        dispatch(productModal({ open: false, id: "" }))
+                      }
+                      className="!px-4 !py-2 !bg-green-500 !text-white !flex !items-center !gap-2 hover:!bg-gray-900"
                     >
-                      <BsBag className="text-xl" /> View In Cart
+                      <BsBag /> View In Cart
                     </Button>
                   </Link>
 
                   <Button
                     onClick={deleteCartItem}
-                    className="!px-4 !ml-1 !mb-6 !py-2 !bg-red-500 !text-white !transition hover:!opacity-80 flex items-center gap-1"
+                    className="!px-4 !py-2 !bg-red-500 !text-white !flex !items-center !gap-2 hover:!opacity-80"
                   >
-                    <MdDeleteOutline className="text-xl" /> Remove From Cart
+                    <MdDeleteOutline /> Remove From Cart
                   </Button>
-                </div>
+                </>
               ) : (
                 <Button
                   onClick={() => addToCart(proData, quantity)}
-                  className="!px-4 !mt-5 !ml-1 !mb-6 !py-2 !bg-primary !text-white !transition hover:!bg-gray-900 flex items-center gap-1"
+                  className="!px-4 !py-2 !bg-primary !text-white !flex !items-center !gap-2 hover:!bg-gray-900"
                 >
-                  <FaOpencart className="text-xl" /> Add To Cart
+                  <FaOpencart /> Add To Cart
                 </Button>
               )}
             </div>
+
+            {/* Wishlist & Compare */}
             <div className="flex flex-wrap items-center gap-6 text-sm text-gray-600">
               {!isAddedToList ? (
                 <span
                   onClick={() => handleAddToMyList(proData)}
-                  className="flex hover:text-green-500 transition cursor-pointer gap-2 items-center"
+                  className="flex items-center gap-2 cursor-pointer hover:text-green-500"
                 >
-                  <FaRegHeart className="text-lg" /> Add To Wishlist
+                  <FaRegHeart /> Add To Wishlist
                 </span>
               ) : (
                 <span
                   onClick={handleRemoveToMyList}
-                  className="flex link transition cursor-pointer gap-2 items-center"
+                  className="flex items-center gap-2 cursor-pointer hover:text-red-500"
                 >
-                  <FaHeart className="text-lg text-red-500" /> Remove From
-                  Wishlist
+                  <FaHeart className="text-red-500" /> Remove From Wishlist
                 </span>
               )}
-              <span className="flex items-center gap-2 cursor-pointer hover:text-primary transition">
-                <GoGitCompare className="text-lg" /> Add To Compare
+
+              <span className="flex items-center gap-2 cursor-pointer hover:text-primary">
+                <GoGitCompare /> Add To Compare
               </span>
             </div>
           </div>

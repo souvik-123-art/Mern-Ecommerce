@@ -147,75 +147,87 @@ export const MyAccount = () => {
 
   return (
     <section className="myAccountSec py-10 w-full">
-      <div className="container mx-auto flex gap-5">
-        <div className="col1 w-[20%]">
+      <div className="container mx-auto flex flex-col md:flex-row gap-5 px-2 sm:px-4">
+        {/* Sidebar */}
+        <div className="col1 w-full md:w-[25%] lg:w-[20%]">
           <AccountSidebar />
         </div>
-        <div className="col2 w-[50%]">
-          <div className="card bg-white p-5 shadow-md rounded-md mb-5">
-            <div className="flex items-center pb-0">
-              <h2 className="pb-3 text-2xl font-semibold">My Profile</h2>
+
+        {/* Main Content */}
+        <div className="col2 w-full md:w-[75%] lg:w-[80%] flex flex-col gap-5">
+          {/* Profile Card */}
+          <div className="card bg-white p-4 sm:p-5 shadow-md rounded-md w-full">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center pb-0">
+              <h2 className="pb-3 text-xl sm:text-2xl font-semibold">
+                My Profile
+              </h2>
               <Button
-                className="!ml-auto !text-primary"
+                className="!ml-auto !text-primary mt-2 sm:mt-0 !text-sm sm:!text-md"
                 onClick={() => setPassOpen(true)}
               >
                 Change Password
               </Button>
             </div>
             <hr />
-            <form className="mt-8" onSubmit={handleSubmit}>
-              <div className="flex items-center gap-5">
-                <div className="w-1/2">
-                  <div className="">
-                    <h3 className="text-lg font-[500] mb-1">Full Name</h3>
-                    <input
-                      type="text"
-                      className="w-full h-[40px] border border-black/30 outline-none focus:border-black/50 rounded-sm p-3 text-sm"
-                      name="name"
-                      placeholder="enter full name"
-                      disabled={isLoading ? true : false}
-                      onChange={onChangeInput}
-                      value={formFields.name}
-                    />
-                  </div>
+
+            <form
+              className="mt-6 sm:mt-8 flex flex-col gap-4"
+              onSubmit={handleSubmit}
+            >
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="w-full sm:w-1/2">
+                  <h3 className="text-base sm:text-lg font-[500] mb-1">
+                    Full Name
+                  </h3>
+                  <input
+                    type="text"
+                    className="w-full h-[40px] border border-black/30 outline-none focus:border-black/50 rounded-sm p-3 text-sm"
+                    name="name"
+                    placeholder="Enter full name"
+                    disabled={isLoading}
+                    onChange={onChangeInput}
+                    value={formFields.name}
+                  />
                 </div>
-                <div className="w-1/2">
-                  <div className="">
-                    <h3 className="text-lg font-[500] mb-1">Email Address</h3>
-                    <input
-                      type="email"
-                      className="w-full h-[40px] border border-black/30 outline-none focus:border-black/50 rounded-sm p-3 text-sm"
-                      name="email"
-                      placeholder="enter email address"
-                      disabled={isLoading ? true : false}
-                      onChange={onChangeInput}
-                      value={formFields.email}
-                    />
-                  </div>
+
+                <div className="w-full sm:w-1/2">
+                  <h3 className="text-base sm:text-lg font-[500] mb-1">
+                    Email Address
+                  </h3>
+                  <input
+                    type="email"
+                    className="w-full h-[40px] border border-black/30 outline-none focus:border-black/50 rounded-sm p-3 text-sm"
+                    name="email"
+                    placeholder="Enter email address"
+                    disabled={isLoading}
+                    onChange={onChangeInput}
+                    value={formFields.email}
+                  />
                 </div>
               </div>
-              <div className="flex items-center gap-5 mt-4">
-                <div className="">
-                  <h3 className="text-lg font-[500] mb-1">Mobile No.</h3>
+
+              <div className="flex flex-col sm:flex-row gap-4 mt-2 sm:mt-4">
+                <div className="w-full sm:w-1/2">
+                  <h3 className="text-base sm:text-lg font-[500] mb-1">
+                    Mobile No.
+                  </h3>
                   <PhoneInput
                     defaultCountry="in"
                     value={String(formFields.mobile)}
                     name="mobile"
-                    disabled={isLoading ? true : false}
-                    onChange={(phone) => {
-                      setFormFields({
-                        ...formFields,
-                        mobile: phone,
-                      });
-                    }}
+                    disabled={isLoading}
+                    onChange={(phone) =>
+                      setFormFields({ ...formFields, mobile: phone })
+                    }
                   />
                 </div>
               </div>
-              <div className="flex items-center">
+
+              <div className="flex justify-center sm:justify-start">
                 <Button
                   type="submit"
                   disabled={!validValue}
-                  className="!px-6 !mt-5 !py-2 !bg-primary !text-white hover:!bg-gray-900 !transition-all !self-center !flex "
+                  className="!px-6 !mt-5 !py-2 !bg-primary !text-white hover:!bg-gray-900 !transition-all !flex"
                 >
                   {isLoading ? (
                     <CircularProgress
@@ -229,51 +241,59 @@ export const MyAccount = () => {
               </div>
             </form>
           </div>
-          <Collapse isOpened={passOpen}>
-            <div className="card bg-white p-5 shadow-md rounded-md">
-              <div className="flex items-center pb-3">
-                <h2 className="pb-0">Change Password</h2>
 
+          {/* Change Password Collapse */}
+          <Collapse isOpened={passOpen}>
+            <div className="card bg-white p-4 sm:p-5 shadow-md rounded-md w-full">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center pb-3">
+                <h2 className="pb-2 text-lg sm:text-xl font-semibold">
+                  Change Password
+                </h2>
                 <IoMdClose
                   onClick={() => setPassOpen(false)}
-                  className="text-2xl ml-auto cursor-pointer text-black link transition"
+                  className="text-2xl ml-auto cursor-pointer text-black link transition mt-2 sm:mt-0"
                 />
               </div>
               <hr />
-              <form className="mt-8" onSubmit={handleSubmitPasswordChange}>
-                <div className="flex items-center gap-5">
-                  <div className="w-1/2">
+
+              <form
+                className="mt-6 sm:mt-8 flex flex-col gap-4"
+                onSubmit={handleSubmitPasswordChange}
+              >
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="w-full sm:w-1/2">
                     <TextField
                       label="Old Password"
-                      type="text"
+                      type="password"
                       variant="outlined"
                       size="small"
                       className="w-full"
                       name="oldPassword"
-                      disabled={isLoading2 ? true : false}
+                      disabled={isLoading2}
                       onChange={onChangeInput}
                       value={changePassword.oldPassword}
                     />
                   </div>
-                  <div className="w-1/2">
+                  <div className="w-full sm:w-1/2">
                     <TextField
                       label="New Password"
-                      type="text"
+                      type="password"
                       variant="outlined"
                       size="small"
                       className="w-full"
                       name="newPassword"
-                      disabled={isLoading2 ? true : false}
+                      disabled={isLoading2}
                       onChange={onChangeInput}
                       value={changePassword.newPassword}
                     />
                   </div>
                 </div>
-                <div className="flex items-center">
+
+                <div className="flex justify-center sm:justify-start">
                   <Button
                     type="submit"
                     disabled={!validValue2}
-                    className="!px-6 !mt-5 !py-2 !bg-primary !text-white hover:!bg-gray-900 !w-full !transition-all !flex "
+                    className="!px-6 !mt-5 !py-2 !bg-primary !text-white hover:!bg-gray-900 !w-full sm:!w-auto !transition-all !flex"
                   >
                     {isLoading2 ? (
                       <CircularProgress

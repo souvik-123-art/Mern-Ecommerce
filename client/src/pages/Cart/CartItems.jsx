@@ -61,21 +61,24 @@ export const CartItems = (props) => {
   };
 
   return (
-    <div className="cartItem w-full p-3 flex items-center border-b border-gray-200 gap-4">
-      <div className="img w-[10%] rounded-md overflow-hidden">
+    <div className="cartItem w-full p-3 flex flex-col sm:flex-row items-start sm:items-center border-b border-gray-200 gap-4">
+      {/* Product Image */}
+      <div className="img w-full sm:w-[10%] rounded-md overflow-hidden flex-shrink-0">
         <Link to={`/product-details/${props?.data?.productId}`}>
           <img src={props?.data?.image} className="w-full" alt="" />
         </Link>
       </div>
-      <div className="info w-[90%] relative">
+
+      {/* Info Section */}
+      <div className="info w-full sm:w-[90%] relative">
         <IoMdClose
           onClick={() => deleteCartItem(props?.data?._id)}
-          className="text-xl link transition ml-auto cursor-pointer"
+          className="text-xl link transition ml-auto cursor-pointer absolute right-0 top-0 sm:static"
         />
-        <span className="text-md font-semibold text-gray-400">
+        <span className="text-md font-semibold text-gray-400 block sm:inline">
           {props?.data?.brand}
         </span>
-        <h3 className="font-semibold text-lg transition link">
+        <h3 className="font-semibold text-lg transition link mt-1 sm:mt-0">
           <Link to={`/product-details/${props?.data?.productId}`}>
             {props?.data?.productTitle}
           </Link>
@@ -85,10 +88,11 @@ export const CartItems = (props) => {
           value={Number(props?.data?.rating)}
           readOnly
           size="small"
+          className="mt-1"
         />
 
         {/* Options */}
-        <div className="flex items-center gap-4 mt-2">
+        <div className="flex flex-wrap gap-2 mt-2">
           {/* Size */}
           {props?.data?.productSize?.length > 0 && (
             <>
@@ -212,8 +216,8 @@ export const CartItems = (props) => {
           </div>
         </div>
 
-        {/* Price section */}
-        <div className="flex items-center gap-4 mt-2">
+        {/* Price Section */}
+        <div className="flex flex-wrap gap-4 mt-2">
           <span className="price text-primary text-[14px] font-[600]">
             ₹ {props?.data?.price.toLocaleString("en-IN")}
           </span>

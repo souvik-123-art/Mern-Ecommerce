@@ -58,9 +58,9 @@ const CategoryList = () => {
 
   return (
     <>
-      <div className="py-3 flex items-center">
+      <div className="py-3 flex flex-col sm:flex-row items-start sm:items-center gap-3">
         <h2 className="text-3xl font-bold">Category List</h2>
-        <div className="col ml-auto flex items-center gap-3">
+        <div className="ml-auto flex flex-wrap items-center gap-3">
           <Button className="btn !bg-green-600 !text-white hover:!bg-green-400">
             Export
           </Button>
@@ -81,7 +81,7 @@ const CategoryList = () => {
         </div>
       </div>
 
-      <div className="card my-4 p-5 mt-5 shadow-md sm:rounded-lg bg-white overflow-hidden">
+      <div className="card my-4 p-4 sm:p-5 mt-5 shadow-md sm:rounded-lg bg-white overflow-auto">
         <TableContainer sx={{ maxHeight: 440 }}>
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
@@ -104,38 +104,47 @@ const CategoryList = () => {
                     <TableCell width={100}>
                       <div className="flex items-center gap-4 w-[50px]">
                         <div className="img w-full rounded-md overflow-hidden">
-                          <img src={item.images} className="w-full" alt="" />
+                          <img
+                            src={item.images}
+                            className="w-full h-auto object-cover"
+                            alt="category"
+                          />
                         </div>
                       </div>
                     </TableCell>
+
                     <TableCell width={100}>
                       <span>{item.name}</span>
                     </TableCell>
+
                     <TableCell width={100}>
-                      <TooltipMUI title="Edit Category" placement="top">
-                        <Button
-                          onClick={() =>
-                            dispatch(
-                              setIsOpenFullScreenPanel({
-                                open: true,
-                                model: "Edit Category",
-                                id: item._id,
-                              })
-                            )
-                          }
-                          className="!w-8 !bg-green-500 !mr-2 !h-8 !min-w-8 !text-[#f1f1f1] !rounded-full"
-                        >
-                          <FiEdit2 className="text-lg" />
-                        </Button>
-                      </TooltipMUI>
-                      <TooltipMUI title="Delete Category" placement="top">
-                        <Button
-                          onClick={() => removeCategory(item._id)}
-                          className="!w-8 !bg-red-500 !text-lg !mr-2 !h-8 !min-w-8 !text-[#f1f1f1] !rounded-full"
-                        >
-                          <RiDeleteBin6Line />
-                        </Button>
-                      </TooltipMUI>
+                      <div className="flex gap-2 flex-wrap">
+                        <TooltipMUI title="Edit Category" placement="top">
+                          <Button
+                            onClick={() =>
+                              dispatch(
+                                setIsOpenFullScreenPanel({
+                                  open: true,
+                                  model: "Edit Category",
+                                  id: item._id,
+                                })
+                              )
+                            }
+                            className="!w-8 !bg-green-500 !h-8 !min-w-8 !text-white !rounded-full"
+                          >
+                            <FiEdit2 className="text-lg" />
+                          </Button>
+                        </TooltipMUI>
+
+                        <TooltipMUI title="Delete Category" placement="top">
+                          <Button
+                            onClick={() => removeCategory(item._id)}
+                            className="!w-8 !bg-red-500 !h-8 !min-w-8 !text-white !rounded-full"
+                          >
+                            <RiDeleteBin6Line />
+                          </Button>
+                        </TooltipMUI>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}

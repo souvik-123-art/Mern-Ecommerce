@@ -162,54 +162,53 @@ export const Checkout = () => {
         open={failedPopupOpen}
         onClose={() => setFailedPopupOpen(false)}
       />
-      <div className="container mx-auto ">
-        <form onSubmit={checkout} className="flex gap-5">
-          <div className="leftCol w-[70%]">
+      <div className="container mx-auto">
+        <form onSubmit={checkout} className="flex flex-col lg:flex-row gap-5">
+          {/* Left Column: Address */}
+          <div className="leftCol w-full lg:w-[70%]">
             <div className="card bg-white rounded-md shadow-md p-5 w-full">
               <h1 className="text-2xl font-bold text-gray-700 mb-5">
-                Select Delivery Address{" "}
+                Select Delivery Address
               </h1>
               {address.map((add, idx) => (
                 <label
                   key={add?._id}
-                  className={`address w-full flex flex-col text-gray-600 border-dashed border border-gray-300  gap-4 cursor-pointer ${
+                  className={`address w-full flex flex-col text-gray-600 border-dashed border border-gray-300 gap-4 cursor-pointer ${
                     isChecked === idx && "bg-[#f1f1f1]"
                   } p-3 rounded-md mb-2 relative`}
                 >
-                  {" "}
                   <Radio
                     checked={isChecked === idx}
                     value={add?._id}
                     onChange={(e) => handleChange(e, idx)}
                     className="!absolute !right-0 !top-0"
                   />
-                  {add.addressType === "Home" ? (
-                    <span className="p-2 self-start flex items-center text-sm gap-2 bg-gray-600 text-white rounded-md">
-                      <IoMdHome className="text-white" /> {add?.addressType}
-                    </span>
-                  ) : (
-                    <span className="p-2 self-start flex items-center text-sm gap-2 bg-gray-600 text-white rounded-md">
-                      <HiBuildingOffice className="text-white" />{" "}
-                      {add?.addressType}
-                    </span>
-                  )}
-                  <span className="text-xl font-semibold text-black/80 flex flex-col gap-4">
+                  <span className="p-2 self-start flex items-center text-sm gap-2 bg-gray-600 text-white rounded-md">
+                    {add.addressType === "Home" ? (
+                      <IoMdHome className="text-white" />
+                    ) : (
+                      <HiBuildingOffice className="text-white" />
+                    )}{" "}
+                    {add?.addressType}
+                  </span>
+                  <span className="text-xl font-semibold text-black/80 flex flex-col gap-2">
                     <span>{userDetails?.name}</span>
                     <span className="text-sm flex items-start gap-1">
-                      <IoIosCall className="text-lg" />
-                      <span>+{add?.mobile}</span>
+                      <IoIosCall className="text-lg" /> +{add?.mobile}
                     </span>
                   </span>
-                  <span>
+                  <span className="text-sm break-words">
                     {add?.address_line}, {add?.city},{" "}
                     {add?.landmark && add?.landmark} {add?.state},{" "}
-                    {add?.country},{add?.pincode}
+                    {add?.country}, {add?.pincode}
                   </span>
                 </label>
               ))}
             </div>
           </div>
-          <div className="rightCol w-[30%]">
+
+          {/* Right Column: Order Summary */}
+          <div className="rightCol w-full lg:w-[30%] mt-5 lg:mt-0">
             <div className="shadow-md bg-white rounded-md p-5">
               <h2 className="text-xl font-bold pb-3 text-black/70">
                 YOUR ORDER
@@ -220,14 +219,14 @@ export const Checkout = () => {
                 <span className="font-semibold">Subtotal</span>
               </div>
               <hr />
-              <div className="scroll overflow-x-hidden overflow-y-scroll max-h-[250px] pr-2">
+              <div className="scroll overflow-x-hidden overflow-y-auto max-h-[250px] pr-2 mt-2">
                 {cartData?.length !== 0 &&
                   cartData?.map((item) => (
                     <div
                       key={item?._id}
-                      className="flex items-center justify-between py-2"
+                      className="flex flex-col sm:flex-row items-start sm:items-center justify-between py-2"
                     >
-                      <div className="part1 flex items-center gap-3 w-[70%]">
+                      <div className="part1 flex items-center gap-3 w-full sm:w-[70%]">
                         <div className="img w-[50px] h-[50px] overflow-hidden rounded-md border flex-shrink-0">
                           <img
                             src={item?.image}
@@ -245,11 +244,13 @@ export const Checkout = () => {
                         </div>
                       </div>
 
-                      <span className="font-semibold text-sm flex-shrink-0">
+                      <span className="font-semibold text-sm mt-2 sm:mt-0 flex-shrink-0">
                         ₹ {item?.subtotal.toLocaleString("en-IN")}.00
                       </span>
                     </div>
                   ))}
+
+                {/* Totals */}
                 <div className="mt-4">
                   <div className="flex justify-between items-center mb-2">
                     <span>Taxes:</span>

@@ -253,3 +253,30 @@ textarea {
     background-color: #ff5252 !important;
   }
 }
+
+
+
+
+
+
+
+
+
+.sliderHome {
+  isolation: isolate;
+  contain: content;
+  z-index: 1 !important; /* Lower z-index than cart panel */
+}
+
+.sliderHome .swiper-wrapper {
+  touch-action: pan-y;
+}
+
+/* When cart is open, disable swiper interactions */
+body.cart-open .sliderHome {
+  pointer-events: none;
+}
+
+body.cart-open .sliderHome .swiper-wrapper {
+  touch-action: none;
+}

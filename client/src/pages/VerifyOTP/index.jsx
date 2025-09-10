@@ -65,47 +65,46 @@ const VerifyOTP = () => {
     }
   }, [code]);
   return (
-    <section className="login py-10">
+    <section className="login py-6 md:py-10 px-4">
       <div className="container mx-auto flex items-center justify-center">
-        <div className="w-full max-w-md border rounded-md bg-white">
-          <div className="p-8">
-            <h2 className="text-3xl font-bold mb-6 text-center text-gray-800 ">
+        <div className="w-full max-w-md border rounded-md bg-white shadow-md">
+          <div className="p-6 md:p-8">
+            <h2 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6 text-center text-gray-800">
               Verify Your Email
             </h2>
-            <p className="text-center text-gray-700">
+            <p className="text-center text-gray-700 text-sm md:text-base">
               Enter the 6-digit code sent to your email address for reset your
               password
             </p>
           </div>
-          <form className="p-8" onSubmit={handleSubmit}>
-            <div className="flex justify-between">
+
+          <form className="p-6 md:p-8" onSubmit={handleSubmit}>
+            <div className="flex justify-between gap-2 mb-6 md:mb-8">
               {code.map((digit, index) => (
                 <input
                   key={index}
                   ref={(el) => (inputRefs.current[index] = el)}
                   type="text"
-                  disabled={isLoading ? true : false}
+                  disabled={isLoading}
                   maxLength="6"
                   value={digit}
                   onChange={(e) => handleChange(index, e.target.value)}
                   onKeyDown={(e) => {
-                    if (e.key === " ") {
-                      e.preventDefault();
-                      return;
-                    }
+                    if (e.key === " ") e.preventDefault();
                     handleKeyDown(index, e);
                   }}
-                  className="w-14 h-14 text-center text-2xl font-bold bg-gray-50
-rounded-lg focus:border-primary focus:outline-none
-                text-primary
-                border
-                border-gray-200 mb-8"
+                  className="w-10 h-10 md:w-14 md:h-14 text-center text-xl md:text-2xl font-bold bg-gray-50
+                    rounded-lg focus:border-primary focus:outline-none
+                    text-primary border border-gray-200"
                 />
               ))}
             </div>
+
             <Button
               type="submit"
-              className="!px-6 !mt-5 !w-full !flex !py-2 !bg-primary !text-white hover:!bg-gray-900 transition-all"
+              disabled={isLoading}
+              className="!px-6 !mt-4 !w-full !flex !py-2 !bg-primary !text-white hover:!bg-gray-900 transition-all !h-12"
+              variant="contained"
             >
               {isLoading ? (
                 <CircularProgress

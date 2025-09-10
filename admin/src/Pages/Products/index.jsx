@@ -70,10 +70,10 @@ const Products = () => {
   const [proCat, setProCat] = useState("All");
   const [proSubCat, setProSubCat] = useState("");
   const [proTSubCat, setTProSubCat] = useState("");
-
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedCatObject, setSelectedCatObject] = useState(null);
   const [selectedSubCatObject, setSelectedSubCatObject] = useState(null);
-
+  const [allProd, setAllProd] = useState([]);
   // Helper function to initialize product data with 'checked' property
   const initializeProductsWithChecked = (products) => {
     return (
@@ -87,12 +87,12 @@ const Products = () => {
     setProCat(selectedCatId);
     setProSubCat("");
     setTProSubCat("");
-    setSelectedSubCatObject(null); 
+    setSelectedSubCatObject(null);
 
     const fetchProducts =
       selectedCatId === "All"
         ? fetchDataFromApi("/api/product")
-        : fetchDataFromApi(`/api/product/category/${selectedCatId}`); 
+        : fetchDataFromApi(`/api/product/category/${selectedCatId}`);
 
     fetchProducts
       .then((res) => {
@@ -301,6 +301,7 @@ const Products = () => {
           dispatch(
             setProData(initializeProductsWithChecked(productsRes?.data))
           );
+          setAllProd(initializeProductsWithChecked(productsRes?.data));
         } else {
           toast.error("Failed to fetch initial products.");
         }
@@ -317,12 +318,29 @@ const Products = () => {
         setIsLoading(false); // Stop loading after all initial fetches
       });
   }, []);
-
+  useEffect(() => {
+    if (searchQuery !== "") {
+      const filteredProds = allProd.filter(
+        (pro) =>
+          pro?._id?.toLowerCase().includes(searchQuery?.toLowerCase()) ||
+          pro?.name.toLowerCase().includes(searchQuery?.toLowerCase()) ||
+          pro?.brand.toLowerCase().includes(searchQuery?.toLowerCase()) ||
+          pro?.catName.toLowerCase().includes(searchQuery?.toLowerCase()) ||
+          pro?.subCat.toLowerCase().includes(searchQuery?.toLowerCase()) ||
+          pro?.thirdSubCat.toLowerCase().includes(searchQuery?.toLowerCase()) ||
+          pro?.createdAt.includes(searchQuery)
+      );
+      dispatch(setProData(filteredProds));
+    } else {
+      dispatch(setProData(allProd));
+    }
+  }, [searchQuery, allProd]);
   return (
     <>
-      <div className="py-3 flex items-center">
-        <h2 className="text-3xl font-bold">Products</h2>
-        <div className="col ml-auto flex items-center gap-3">
+      <div className="py-3 flex flex-col md:flex-row items-start md:items-center gap-3">
+        <h2 className="text-2xl md:text-3xl font-bold">Products</h2>
+
+        <div className="flex flex-wrap gap-3 mt-2 md:mt-0 ml-auto">
           {sortedIds?.length !== 0 && (
             <Button
               onClick={deleteMultipleProduct}
@@ -334,9 +352,6 @@ const Products = () => {
               Delete Selected ({sortedIds.length})
             </Button>
           )}
-          <Button className="btn !bg-green-600 !text-white hover:!bg-green-400">
-            Export
-          </Button>
           <Button
             className="btn-blue btn !flex !items-center !gap-1"
             onClick={() =>
@@ -350,11 +365,12 @@ const Products = () => {
           </Button>
         </div>
       </div>
+
       <div className="card my-4 p-5 shadow-md sm:rounded-lg bg-white overflow-hidden">
-        <div className="flex items-center w-full mb-4">
-          {/* Main Category Filter */}
-          <div className="col w-[15%]">
-            <h4 className="text-lg font-semibold mb-3">Category By</h4>
+        <div className="flex flex-col md:flex-row gap-4 w-full mb-4">
+          {/* Category Filter */}
+          <div className="w-full md:w-[15%]">
+            <h4 className="text-lg font-semibold mb-2">Category By</h4>
             {catData?.length > 0 && (
               <FormControl fullWidth size="small">
                 <InputLabel id="proCat-label">Select Category</InputLabel>
@@ -369,7 +385,7 @@ const Products = () => {
                   onChange={handleChangeProCat}
                 >
                   <MenuItem value="All">All</MenuItem>
-                  {catData?.map((cat) => (
+                  {catData.map((cat) => (
                     <MenuItem key={cat?._id} value={cat?._id}>
                       {cat?.name}
                     </MenuItem>
@@ -379,11 +395,11 @@ const Products = () => {
             )}
           </div>
 
-          {/* Sub Category Filter - Conditionally rendered */}
-          <div className="col w-[15%] ml-3">
+          {/* Sub Category Filter */}
+          <div className="w-full md:w-[15%]">
             <h4
-              className={`text-lg font-semibold mb-3 ${
-                !selectedCatObject?.children?.length && "hidden" // Fix: Correct hidden logic
+              className={`text-lg font-semibold mb-2 ${
+                !selectedCatObject?.children?.length && "hidden"
               }`}
             >
               Sub Category By
@@ -413,11 +429,11 @@ const Products = () => {
             )}
           </div>
 
-          {/* Third Level Sub Category Filter - Conditionally rendered */}
-          <div className="col w-[20%] ml-3">
+          {/* Third Level Sub Category Filter */}
+          <div className="w-full md:w-[20%]">
             <h4
-              className={`text-lg font-semibold mb-3 ${
-                !selectedSubCatObject?.children?.length && "hidden" // Fix: Correct hidden logic
+              className={`text-lg font-semibold mb-2 ${
+                !selectedSubCatObject?.children?.length && "hidden"
               }`}
             >
               Third Sub Category By
@@ -446,21 +462,26 @@ const Products = () => {
               </FormControl>
             )}
           </div>
-          <div className="col w-[25%] ml-auto">
-            <SearchBox />
+
+          {/* Search Box */}
+          <div className="w-full md:w-[25%]">
+            <SearchBox
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+            />
           </div>
         </div>
-        {/* Loading overlay for the table */}
+
+        {/* Table Area */}
         <div className="relative min-h-[400px]">
-          {" "}
-          {/* min-h for consistent space */}
           <div
             className={`absolute inset-0 bg-white/40 ${
               isLoading ? "flex" : "hidden"
-            } justify-center items-center z-50 left-0 top-0`}
+            } justify-center items-center z-50`}
           >
             <CircularProgress className="!text-primary" />
           </div>
+
           {proData.length !== 0 ? (
             <>
               <TableContainer sx={{ maxHeight: 440 }}>
@@ -471,11 +492,7 @@ const Products = () => {
                         <Checkbox
                           size="small"
                           onChange={handleSelectAll}
-                          checked={
-                            proData.length > 0
-                              ? proData.every((item) => item.checked)
-                              : false
-                          }
+                          checked={proData.every((item) => item.checked)}
                         />
                       </TableCell>
                       {columns.map((column) => (
@@ -489,124 +506,112 @@ const Products = () => {
                       ))}
                     </TableRow>
                   </TableHead>
+
                   <TableBody>
                     {proData
-                      ?.slice(
+                      .slice(
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage
                       )
-                      ?.map(
-                        (
-                          pro 
-                        ) => (
-                          <TableRow key={pro._id}>
-                            <TableCell style={{ minWidth: columns.minWidth }}>
-                              <Checkbox
-                                size="small"
-                                checked={pro.checked || false}
-                                onChange={(e) =>
-                                  handleCheckboxChange(e, pro._id)
-                                }
-                              />
-                            </TableCell>
-                            <TableCell style={{ minWidth: columns.minWidth }}>
-                              <div className="flex items-center gap-4">
-                                <div className="img w-[55px] h-[55px] rounded-md overflow-hidden">
-                                  <Link to={`/product/${pro._id}`}>
-                                    <img
-                                      src={pro.images[0]}
-                                      className="w-full"
-                                      alt={pro.name} 
-                                    />
-                                  </Link>
-                                </div>
-                                <div className="info">
-                                  <h3 className="font-bold text-sm link">
-                                    <Link to={`/product/${pro._id}`}>
-                                      {pro.name}
-                                    </Link>
-                                  </h3>
-                                  <span className="text-[12px]">
-                                    {pro.thirdSubCat}
-                                  </span>
-                                </div>
-                              </div>
-                            </TableCell>
-                            <TableCell style={{ minWidth: columns.minWidth }}>
-                              {pro.catName}
-                            </TableCell>
-                            <TableCell style={{ minWidth: columns.minWidth }}>
-                              {pro.subCat}
-                            </TableCell>
-                            <TableCell style={{ minWidth: columns.minWidth }}>
-                              <div className="flex gap-2 text-[16px]">
-                                <span className="line-through text-gray-500">
-                                  ${pro.oldPrice}
-                                </span>
-                                <span className="text-primary">
-                                  ${pro.price}
-                                </span>
-                              </div>
-                            </TableCell>
-                            <TableCell style={{ minWidth: columns.minWidth }}>
-                              <span className="text-sm">
-                                <span className="font-semibold mr-2">
-                                  {pro.sale}
-                                </span>
-                                Sales
-                              </span>
-                              <Progress value={pro.sale} />
-                            </TableCell>
-                            <TableCell style={{ minWidth: columns.minWidth }}>
-                              <TooltipMUI title="Edit Product" placement="top">
-                                <Button
-                                  onClick={() =>
-                                    dispatch(
-                                      setIsOpenFullScreenPanel({
-                                        open: true,
-                                        model: "Edit Product",
-                                        id: pro._id,
-                                      })
-                                    )
-                                  }
-                                  className="!w-8 !bg-green-500 !mr-2 !h-8 !min-w-8 !text-[#f1f1f1] !rounded-full"
-                                >
-                                  <FiEdit2 className="text-lg" />
-                                </Button>
-                              </TooltipMUI>
-                              <TooltipMUI
-                                title="View Product Details"
-                                placement="top"
-                              >
-                                {" "}
+                      .map((pro) => (
+                        <TableRow key={pro._id}>
+                          <TableCell>
+                            <Checkbox
+                              size="small"
+                              checked={pro.checked || false}
+                              onChange={(e) => handleCheckboxChange(e, pro._id)}
+                            />
+                          </TableCell>
+
+                          <TableCell>
+                            <div className="flex items-center gap-4">
+                              <div className="img w-[55px] h-[55px] rounded-md overflow-hidden">
                                 <Link to={`/product/${pro._id}`}>
-                                  <Button className="!w-8 !bg-blue-500 !mr-2 !h-8 !min-w-8 !text-[#f1f1f1] !rounded-full">
-                                    <FiEye className="text-lg" />
-                                  </Button>
+                                  <img
+                                    src={pro.images[0]}
+                                    className="w-full"
+                                    alt={pro.name}
+                                  />
                                 </Link>
-                              </TooltipMUI>
-                              <TooltipMUI
-                                title="Delete Product"
-                                placement="top"
+                              </div>
+                              <div className="info">
+                                <h3 className="font-bold text-sm link">
+                                  <Link to={`/product/${pro._id}`}>
+                                    {pro.name}
+                                  </Link>
+                                </h3>
+                                <span className="text-[12px]">
+                                  {pro.thirdSubCat}
+                                </span>
+                              </div>
+                            </div>
+                          </TableCell>
+
+                          <TableCell>{pro.catName}</TableCell>
+                          <TableCell>{pro.subCat}</TableCell>
+                          <TableCell>
+                            <div className="flex gap-2 text-[16px]">
+                              <span className="line-through text-gray-500">
+                                ${pro.oldPrice}
+                              </span>
+                              <span className="text-primary">${pro.price}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <span className="text-sm font-semibold mr-2">
+                              {pro.sale}
+                            </span>
+                            Sales
+                            <Progress value={pro.sale} />
+                          </TableCell>
+                          <TableCell>
+                            <TooltipMUI title="Edit Product" placement="top">
+                              <Button
+                                onClick={() =>
+                                  dispatch(
+                                    setIsOpenFullScreenPanel({
+                                      open: true,
+                                      model: "Edit Product",
+                                      id: pro._id,
+                                    })
+                                  )
+                                }
+                                className="!w-8 !bg-green-500 !mr-2 !h-8 !min-w-8 !text-[#f1f1f1] !rounded-full"
                               >
-                                <Button
-                                  onClick={() => removeProduct(pro._id)}
-                                  className="!w-8 !bg-red-500 !text-lg !mr-2 !h-8 !min-w-8 !text-[#f1f1f1] !rounded-full"
-                                >
-                                  <RiDeleteBin6Line />
+                                <FiEdit2 className="text-lg" />
+                              </Button>
+                            </TooltipMUI>
+
+                            <TooltipMUI
+                              title="View Product Details"
+                              placement="top"
+                            >
+                              <Link to={`/product/${pro._id}`}>
+                                <Button className="!w-8 !bg-blue-500 !mr-2 !h-8 !min-w-8 !text-[#f1f1f1] !rounded-full">
+                                  <FiEye className="text-lg" />
                                 </Button>
-                              </TooltipMUI>
-                            </TableCell>
-                          </TableRow>
-                        )
-                      )}
+                              </Link>
+                            </TooltipMUI>
+
+                            <TooltipMUI title="Delete Product" placement="top">
+                              <Button
+                                onClick={() => removeProduct(pro._id)}
+                                className="!w-8 !bg-red-500 !text-lg !mr-2 !h-8 !min-w-8 !text-[#f1f1f1] !rounded-full"
+                              >
+                                <RiDeleteBin6Line />
+                              </Button>
+                            </TooltipMUI>
+                          </TableCell>
+                        </TableRow>
+                      ))}
                   </TableBody>
                 </Table>
               </TableContainer>
+
               <TablePagination
                 rowsPerPageOptions={[10, 25, 100]}
                 component="div"
-                count={proData?.length}
+                count={proData.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}

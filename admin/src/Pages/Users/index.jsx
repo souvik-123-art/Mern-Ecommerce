@@ -75,11 +75,11 @@ const Users = () => {
   return (
     <>
       <div className="card my-4 p-5 mt-5 shadow-md sm:rounded-lg bg-white overflow-hidden">
-        <div className="flex items-center w-full mb-4">
+        <div className="flex items-center w-full mb-4 flex-col md:flex-row gap-4 md:gap-0">
           <div className="col w-[60%]">
             <h2 className="text-3xl font-bold">Users List</h2>
           </div>
-          <div className="col w-[40%] ml-auto">
+          <div className="col md:w-[40%] w-full ml-auto">
             <SearchBox
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}

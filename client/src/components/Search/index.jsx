@@ -46,31 +46,37 @@ export const Search = () => {
       setLoading(false);
     } else {
       navigate("/search");
+      setSearchQuery("");
       setLoading(false);
     }
   };
   return (
-    <div className="searchbox w-full h-[50px] bg-[#f1f1f1] rounded-full relative p-2 text-black">
+    <div className="searchbox w-full max-w-xl mx-auto h-[50px] bg-[#f1f1f1] rounded-full relative p-2 text-black">
+      {/* Search Input */}
       <input
-        className="w-full h-full focus:outline-none bg-transparent pl-4 pr-12 text-[15px] placeholder-[#aaaaaa]"
+        className="w-full h-full focus:outline-none bg-transparent pl-4 pr-12 text-sm placeholder-gray-500"
         type="text"
         value={searchQuery}
         placeholder="Search for Products..."
         onChange={onChangeInput}
       />
+
+      {/* Search Button */}
       <Button
         onClick={search}
-        className="!absolute top-[7px] right-2 !w-[35px] !h-[35px] !min-w-[35px] !text-primary !rounded-full"
+        className="!absolute !top-1/2 !right-2 !-translate-y-1/2 !w-9 !h-9 !min-w-[36px] !text-primary !rounded-full"
       >
         {loading ? (
-          <CircularProgress size={18} className=" !text-primary" />
+          <CircularProgress size={18} className="text-primary" />
         ) : (
-          <RiSearch2Line className="!text-9xl text-[#8a8a8a]" />
+          <RiSearch2Line className="text-xl text-gray-600" />
         )}
       </Button>
+
+      {/* Dropdown Search Results */}
       {searchQuery && searchData?.data?.length > 0 && (
-        <div className="searchData w-full bg-white rounded-md shadow-lg absolute top-[55px] left-0 max-h-[300px] overflow-y-auto z-[40] border border-gray-300">
-          {searchData?.data.map((item) => (
+        <div className="searchData absolute top-[55px] left-0 w-full bg-white rounded-md shadow-lg max-h-[300px] overflow-y-auto z-40 border border-gray-300">
+          {searchData.data.map((item) => (
             <div
               key={item._id}
               className="flex items-center p-3 cursor-pointer hover:bg-gray-100"
@@ -83,10 +89,10 @@ export const Search = () => {
               <img
                 src={item.images[0]}
                 alt={item.name}
-                className="w-[50px] h-[50px] object-cover rounded-md mr-4"
+                className="w-12 h-12 object-cover rounded-md mr-3"
               />
               <div>
-                <h4 className="text-sm font-semibold text-gray-800">
+                <h4 className="text-sm font-semibold text-gray-800 truncate">
                   {item.name}
                 </h4>
                 <p className="text-xs text-gray-600">

@@ -19,7 +19,7 @@ export const ProductListing = () => {
   const catData = useSelector((state) => state.catData.catData);
   const location = useLocation();
   const [anchorEl, setAnchorEl] = useState(null);
-  const [itemView, setItemView] = useState("list");
+  const [itemView, setItemView] = useState("grid");
   const [productsData, setProductsData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
@@ -95,7 +95,8 @@ export const ProductListing = () => {
 
   return (
     <section className="py-5">
-      <div className="container mx-auto">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Breadcrumbs */}
         <Breadcrumbs separator="|" aria-label="breadcrumb">
           <Link
             underline="hover"
@@ -105,20 +106,17 @@ export const ProductListing = () => {
           >
             Home
           </Link>
-          <Link
-            separator="|"
-            underline="hover"
-            color="inherit"
-            className="link transition"
-          >
+          <Link underline="hover" color="inherit" className="link transition">
             {bredcrumb}
           </Link>
         </Breadcrumbs>
       </div>
+
       <div className="bg-white p-2 mt-4">
-        <div className="container mx-auto flex gap-3 ">
-          <div className="sidebarWrapper w-[20%] relative">
-            <div className="sticky top-16 max-h-[calc(100vh-40px)] overflow-y-auto">
+        <div className="container mx-auto flex flex-col lg:flex-row gap-3 px-4 sm:px-6 lg:px-8">
+          {/* Sidebar */}
+          <div className="sidebarWrapper w-full lg:w-[20%] relative">
+            <div className="sticky top-[200px] max-h-[calc(100vh-40px)] overflow-y-auto">
               <Sidebar
                 productsData={productsData}
                 setProductsData={setProductsData}
@@ -129,9 +127,12 @@ export const ProductListing = () => {
               />
             </div>
           </div>
-          <div className="rightCont w-[80%] border border-[#dadada] p-5 rounded-md">
-            <div className="bg-[#f1f1f1] p-2 w-full mb-3 rounded-md flex items-center justify-between">
-              <div className="col1 flex items-center gap-1">
+
+          {/* Right Container */}
+          <div className="rightCont w-full lg:w-[80%] border border-[#dadada] p-5 rounded-md">
+            {/* View & Sort */}
+            <div className="bg-[#f1f1f1] p-2 w-full mb-3 rounded-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+              <div className="col1 flex items-center gap-1 flex-wrap">
                 <Button
                   onClick={() => setItemView("grid")}
                   className={`!w-[40px] !min-w-[40px] !rounded-full !text-black !h-[40px] ${
@@ -149,11 +150,10 @@ export const ProductListing = () => {
                   <FaThList className="text-[rgba(0,0,0,0.7)]" />
                 </Button>
                 <span className="text-[14px] font-[500] pl-3 text-[rgba(0,0,0,0.7)]">
-                  There are{" "}
-                  {productsData?.length !== 0 ? productsData?.length : 0}{" "}
-                  products
+                  There are {productsData?.length || 0} products
                 </span>
               </div>
+
               <div className="col2 ml-auto flex gap-2 items-center justify-end">
                 <span className="text-[14px] font-[500] pl-3 text-[rgba(0,0,0,0.7)]">
                   Sort By:
@@ -176,14 +176,8 @@ export const ProductListing = () => {
                     anchorEl={anchorEl}
                     open={open}
                     onClose={handleClose}
-                    anchorOrigin={{
-                      vertical: "top",
-                      horizontal: "left",
-                    }}
-                    transformOrigin={{
-                      vertical: "top",
-                      horizontal: "left",
-                    }}
+                    anchorOrigin={{ vertical: "top", horizontal: "left" }}
+                    transformOrigin={{ vertical: "top", horizontal: "left" }}
                   >
                     <MenuItem
                       className="!text-sm !font-['lexend']"
@@ -241,8 +235,10 @@ export const ProductListing = () => {
                 </div>
               </div>
             </div>
+
+            {/* Product Items */}
             {itemView === "grid" ? (
-              <div className="grid grid-cols-5 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 {isLoading
                   ? Array.from({ length: 5 }).map((_, i) => (
                       <ProductSkeleton key={i} />
@@ -264,6 +260,8 @@ export const ProductListing = () => {
                     ))}
               </div>
             )}
+
+            {/* Pagination */}
             {totalPages > 1 && (
               <div className="pagination mt-10 flex justify-center">
                 <Pagination

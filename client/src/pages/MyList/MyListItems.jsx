@@ -27,27 +27,43 @@ export const MyListItems = ({ data }) => {
     });
   };
   return (
-    <div className="cartItem w-full p-3 flex border-b border-gray-200  gap-4">
-      <div className="img w-[10%] rounded-md overflow-hidden">
+    <div className="cartItem w-full p-3 flex flex-col sm:flex-row border-b border-gray-200 gap-3 sm:gap-4">
+      {/* Product Image */}
+      <div className="img w-full sm:w-[10%] rounded-md overflow-hidden flex-shrink-0">
         <Link to={`/product-details/${data?.productId}`}>
-          <img src={data?.image} className="w-full" alt="" />
+          <img
+            src={data?.image}
+            className="w-full h-auto object-cover"
+            alt=""
+          />
         </Link>
       </div>
-      <div className="info w-[90%] relative">
+
+      {/* Product Info */}
+      <div className="info w-full sm:w-[90%] relative flex flex-col gap-1">
+        {/* Remove Button */}
         <IoMdClose
           onClick={handleRemoveToMyList}
-          className="absolute right-0 text-xl cursor-pointer link transition"
+          className="absolute top-2 right-0 text-xl cursor-pointer link transition"
         />
+
+        {/* Brand */}
         <span className="text-md font-semibold text-gray-400">
           {data?.brand}
         </span>
-        <h3 className="font-semibold text-lg transition link">
+
+        {/* Product Title */}
+        <h3 className="font-semibold text-lg transition link truncate">
           <Link to={`/product-details/${data?.productId}`}>
             {data?.productTitle}
           </Link>
         </h3>
+
+        {/* Rating */}
         <Rating name="size-small" defaultValue={4} readOnly size="small" />
-        <div className="flex items-center gap-4 mt-2">
+
+        {/* Price Info */}
+        <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-2">
           <span className="price text-primary text-[14px] font-[600]">
             ₹ {data?.price.toLocaleString("en-IN")}
           </span>

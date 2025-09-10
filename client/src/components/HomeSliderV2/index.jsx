@@ -32,27 +32,28 @@ export const HomeSliderV2 = (props) => {
         {props?.data?.map((item) => {
           if (item?.isDisplayOnHomeBanner && item?.bannerImages?.length !== 0) {
             return (
-              <SwiperSlide>
-                <div className="item w-full rounded-md overflow-hidden relative">
-                  <img className="w-full" src={item?.bannerImages[0]} />
-                  <div className="info absolute top-0 -right-[100%] w-[50%] z-50 p-8 h-full flex justify-center items-center flex-col gap-4 opacity-0 transition-all duration-1000">
-                    <h4 className="text-[20px] font-[300] w-full text-left">
+              <SwiperSlide key={item?._id}>
+                <div className="item w-full rounded-md overflow-hidden relative group">
+                  <img
+                    className="w-full h-auto object-cover"
+                    src={item?.bannerImages[0]}
+                    alt={item?.bannerTitleName || "Banner Image"}
+                  />
+                  <div className="info absolute top-0 right-0 w-full md:w-1/2 p-6 md:p-8 h-full bg-black bg-opacity-50 text-white flex flex-col justify-center items-start gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+                    <h4 className="text-lg md:text-xl font-light">
                       {item?.bannerTitleName}
                     </h4>
-                    <h2 className="text-[32px] font-['lexend_giga'] font-[700] w-full text-left">
+                    <h2 className="text-2xl md:text-4xl font-bold font-['lexend_giga']">
                       {item?.name}
                     </h2>
-                    <p className="w-full text-left text-lg">
-                      Starting At Only{" "}
+                    <p className="text-md md:text-lg">
+                      Starting At{" "}
                       <span className="text-2xl text-primary font-bold">
                         ₹{item?.price.toLocaleString("en-IN")}/-
                       </span>
                     </p>
-                    <Link
-                      className="w-full block"
-                      to={`/product-details/${item?._id}`}
-                    >
-                      <Button className="!px-4 !py-2 !bg-primary !text-white !transition hover:!bg-gray-900 self-start">
+                    <Link to={`/product-details/${item?._id}`}>
+                      <Button className="!px-4 !py-2 !bg-primary !text-white hover:!bg-gray-900">
                         Shop Now
                       </Button>
                     </Link>
@@ -61,6 +62,7 @@ export const HomeSliderV2 = (props) => {
               </SwiperSlide>
             );
           }
+          return null;
         })}
       </Swiper>
     </>

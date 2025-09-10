@@ -249,7 +249,6 @@ const AddProduct = () => {
     }));
   };
 
-  
   const onChangeRating = (e) => {
     setFormFields((fields) => ({
       ...fields,
@@ -395,43 +394,47 @@ const AddProduct = () => {
   }, [isOpenFullScreenPanel]);
 
   return (
-    <section className="p-5 bg-gray-50 h-[100vh]">
-      <form className="form p-8 py-3" onSubmit={handleSubmit}>
-        <div className="scroll max-h-[70vh] overflow-y-scroll pr-4">
-          <div className="grid grid-cols-1 mb-3">
-            <div className="col-span-1">
-              <h3 className="text-lg font-[500] mb-1">Product Name</h3>
-              <input
-                type="text"
-                className="w-full h-[40px] border border-black/30 outline-none focus:border-black/50 rounded-md p-3 text-sm"
-                name="name"
-                value={formFields.name}
-                onChange={onChangeInput}
-              />
-            </div>
+    <section className="p-5 bg-gray-50 min-h-screen">
+      <form
+        className="form p-5 sm:p-8 py-3 bg-white rounded-lg shadow"
+        onSubmit={handleSubmit}
+      >
+        {/* Scroll wrapper */}
+        <div className="scroll max-h-[70vh] overflow-y-auto pr-2 sm:pr-4">
+          {/* Product Name */}
+          <div className="mb-3">
+            <h3 className="text-lg font-medium mb-1">Product Name</h3>
+            <input
+              type="text"
+              className="w-full h-[40px] border border-black/30 focus:outline-none focus:border-black/50 rounded-md p-3 text-sm"
+              name="name"
+              value={formFields.name}
+              onChange={onChangeInput}
+            />
           </div>
-          <div className="grid grid-cols-1 mb-3">
-            <div className="col-span-1">
-              <h3 className="text-lg font-[500] mb-1">Product Description</h3>
-              <textarea
-                type="text"
-                className="w-full !h-32 border border-black/30 outline-none focus:border-black/50 rounded-md p-3 text-sm"
-                name="description"
-                value={formFields.description}
-                onChange={onChangeInput}
-              />
-            </div>
+
+          {/* Product Description */}
+          <div className="mb-3">
+            <h3 className="text-lg font-medium mb-1">Product Description</h3>
+            <textarea
+              className="w-full h-32 border border-black/30 focus:outline-none focus:border-black/50 rounded-md p-3 text-sm"
+              name="description"
+              value={formFields.description}
+              onChange={onChangeInput}
+            />
           </div>
-          <div className="grid grid-cols-4 mb-10 gap-4">
-            <div className="col-span-1">
-              <h3 className="text-lg font-[500] mb-3">Product Category</h3>
+
+          {/* Category + Pricing */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            {/* Category */}
+            <div>
+              <h3 className="text-lg font-medium mb-2">Product Category</h3>
               {catData?.length !== 0 && (
-                <FormControl fullWidth>
+                <FormControl fullWidth size="small">
                   <InputLabel id="proCat-label">Select Category</InputLabel>
                   <Select
                     className="focus:!outline-black/50"
                     labelId="proCat-label"
-                    size="medium"
                     id="proCat"
                     value={proCat}
                     label="Select Category"
@@ -439,9 +442,9 @@ const AddProduct = () => {
                   >
                     {catData?.map((cat) => (
                       <MenuItem
-                        onClick={() => selectCatByName(cat?.name)}
-                        key={cat?.name}
+                        key={cat?._id}
                         value={cat?._id}
+                        onClick={() => selectCatByName(cat?.name)}
                       >
                         {cat?.name}
                       </MenuItem>
@@ -450,76 +453,75 @@ const AddProduct = () => {
                 </FormControl>
               )}
             </div>
-            <div className="col-span-1">
-              <h3 className="text-lg font-[500] mb-3">Product Sub Category</h3>
-              <div>
-                {selectedCatObject?.children?.length !== 0 && (
-                  <FormControl fullWidth>
-                    <InputLabel id="proSubCat-label">
-                      Select Sub Category
-                    </InputLabel>
-                    <Select
-                      className="focus:!outline-black/50"
-                      labelId="proSubCat-label"
-                      size="medium"
-                      id="proSubCat"
-                      value={proSubCat}
-                      label="Select Sub Category"
-                      onChange={handleChangeProSubCat}
-                    >
-                      {selectedCatObject?.children?.map((subCat) => (
-                        <MenuItem
-                          onClick={() => selectSubCatByName(subCat?.name)}
-                          key={subCat?.name}
-                          value={subCat?._id}
-                        >
-                          {subCat?.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                )}
-              </div>
+
+            {/* Sub Category */}
+            <div>
+              <h3 className="text-lg font-medium mb-2">Product Sub Category</h3>
+              {selectedCatObject?.children?.length > 0 && (
+                <FormControl fullWidth size="small">
+                  <InputLabel id="proSubCat-label">
+                    Select Sub Category
+                  </InputLabel>
+                  <Select
+                    className="focus:!outline-black/50"
+                    labelId="proSubCat-label"
+                    id="proSubCat"
+                    value={proSubCat}
+                    label="Select Sub Category"
+                    onChange={handleChangeProSubCat}
+                  >
+                    {selectedCatObject?.children?.map((subCat) => (
+                      <MenuItem
+                        key={subCat?._id}
+                        value={subCat?._id}
+                        onClick={() => selectSubCatByName(subCat?.name)}
+                      >
+                        {subCat?.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
             </div>
-            <div className="col-span-1">
-              <h3 className="text-lg font-[500] mb-3">
-                Product Third Level Sub Category
+
+            {/* Third Level Category */}
+            <div>
+              <h3 className="text-lg font-medium mb-2">
+                Third Level Sub Category
               </h3>
-              <div>
-                {selectedSubCatObject?.children !== 0 && (
-                  <FormControl fullWidth>
-                    <InputLabel id="proTSubCat-label">
-                      Select Third Level Sub Category
-                    </InputLabel>
-                    <Select
-                      className="focus:!outline-black/50"
-                      labelId="proTSubCat-label"
-                      size="medium"
-                      id="proTSubCat"
-                      value={proTSubCat}
-                      label="Select Third Level Sub Category"
-                      onChange={handleChangeProTSubCat}
-                    >
-                      {selectedSubCatObject?.children?.map((thirdSubCat) => (
-                        <MenuItem
-                          onClick={() =>
-                            selectThirdSubCatByName(thirdSubCat?.name)
-                          }
-                          key={thirdSubCat?.name}
-                          value={thirdSubCat?._id}
-                        >
-                          {thirdSubCat?.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                )}
-              </div>
+              {selectedSubCatObject?.children?.length > 0 && (
+                <FormControl fullWidth size="small">
+                  <InputLabel id="proTSubCat-label">
+                    Select Third Level
+                  </InputLabel>
+                  <Select
+                    className="focus:!outline-black/50"
+                    labelId="proTSubCat-label"
+                    id="proTSubCat"
+                    value={proTSubCat}
+                    label="Select Third Level"
+                    onChange={handleChangeProTSubCat}
+                  >
+                    {selectedSubCatObject?.children?.map((thirdSubCat) => (
+                      <MenuItem
+                        key={thirdSubCat?._id}
+                        value={thirdSubCat?._id}
+                        onClick={() =>
+                          selectThirdSubCatByName(thirdSubCat?.name)
+                        }
+                      >
+                        {thirdSubCat?.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
             </div>
-            <div className="col-span-1">
-              <h3 className="text-lg font-[500] mb-3">Product Price</h3>
+
+            {/* Price */}
+            <div>
+              <h3 className="text-lg font-medium mb-2">Product Price</h3>
               <TextField
-                id="outlined-basic"
                 type="number"
                 label="Enter Price"
                 variant="outlined"
@@ -529,10 +531,11 @@ const AddProduct = () => {
                 onChange={onChangeInput}
               />
             </div>
-            <div className="col-span-1">
-              <h3 className="text-lg font-[500] mb-3">Product Old Price</h3>
+
+            {/* Old Price */}
+            <div>
+              <h3 className="text-lg font-medium mb-2">Old Price</h3>
               <TextField
-                id="outlined-basic"
                 type="number"
                 label="Enter Old Price"
                 variant="outlined"
@@ -543,31 +546,31 @@ const AddProduct = () => {
               />
             </div>
           </div>
-          <div className="grid grid-cols-4 mb-3 gap-4">
-            <div className="col-span-1">
-              <h3 className="text-lg font-[500] mb-3">Is Featured ?</h3>
-              <div>
-                <FormControl fullWidth>
-                  <InputLabel id="isFeatured-label">Select Featured</InputLabel>
-                  <Select
-                    className="focus:!outline-black/50"
-                    labelId="isFeatured-label"
-                    size="medium"
-                    id="isFeatured"
-                    value={isFeatured}
-                    label="Select Featured"
-                    onChange={handleChangeIsFeatured}
-                  >
-                    <MenuItem value={true}>True</MenuItem>
-                    <MenuItem value={false}>False</MenuItem>
-                  </Select>
-                </FormControl>
-              </div>
+
+          {/* Stock, Brand, Discount, Featured */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            {/* Featured */}
+            <div>
+              <h3 className="text-lg font-medium mb-2">Is Featured?</h3>
+              <FormControl fullWidth size="small">
+                <InputLabel id="isFeatured-label">Select</InputLabel>
+                <Select
+                  labelId="isFeatured-label"
+                  id="isFeatured"
+                  value={isFeatured}
+                  label="Select Featured"
+                  onChange={handleChangeIsFeatured}
+                >
+                  <MenuItem value={true}>True</MenuItem>
+                  <MenuItem value={false}>False</MenuItem>
+                </Select>
+              </FormControl>
             </div>
-            <div className="col-span-1">
-              <h3 className="text-lg font-[500] mb-3">Product Stock</h3>
+
+            {/* Stock */}
+            <div>
+              <h3 className="text-lg font-medium mb-2">Stock</h3>
               <TextField
-                id="outlined-basic"
                 type="number"
                 label="Enter Stock"
                 variant="outlined"
@@ -577,10 +580,11 @@ const AddProduct = () => {
                 onChange={onChangeInput}
               />
             </div>
-            <div className="col-span-1">
-              <h3 className="text-lg font-[500] mb-3">Product Brand</h3>
+
+            {/* Brand */}
+            <div>
+              <h3 className="text-lg font-medium mb-2">Brand</h3>
               <TextField
-                id="outlined-basic"
                 type="text"
                 label="Brand"
                 variant="outlined"
@@ -590,10 +594,11 @@ const AddProduct = () => {
                 onChange={onChangeInput}
               />
             </div>
-            <div className="col-span-1">
-              <h3 className="text-lg font-[500] mb-3">Product Discount</h3>
+
+            {/* Discount */}
+            <div>
+              <h3 className="text-lg font-medium mb-2">Discount</h3>
               <TextField
-                id="outlined-basic"
                 type="number"
                 label="Discount"
                 variant="outlined"
@@ -604,84 +609,75 @@ const AddProduct = () => {
               />
             </div>
           </div>
-          <div className="grid grid-cols-4 mb-3 gap-4">
-            <div className="col-span-1">
-              <h3 className="text-lg font-[500] mb-3">Product RAMS</h3>
-              <div>
-                <FormControl fullWidth>
-                  <InputLabel id="proRam-label">Select RAM</InputLabel>
-                  <Select
-                    multiple
-                    className="focus:!outline-black/50"
-                    labelId="proRam-label"
-                    size="medium"
-                    id="proRam"
-                    value={proRam}
-                    label="Select RAM"
-                    onChange={handleChangeProRam}
-                  >
-                    {prodRam?.length !== 0 &&
-                      prodRam?.map((ram) => (
-                        <MenuItem key={ram.ram} value={ram.ram}>
-                          {ram.ram}
-                        </MenuItem>
-                      ))}
-                  </Select>
-                </FormControl>
-              </div>
+
+          {/* RAM, Weight, Size, Rating */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            {/* RAM */}
+            <div>
+              <h3 className="text-lg font-medium mb-2">RAM</h3>
+              <FormControl fullWidth size="small">
+                <InputLabel id="proRam-label">Select RAM</InputLabel>
+                <Select
+                  multiple
+                  labelId="proRam-label"
+                  id="proRam"
+                  value={proRam}
+                  onChange={handleChangeProRam}
+                >
+                  {prodRam?.map((ram) => (
+                    <MenuItem key={ram.ram} value={ram.ram}>
+                      {ram.ram}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </div>
-            <div className="col-span-1">
-              <h3 className="text-lg font-[500] mb-3">Product Weight</h3>
-              <div>
-                <FormControl fullWidth>
-                  <InputLabel id="proWeight-label">Select Weight</InputLabel>
-                  <Select
-                    multiple
-                    className="focus:!outline-black/50"
-                    labelId="proWeight-label"
-                    size="medium"
-                    id="proWeight"
-                    value={proWeight}
-                    label="Select Weight"
-                    onChange={handleChangeProWeight}
-                  >
-                    {prodWgt?.length !== 0 &&
-                      prodWgt?.map((wgt) => (
-                        <MenuItem key={wgt.wgt} value={wgt.wgt}>
-                          {wgt.wgt}
-                        </MenuItem>
-                      ))}
-                  </Select>
-                </FormControl>
-              </div>
+
+            {/* Weight */}
+            <div>
+              <h3 className="text-lg font-medium mb-2">Weight</h3>
+              <FormControl fullWidth size="small">
+                <InputLabel id="proWeight-label">Select Weight</InputLabel>
+                <Select
+                  multiple
+                  labelId="proWeight-label"
+                  id="proWeight"
+                  value={proWeight}
+                  onChange={handleChangeProWeight}
+                >
+                  {prodWgt?.map((wgt) => (
+                    <MenuItem key={wgt.wgt} value={wgt.wgt}>
+                      {wgt.wgt}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </div>
-            <div className="col-span-1">
-              <h3 className="text-lg font-[500] mb-3">Product Size</h3>
-              <div>
-                <FormControl fullWidth>
-                  <InputLabel id="proSize-label">Select Size</InputLabel>
-                  <Select
-                    multiple
-                    className="focus:!outline-black/50"
-                    labelId="proSize-label"
-                    size="medium"
-                    id="proSize"
-                    value={proSize}
-                    label="Select Size"
-                    onChange={handleChangeProSize}
-                  >
-                    {prodSize?.length !== 0 &&
-                      prodSize?.map((size) => (
-                        <MenuItem key={size.size} value={size.size}>
-                          {size.size}
-                        </MenuItem>
-                      ))}
-                  </Select>
-                </FormControl>
-              </div>
+
+            {/* Size */}
+            <div>
+              <h3 className="text-lg font-medium mb-2">Size</h3>
+              <FormControl fullWidth size="small">
+                <InputLabel id="proSize-label">Select Size</InputLabel>
+                <Select
+                  multiple
+                  labelId="proSize-label"
+                  id="proSize"
+                  value={proSize}
+                  onChange={handleChangeProSize}
+                >
+                  {prodSize?.map((size) => (
+                    <MenuItem key={size.size} value={size.size}>
+                      {size.size}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </div>
-            <div className="col-span-1">
-              <h3 className="text-lg font-[500] mb-3">Product Rating</h3>
+
+            {/* Rating */}
+            <div>
+              <h3 className="text-lg font-medium mb-2">Rating</h3>
               <Rating
                 name="half-rating"
                 defaultValue={1}
@@ -690,34 +686,25 @@ const AddProduct = () => {
               />
             </div>
           </div>
-          <div className="col w-full p-5 px-0">
+
+          {/* Media & Images */}
+          <div className="mb-6">
             <h3 className="font-bold text-lg mb-3">Media & Images</h3>
-            <div className="grid grid-cols-7 gap-4">
-              {previews?.length !== 0 &&
-                previews?.map((image, index) => (
-                  <div key={image} className="uploadImageWrapper relative">
-                    <span
-                      className="cursor-pointer"
-                      onClick={() => removeImg(image, index)}
-                    >
-                      <IoClose className="absolute text-white bg-red-500 p-1 rounded-full -right-1 -top-1 text-2xl z-20" />
-                    </span>
-
-                    <div className="lazyload w-full rounded-md overflow-hidden border border-dashed border-black/30 h-[150px] bg-gray-100 hover:bg-gray-200 text-gray-500 relative">
-                      <LazyLoadImage
-                        className="w-full h-full object-cover"
-                        effect="blur"
-                        wrapperProps={{
-                          // If you need to, you can tweak the effect transition using the wrapper style.
-                          style: { transitionDelay: "1s" },
-                        }}
-                        alt={"image"}
-                        src={image}
-                      />
-                    </div>
-                  </div>
-                ))}
-
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4">
+              {previews?.map((image, index) => (
+                <div key={image} className="relative">
+                  <IoClose
+                    className="absolute text-white bg-red-500 p-1 rounded-full -right-1 -top-1 text-2xl cursor-pointer z-20"
+                    onClick={() => removeImg(image, index)}
+                  />
+                  <LazyLoadImage
+                    className="w-full h-[150px] object-cover rounded-md border border-dashed border-black/30"
+                    effect="blur"
+                    src={image}
+                    alt="image"
+                  />
+                </div>
+              ))}
               <UploadBox
                 multiple={true}
                 name="images"
@@ -728,41 +715,32 @@ const AddProduct = () => {
               />
             </div>
           </div>
-          <div className="col w-full p-5 px-0">
-            <div className="shadow-md bg-white p-4 w-full relative">
+
+          {/* Banner Section */}
+          <div className="mb-6">
+            <div className="shadow-md bg-white p-4 rounded-lg relative">
               <Switch
                 onChange={handleChangeSwitch}
                 checked={checkedSwitch}
-                className="!absolute right-5"
+                className="!absolute right-5 top-5"
                 {...label}
               />
               <h3 className="font-bold text-lg mb-3">Banner Images</h3>
-              <div className="grid grid-cols-7 gap-4">
-                {bannerPreviews?.length !== 0 &&
-                  bannerPreviews?.map((image, index) => (
-                    <div key={image} className="uploadImageWrapper relative">
-                      <span
-                        className="cursor-pointer"
-                        onClick={() => removeImg2(image, index)}
-                      >
-                        <IoClose className="absolute text-white bg-red-500 p-1 rounded-full -right-1 -top-1 text-2xl z-20" />
-                      </span>
-
-                      <div className="lazyload w-full rounded-md overflow-hidden border border-dashed border-black/30 h-[150px] bg-gray-100 hover:bg-gray-200 text-gray-500 relative">
-                        <LazyLoadImage
-                          className="w-full h-full object-cover"
-                          effect="blur"
-                          wrapperProps={{
-                            // If you need to, you can tweak the effect transition using the wrapper style.
-                            style: { transitionDelay: "1s" },
-                          }}
-                          alt={"image"}
-                          src={image}
-                        />
-                      </div>
-                    </div>
-                  ))}
-
+              <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4">
+                {bannerPreviews?.map((image, index) => (
+                  <div key={image} className="relative">
+                    <IoClose
+                      className="absolute text-white bg-red-500 p-1 rounded-full -right-1 -top-1 text-2xl cursor-pointer z-20"
+                      onClick={() => removeImg2(image, index)}
+                    />
+                    <LazyLoadImage
+                      className="w-full h-[150px] object-cover rounded-md border border-dashed border-black/30"
+                      effect="blur"
+                      src={image}
+                      alt="image"
+                    />
+                  </div>
+                ))}
                 <UploadBox
                   multiple={false}
                   name="bannerImages"
@@ -772,10 +750,10 @@ const AddProduct = () => {
                   setDisable={setDisable}
                 />
               </div>
-              <h3 className="font-bold text-lg mb-3 mt-5">Banner Title</h3>
+              <h3 className="font-bold text-lg mt-5 mb-2">Banner Title</h3>
               <input
                 type="text"
-                className="w-1/2 h-[40px] border border-black/30 outline-none focus:border-black/50 rounded-md p-3 text-sm"
+                className="w-full sm:w-1/2 h-[40px] border border-black/30 rounded-md p-3 text-sm focus:outline-none focus:border-black/50"
                 name="bannerTitleName"
                 value={formFields.bannerTitleName}
                 onChange={onChangeInput}
@@ -783,16 +761,21 @@ const AddProduct = () => {
             </div>
           </div>
         </div>
-        <hr />
-        <Button type="submit" className=" !p-3 btn-blue w-full !mt-8">
-          <BsCloudUpload className="mr-2 text-xl" />
-          Publish & View
+
+        {/* Submit */}
+        <Button
+          type="submit"
+          className="w-full mt-6 p-3 btn-blue flex items-center justify-center gap-2"
+        >
+          <BsCloudUpload className="text-xl" /> Publish & View
         </Button>
       </form>
+
+      {/* Loader */}
       <div
         className={`absolute inset-0 bg-black/40 ${
           isLoading ? "flex" : "hidden"
-        } justify-center items-center z-50 left-0 top-0`}
+        } justify-center items-center z-50`}
       >
         <CircularProgress className="!text-white" />
       </div>

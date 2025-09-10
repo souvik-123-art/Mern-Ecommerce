@@ -90,47 +90,53 @@ export const Header = () => {
     <>
       <header
         className={`w-full h-[70px] ${
-          sideBarOpen ? "pl-[18.5rem]" : "pl-7"
-        } bg-[#fff] flex items-center justify-between shadow-md sticky top-0 left-0 z-10 transition-all duration-300`}
+          sideBarOpen ? "pl-[18.5rem]" : "pl-4"
+        } bg-white flex items-center justify-between shadow-md sticky top-0 left-0 z-10 transition-all duration-300`}
       >
+        {/* Sidebar Toggle Button */}
         <div className="part1">
           <Button
             onClick={() => dispatch(OpenSidePanel(!sideBarOpen))}
             className="!w-[40px] !h-[40px] !rounded-full !min-w-[40px] !text-black/80"
           >
             {sideBarOpen ? (
-              <HiOutlineMenuAlt2 className="text-3xl" />
+              <HiOutlineMenuAlt2 className="text-2xl sm:text-3xl" />
             ) : (
-              <HiOutlineMenu className="text-3xl" />
+              <HiOutlineMenu className="text-2xl sm:text-3xl" />
             )}
           </Button>
         </div>
-        <div className="part2 w-[40%] flex items-center justify-end gap-6 pr-7">
-          <IconButton aria-label="cart">
-            <StyledBadge badgeContent={4} color="secondary">
-              <FaRegBell />
-            </StyledBadge>
-          </IconButton>
 
+        {/* Right Section */}
+        <div className="part2 flex items-center gap-4 sm:gap-6 pr-4 sm:pr-7">
+          {/* Notification Bell */}
+          {/* <IconButton aria-label="notifications" size="large">
+            <StyledBadge badgeContent={4} color="secondary">
+              <FaRegBell className="text-xl sm:text-2xl" />
+            </StyledBadge>
+          </IconButton> */}
+
+          {/* User Avatar and Dropdown Menu */}
           <div className="relative">
             <div
               onClick={handleClickMyAcc}
-              className="rounded-full w-[35px] h-[35px] overflow-hidden cursor-pointer"
+              className="rounded-full w-[35px] h-[35px] sm:w-[40px] sm:h-[40px] overflow-hidden cursor-pointer"
             >
-              {previews?.length !== 0 ? (
+              {previews?.length ? (
                 <img
                   src={previews}
-                  alt=""
+                  alt="Avatar"
                   className="w-full h-full object-cover"
                 />
               ) : (
                 <img
                   src="https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1095249842.jpg"
-                  alt=""
+                  alt="Default Avatar"
                   className="w-full h-full object-cover"
                 />
               )}
             </div>
+
             <Menu
               anchorEl={anchorMyAcc}
               id="account-menu"
@@ -168,41 +174,39 @@ export const Header = () => {
               transformOrigin={{ horizontal: "right", vertical: "top" }}
               anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
-              <div className="flex items-center py-1 mb-2 px-3 gap-3">
+              <div className="flex items-center py-2 px-3 gap-3">
                 <div className="rounded-full w-[40px] h-[40px] overflow-hidden pointer-events-none">
-                  {previews?.length !== 0 ? (
+                  {previews?.length ? (
                     <img
                       src={previews}
-                      alt=""
+                      alt="Avatar"
                       className="w-full h-full object-cover"
                     />
                   ) : (
                     <img
                       src="https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1095249842.jpg"
-                      alt=""
+                      alt="Default Avatar"
                       className="w-full h-full object-cover"
                     />
                   )}
                 </div>
                 <div className="info">
-                  <h3 className="text-[15px] leading-5 font-[500]">
+                  <h3 className="text-[15px] font-semibold">
                     {userDetails?.name}
                   </h3>
-                  <p className="text-xs opacity-70 font-[400]">
-                    {userDetails?.email}
-                  </p>
+                  <p className="text-xs opacity-70">{userDetails?.email}</p>
                 </div>
               </div>
+
               <Divider className="!mb-2" />
+
               <Link to="/profile">
-                <MenuItem
-                  onClick={handleCloseMyAcc}
-                  className="flex items-center gap-3"
-                >
+                <MenuItem className="flex items-center gap-3">
                   <FaRegUser className="text-[16px]" />
                   <span className="text-sm">Profile</span>
                 </MenuItem>
               </Link>
+
               <MenuItem onClick={logout} className="flex items-center gap-2">
                 <IoIosLogOut className="text-[18px]" />
                 <span className="text-sm">Sign Out</span>
@@ -211,6 +215,7 @@ export const Header = () => {
           </div>
         </div>
       </header>
+
       <Dialog
         fullScreen
         open={isOpenFullScreenPanel.open}

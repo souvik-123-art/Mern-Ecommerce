@@ -16,7 +16,7 @@ export const ResetPassword = () => {
     conPassword: "",
   });
   const { token } = useParams();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const onChangeInput = (e) => {
     const { name, value } = e.target;
     setFormFields(() => {
@@ -53,7 +53,7 @@ export const ResetPassword = () => {
           password: "",
           conPassword: "",
         });
-        navigate("/login")
+        navigate("/login");
       } else {
         toast.error(res.message);
         setIsLoading(false);
@@ -61,14 +61,15 @@ export const ResetPassword = () => {
     });
   };
   return (
-    <section className="login py-10">
-      <div className="container mx-auto">
-        <div className="card shadow-md w-[500px] m-auto rounded-md bg-white p-5 px-10">
-          <h3 className="text-center text-2xl font-bold text-gray-700">
+    <section className="resetPass py-6 md:py-10 px-4">
+      <div className="container mx-auto max-w-md md:max-w-lg">
+        <div className="card shadow-md w-full m-auto rounded-md bg-white p-4 md:p-6 lg:p-8">
+          <h3 className="text-center text-xl md:text-2xl font-bold text-gray-700 mb-4 md:mb-6">
             Reset Password
           </h3>
-          <form className="w-full mt-5" onSubmit={handleSubmit}>
-            <div className="form-group w-full mb-3 relative">
+
+          <form className="w-full mt-3 md:mt-5" onSubmit={handleSubmit}>
+            <div className="form-group w-full mb-4 relative">
               <TextField
                 type={showPassword ? "text" : "password"}
                 id="password"
@@ -78,18 +79,20 @@ export const ResetPassword = () => {
                 value={formFields.password}
                 name="password"
                 onChange={onChangeInput}
-                disabled={isLoading ? true : false}
+                disabled={isLoading}
+                size="small"
               />
               <Button
                 onClick={() => setShowPassword(!showPassword)}
                 className="!w-[40px] !min-w-[40px] !rounded-full
-                    !text-black !bg-transparent
-                   !h-[40px] !text-xl !absolute !z-5 !right-2 !top-2 opacity-75 hover:!text-primary !transition"
+                  !text-black !bg-transparent
+                  !h-[40px] !text-xl !absolute !z-5 !right-1 !top-1 opacity-75 hover:!text-primary !transition"
               >
                 {showPassword ? <IoMdEyeOff /> : <IoMdEye />}
               </Button>
             </div>
-            <div className="form-group w-full mb-3 relative">
+
+            <div className="form-group w-full mb-4 relative">
               <TextField
                 type={showConPassword ? "text" : "password"}
                 id="confirmPassword"
@@ -99,21 +102,24 @@ export const ResetPassword = () => {
                 value={formFields.conPassword}
                 name="conPassword"
                 onChange={onChangeInput}
-                disabled={isLoading ? true : false}
+                disabled={isLoading}
+                size="small"
               />
               <Button
                 onClick={() => setShowConPassword(!showConPassword)}
                 className="!w-[40px] !min-w-[40px] !rounded-full
-                    !text-black !bg-transparent
-                   !h-[40px] !text-xl !absolute !z-5 !right-2 !top-2 opacity-75 hover:!text-primary !transition"
+                  !text-black !bg-transparent
+                  !h-[40px] !text-xl !absolute !z-5 !right-1 !top-1 opacity-75 hover:!text-primary !transition"
               >
                 {showConPassword ? <IoMdEyeOff /> : <IoMdEye />}
               </Button>
             </div>
+
             <Button
               type="submit"
-              disabled={!validValue}
-              className="!px-6 !mt-5 !w-full !flex !py-2 !bg-primary !text-white hover:!bg-gray-900 transition-all"
+              disabled={!validValue || isLoading}
+              className="!px-6 !mt-4 !w-full !flex !py-2 !bg-primary !text-white hover:!bg-gray-900 transition-all !h-12"
+              variant="contained"
             >
               {isLoading ? (
                 <CircularProgress

@@ -30,30 +30,39 @@ const ProductDetails = () => {
   }, []);
   return (
     <>
-      <div className="py-3 flex items-center mb-8">
-        <h2 className="text-3xl font-bold">Products Details</h2>
+      <div className="py-3 flex items-center mb-6 sm:mb-8">
+        <h2 className="text-2xl sm:text-3xl font-bold">Product Details</h2>
       </div>
-      <div className="productDetails flex flex-col md:flex-row gap-5 relative">
-        <div className="md:w-[30%] w-full">
+
+      <div className="productDetails flex flex-col lg:flex-row gap-6 relative">
+        {/* Left: Product Image / Zoom */}
+        <div className="w-full lg:w-[35%]">
           {singleProData?.images?.length !== 0 && (
             <ProductZoom images={singleProData?.images} />
           )}
         </div>
+
+        {/* Loader overlay */}
         <div
           className={`absolute inset-0 bg-[#f1f1f1] ${
             isLoading ? "flex" : "hidden"
-          } justify-center items-center z-50 left-0 top-0`}
+          } justify-center items-center z-50`}
         >
           <CircularProgress className="!text-primary" />
         </div>
-        <div className="md:w-[70%] w-full">
-          <h1 className="text-[22px] font-[600] text-[rgba(0,0,0,0.7)] mb-2">
+
+        {/* Right: Product Info */}
+        <div className="w-full lg:w-[65%]">
+          {/* Product Title */}
+          <h1 className="text-xl sm:text-2xl font-semibold text-black/70 mb-2">
             {singleProData?.name}
           </h1>
-          <div className="flex items-center gap-3">
-            <span className="text-gray-400 flex gap-2">
-              Brands:
-              <span className="font-[500] text-[rgba(0,0,0,0.7)]">
+
+          {/* Brand + Rating + Reviews */}
+          <div className="flex flex-wrap items-center gap-3 text-sm sm:text-base">
+            <span className="text-gray-500 flex gap-1">
+              Brand:
+              <span className="font-medium text-black/70">
                 {singleProData?.brand}
               </span>
             </span>
@@ -64,78 +73,84 @@ const ProductDetails = () => {
               readOnly
               size="small"
             />
-            <span className="text-sm text-gray-700">
-              Reviews ({proReview?.length})
-            </span>
+            <span className="text-gray-700">Reviews ({proReview?.length})</span>
           </div>
-          <div className="flex items-center gap-4 mt-4">
-            <span className="oldPrice line-through text-gray-500 text-[20px] font-[500]">
+
+          {/* Price Section */}
+          <div className="flex flex-wrap items-center gap-4 mt-4">
+            <span className="line-through text-gray-500 text-lg sm:text-xl font-medium">
               ₹{singleProData?.oldPrice.toLocaleString("en-IN")}
             </span>
-            <span className="price text-primary text-[20px] font-[600]">
+            <span className="text-primary text-lg sm:text-xl font-semibold">
               ₹{singleProData?.price.toLocaleString("en-IN")}
             </span>
             <span className="text-sm">
-              Available In Stock:&nbsp;&nbsp;
-              <span className="text-green-500 font-semibold">
+              In Stock:
+              <span className="text-green-500 font-semibold ml-1">
                 {singleProData?.countInStock} Items
               </span>
             </span>
           </div>
-          <p className="mt-4 text-gray-400 text-lg leading-loose">
+
+          {/* Description */}
+          <p className="mt-4 text-gray-600 text-sm sm:text-base leading-relaxed">
             {singleProData?.description}
           </p>
-          <div className="flex items-center gap-3 mt-4">
-            <span className="text-sm">
-              {singleProData?.size?.length !== 0 && (
-                <span className="flex items-center gap-2 text-lg">
-                  Size:
-                  {singleProData?.size?.map((size, index, array) => (
-                    <p className="font-light" key={size}>
-                      {size}
-                      {index < array.length - 1 ? "," : ""}{" "}
-                    </p>
-                  ))}
-                </span>
-              )}
-              {singleProData?.productRam?.length !== 0 && (
-                <span className="flex items-center gap-2 text-lg">
-                  {" "}
-                  Ram:
-                  {singleProData?.productRam?.map((ram, index, array) => (
-                    <p className="font-light" key={ram}>
-                      {ram}
-                      {index < array.length - 1 ? "," : ""}{" "}
-                    </p>
-                  ))}
-                </span>
-              )}
-              {singleProData?.productWeight?.length !== 0 && (
-                <span className="flex items-center gap-2 text-lg">
-                  {" "}
-                  Weight:
-                  {singleProData?.productWeight?.map((weight, index, array) => (
-                    <p className="font-light" key={weight}>
-                      {weight}
-                      {index < array.length - 1 ? "," : ""}{" "}
-                    </p>
-                  ))}
-                </span>
-              )}
-            </span>
+
+          {/* Size / Ram / Weight */}
+          <div className="flex flex-col gap-2 mt-4 text-sm sm:text-base">
+            {singleProData?.size?.length !== 0 && (
+              <div className="flex flex-wrap items-center gap-1">
+                <span className="font-medium">Size:</span>
+                {singleProData?.size?.map((size, i, arr) => (
+                  <p key={size} className="font-light">
+                    {size}
+                    {i < arr.length - 1 ? "," : ""}
+                  </p>
+                ))}
+              </div>
+            )}
+
+            {singleProData?.productRam?.length !== 0 && (
+              <div className="flex flex-wrap items-center gap-1">
+                <span className="font-medium">Ram:</span>
+                {singleProData?.productRam?.map((ram, i, arr) => (
+                  <p key={ram} className="font-light">
+                    {ram}
+                    {i < arr.length - 1 ? "," : ""}
+                  </p>
+                ))}
+              </div>
+            )}
+
+            {singleProData?.productWeight?.length !== 0 && (
+              <div className="flex flex-wrap items-center gap-1">
+                <span className="font-medium">Weight:</span>
+                {singleProData?.productWeight?.map((wgt, i, arr) => (
+                  <p key={wgt} className="font-light">
+                    {wgt}
+                    {i < arr.length - 1 ? "," : ""}
+                  </p>
+                ))}
+              </div>
+            )}
           </div>
-          <div className="flex items-center py-1 mt-3">
-            <span className="font-[500] flex items-center gap-2 text-lg">
-              Review:
-              <span className="text-lg font-light">
-                ({proReview?.length}) Reviews
+
+          {/* Review Count */}
+          <div className="flex items-center mt-4">
+            <span className="font-medium text-base sm:text-lg">
+              Reviews:
+              <span className="ml-1 font-light">
+                ({proReview?.length}) total
               </span>
             </span>
           </div>
-          <div className="flex items-center py-1 mt-3">
-            <span className="font-[500] flex items-center gap-2 text-lg">
+
+          {/* Published Date */}
+          <div className="flex items-center mt-2">
+            <span className="font-medium text-base sm:text-lg">
               Published:
-              <span className="text-lg font-light">
+              <span className="ml-1 font-light">
                 {new Date(singleProData?.createdAt).toLocaleString("en-IN", {
                   year: "numeric",
                   month: "short",
@@ -147,51 +162,51 @@ const ProductDetails = () => {
               </span>
             </span>
           </div>
-          <div className="w-full proReviewContainer">
-            <h2 className="text-lg font-semibold mt-4 mb-6">
-              Customer Reviews
-            </h2>
-            <div className="scroll w-full max-h-[300px] overflow-y-scroll overflow-x-hidden">
-              {proReview?.length !== 0
-                ? [...proReview].reverse().map((review) => (
-                    <div key={review._id} className="review w-full mb-3">
-                      <article className="border border-gray-200 p-5 rounded-md">
-                        <div class="flex items-center mb-4">
-                          <img
-                            class="w-10 h-10 me-4 rounded-full"
-                            src={review?.image}
-                            alt=""
-                          />
-                          <div class="font-medium text-black/80">
-                            <p>{review?.userName}</p>
-                          </div>
-                        </div>
-                        <div class="mb-3 text-sm text-gray-800">
-                          <p className="mb-2">
-                            <time datetime={review.createdAt}>
-                              {new Date(review.createdAt).toLocaleDateString(
-                                "en-US",
-                                {
-                                  year: "numeric",
-                                  month: "long",
-                                  day: "numeric",
-                                }
-                              )}
-                            </time>
-                          </p>
-                          <Rating
-                            name="size-small"
-                            value={Number(review?.rating)}
-                            readOnly
-                            precision={0.5}
-                            size="small"
-                          />
-                        </div>
-                        <p class="mb-2 text-gray-800">{review?.review}</p>
-                      </article>
-                    </div>
-                  ))
-                : "No Reviews "}
+
+          {/* Customer Reviews */}
+          <div className="w-full mt-6">
+            <h2 className="text-lg font-semibold mb-4">Customer Reviews</h2>
+            <div className="scroll w-full max-h-[300px] overflow-y-auto pr-1">
+              {proReview?.length !== 0 ? (
+                [...proReview].reverse().map((review) => (
+                  <div key={review._id} className="w-full mb-3">
+                    <article className="border border-gray-200 p-4 rounded-md">
+                      <div className="flex items-center mb-3">
+                        <img
+                          className="w-10 h-10 mr-3 rounded-full object-cover"
+                          src={review?.image}
+                          alt={review?.userName}
+                        />
+                        <p className="font-medium text-black/80">
+                          {review?.userName}
+                        </p>
+                      </div>
+                      <p className="text-xs text-gray-500 mb-1">
+                        {new Date(review.createdAt).toLocaleDateString(
+                          "en-US",
+                          {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          }
+                        )}
+                      </p>
+                      <Rating
+                        name="review-rating"
+                        value={Number(review?.rating)}
+                        readOnly
+                        precision={0.5}
+                        size="small"
+                      />
+                      <p className="mt-2 text-gray-800 text-sm">
+                        {review?.review}
+                      </p>
+                    </article>
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-500">No Reviews</p>
+              )}
             </div>
           </div>
         </div>

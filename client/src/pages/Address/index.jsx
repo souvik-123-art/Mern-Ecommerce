@@ -41,16 +41,21 @@ const Address = () => {
   }, [userDetails]);
   return (
     <section className="myAccountSec py-10 w-full">
-      <div className="container mx-auto flex gap-5">
-        <div className="col1 w-[20%]">
+      <div className="container mx-auto flex flex-col lg:flex-row gap-5">
+        {/* Sidebar */}
+        <div className="col1 w-full lg:w-[20%] mb-5 lg:mb-0">
           <AccountSidebar />
         </div>
-        <div className="col2 w-[50%]">
+
+        {/* Address Section */}
+        <div className="col2 w-full lg:w-[50%]">
           <div className="card bg-white p-5 shadow-md rounded-md mb-5">
             <div className="flex items-center pb-0">
               <h2 className="pb-3 text-2xl font-semibold">My Address</h2>
             </div>
             <hr />
+
+            {/* Add Address Button */}
             <div
               className="flex items-center justify-center p-5 border border-dashed border-red-600/30 bg-red-100 hover:bg-red-200 cursor-pointer transition duration-200 rounded-md mb-5"
               onClick={() =>
@@ -63,43 +68,47 @@ const Address = () => {
               }
             >
               <span className="text-sm text-red-500 font-semibold flex gap-2 items-center">
-                {" "}
                 <FaPlus />
                 Add Address
               </span>
             </div>
-            <br />
+
+            {/* Address List */}
             {address.map((add) => (
               <label
                 key={add._id}
-                className="address w-full flex flex-col text-gray-600 border-dashed border-gray-300  gap-4 cursor-pointer bg-[#f1f1f1] p-3 rounded-md mb-2 relative"
+                className="address w-full flex flex-col text-gray-600 border-dashed border-gray-300 gap-4 cursor-pointer bg-[#f1f1f1] p-3 rounded-md mb-2 relative"
               >
-                {add.addressType === "Home" ? (
-                  <span className="p-2 self-start flex items-center text-sm gap-2 bg-gray-600 text-white rounded-md">
-                    <IoMdHome className="text-white" /> {add.addressType}
-                  </span>
-                ) : (
-                  <span className="p-2 self-start flex items-center text-sm gap-2 bg-gray-600 text-white rounded-md">
-                    <HiBuildingOffice className="text-white" />{" "}
-                    {add.addressType}
-                  </span>
-                )}
+                {/* Address Type */}
+                <span className="p-2 self-start flex items-center text-sm gap-2 bg-gray-600 text-white rounded-md">
+                  {add.addressType === "Home" ? (
+                    <IoMdHome className="text-white" />
+                  ) : (
+                    <HiBuildingOffice className="text-white" />
+                  )}
+                  {add.addressType}
+                </span>
 
-                <span className="text-xl font-semibold text-black/80 flex flex-col gap-4">
+                {/* Name & Mobile */}
+                <span className="text-xl font-semibold text-black/80 flex flex-col gap-2 sm:gap-4">
                   <span>{userDetails?.name}</span>
-                  <span className="text-sm flex items-start gap-1">
+                  <span className="text-sm flex items-center gap-1">
                     <IoIosCall className="text-lg" />
                     <span>+{add?.mobile}</span>
                   </span>
                 </span>
-                <span>
+
+                {/* Address Details */}
+                <span className="text-sm sm:text-base break-words">
                   {add.address_line}, {add.city},{" "}
-                  {add?.landmark && add?.landmark} {add.state}, {add.country},
+                  {add?.landmark && add?.landmark} {add.state}, {add.country},{" "}
                   {add.pincode}
                 </span>
+
+                {/* Remove Button */}
                 <IoMdClose
                   onClick={() => removeAddress(add._id)}
-                  className="text-2xl hover:text-red-400 transition absolute z-10 right-3"
+                  className="text-2xl hover:text-red-400 transition absolute top-3 right-3 sm:right-4"
                 />
               </label>
             ))}

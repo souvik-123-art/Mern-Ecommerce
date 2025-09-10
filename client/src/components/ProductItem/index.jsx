@@ -179,10 +179,10 @@ export const ProductItem = (props) => {
     }
   }, [myListData]);
   return (
-    <div className="productItem rounded-xl overflow-hidden border">
+    <div className="productItem rounded-lg md:rounded-xl overflow-hidden border">
       <div className="imgWrapper group relative w-full overflow-hidden">
         <Link to={`/product-details/${props?.data?._id}`}>
-          <div className="img h-[220px] overflow-hidden">
+          <div className="img h-[150px] sm:h-[180px] md:h-[220px] overflow-hidden">
             <img src={props?.data?.images[0]} className="w-full" alt="" />
             <img
               src={props?.data?.images[1]}
@@ -192,14 +192,17 @@ export const ProductItem = (props) => {
           </div>
         </Link>
         {isShowTabs && (
-          <div className="flex items-center justify-center absolute top-0 left-0 w-full h-full bg-[rgba(0,0,0,0.7)] z-[60] p-3 gap-2">
+          <div className="flex items-center justify-center absolute top-0 left-0 w-full h-full bg-[rgba(0,0,0,0.7)] z-[60] p-2 sm:p-3 gap-1 sm:gap-2">
             {props?.data?.size?.length > 0 && (
-              <div className="flex items-center flex-col justify-center gap-3 mt-5">
+              <div className="flex items-center flex-col justify-center gap-2 sm:gap-3 mt-3 sm:mt-5">
                 <IoMdClose
-                  onClick={() => setIsShowTabs(false)}
-                  className="ml-auto text-lg text-white link transition"
+                  onClick={() => {
+                    setIsShowTabs(false);
+                    setSelectedSize("");
+                  }}
+                  className="ml-auto text-base sm:text-lg text-white link transition"
                 />
-                <div className="flex gap-2">
+                <div className="flex gap-1 sm:gap-2 flex-wrap justify-center">
                   {props?.data?.size?.map((size, idx) => (
                     <Button
                       key={size}
@@ -211,7 +214,7 @@ export const ProductItem = (props) => {
                           ? setSelectedSize(size)
                           : setSelectedSize("");
                       }}
-                      className={`!w-10 !min-w-10 !h-10 !rounded-full text-lg ${
+                      className={`!w-8 !h-8 sm:!w-10 sm:!h-10 !min-w-0 !rounded-full text-sm sm:text-lg ${
                         sizeIndex === idx
                           ? "!bg-primary !text-white"
                           : "!text-gray-700 !bg-white"
@@ -225,12 +228,16 @@ export const ProductItem = (props) => {
             )}
 
             {props?.data?.productRam?.length > 0 && (
-              <div className="flex items-center flex-col justify-center gap-3 mt-5">
+              <div className="flex items-center flex-col justify-center gap-2 sm:gap-3 mt-3 sm:mt-5">
                 <IoMdClose
-                  onClick={() => setIsShowTabs(false)}
-                  className="ml-auto text-lg text-white link transition"
+                  onClick={() => {
+                    setIsShowTabs(false);
+
+                    setSelectedRam("");
+                  }}
+                  className="ml-auto text-base sm:text-lg text-white link transition"
                 />
-                <div className="flex gap-2">
+                <div className="flex gap-1 sm:gap-2 flex-wrap justify-center">
                   {props?.data?.productRam?.map((ram, idx) => (
                     <Button
                       key={ram}
@@ -240,7 +247,7 @@ export const ProductItem = (props) => {
                           ? setSelectedRam(ram)
                           : setSelectedRam("");
                       }}
-                      className={`!w-10 !min-w-10 !h-10 !rounded-full text-lg ${
+                      className={`!w-8 !h-8 sm:!w-10 sm:!h-10 !min-w-0 !rounded-full text-sm sm:text-lg ${
                         ramIndex === idx
                           ? "!bg-primary !text-white"
                           : "!text-gray-700 !bg-white"
@@ -254,12 +261,15 @@ export const ProductItem = (props) => {
             )}
 
             {props?.data?.productWeight?.length > 0 && (
-              <div className="flex items-center flex-col justify-center gap-3 mt-5">
+              <div className="flex items-center flex-col justify-center gap-2 sm:gap-3 mt-3 sm:mt-5">
                 <IoMdClose
-                  onClick={() => setIsShowTabs(false)}
-                  className="ml-auto text-lg text-white link transition"
+                  onClick={() => {
+                    setIsShowTabs(false);
+                    setSelectedWeight("");
+                  }}
+                  className="ml-auto text-base sm:text-lg text-white link transition"
                 />
-                <div className="flex gap-2">
+                <div className="flex gap-1 sm:gap-2 flex-wrap justify-center">
                   {props?.data?.productWeight?.map((wgt, idx) => (
                     <Button
                       key={wgt}
@@ -271,7 +281,7 @@ export const ProductItem = (props) => {
                           ? setSelectedWeight(wgt)
                           : setSelectedWeight("");
                       }}
-                      className={`!w-10 !min-w-10 !h-10 !rounded-full text-lg ${
+                      className={`!w-8 !h-8 sm:!w-10 sm:!h-10 !min-w-0 !rounded-full text-sm sm:text-lg ${
                         weightIndex === idx
                           ? "!bg-primary !text-white"
                           : "!text-gray-700 !bg-white"
@@ -286,26 +296,23 @@ export const ProductItem = (props) => {
           </div>
         )}
 
-        <span className="discount absolute top-[15px] left-[15px] z-50 bg-primary text-white rounded-md p-2 text-[12px] font-[500]">
+        <span className="discount absolute top-2 left-2 sm:top-[15px] sm:left-[15px] z-50 bg-primary text-white rounded p-1 sm:p-2 text-[10px] sm:text-[12px] font-[500]">
           {props?.data?.discount}%
         </span>
-        <div className="actions group-hover:top-[15px] transition-all duration-500 absolute top-[-200px] right-[15px] z-50 flex items-center flex-col gap-2">
+        <div className="actions group-hover:top-2 sm:group-hover:top-[15px] transition-all duration-500 absolute top-[-200px] right-2 sm:right-[15px] z-50 flex items-center flex-col gap-1 sm:gap-2">
           <Button
             onClick={() => {
               !isAddedToList
                 ? handleAddToMyList(props?.data)
                 : handleRemoveToMyList();
             }}
-            className="!bg-white hover:!bg-primary !min-w-10 h-10 hover:!text-white !text-primary !rounded-full"
+            className="!bg-white hover:!bg-primary !min-w-8 h-8 sm:!min-w-10 sm:h-10 hover:!text-white !text-primary !rounded-full"
           >
             {isAddedToList ? (
-              <FaHeart className="text-[18px] pointer-events-none " />
+              <FaHeart className="text-[14px] sm:text-[18px] pointer-events-none " />
             ) : (
-              <FaRegHeart className="text-[18px] pointer-events-none " />
+              <FaRegHeart className="text-[14px] sm:text-[18px] pointer-events-none " />
             )}
-          </Button>
-          <Button className="!bg-white hover:!bg-primary !min-w-10 h-10 hover:!text-white !text-primary !rounded-full">
-            <GoGitCompare className="text-[18px] pointer-events-none " />
           </Button>
           <Button
             onClick={() =>
@@ -316,14 +323,14 @@ export const ProductItem = (props) => {
                 })
               )
             }
-            className="!bg-white hover:!bg-primary !min-w-10 h-10 hover:!text-white !text-primary !rounded-full"
+            className="!bg-white hover:!bg-primary !min-w-8 h-8 sm:!min-w-10 sm:h-10 hover:!text-white !text-primary !rounded-full"
           >
-            <MdZoomOutMap className="text-[18px] pointer-events-none " />
+            <MdZoomOutMap className="text-[14px] sm:text-[18px] pointer-events-none " />
           </Button>
         </div>
       </div>
-      <div className="info p-3 py-5 bg-[#fafafa]">
-        <h6 className="text-[13px] mb-1 text-gray-500">
+      <div className="info p-2 sm:p-3 py-3 sm:py-5 bg-[#fafafa]">
+        <h6 className="text-[11px] sm:text-[13px] mb-1 text-gray-500">
           <Link
             to={`/product-details/${props?.data?._id}`}
             className="link transition"
@@ -331,7 +338,7 @@ export const ProductItem = (props) => {
             {props?.data?.brand}
           </Link>
         </h6>
-        <h3 className="text-[15px] mb-2 title font-[500] text-[rgba(0,0,0,0.8)] truncate">
+        <h3 className="text-[13px] sm:text-[15px] mb-2 title font-[500] text-[rgba(0,0,0,0.8)] truncate">
           <Link
             to={`/product-details/${props?.data?._id}`}
             className="link transition"
@@ -346,16 +353,16 @@ export const ProductItem = (props) => {
           readOnly
           size="small"
         />
-        <div className="flex items-center gap-4">
-          <span className="oldPrice line-through text-gray-500 text-[15px] font-[500]">
+        <div className="flex items-center gap-2 sm:gap-4 mt-1 sm:mt-0">
+          <span className="oldPrice line-through text-gray-500 text-[13px] sm:text-[15px] font-[500]">
             ₹{props?.data?.oldPrice.toLocaleString("en-IN")}
           </span>
-          <span className="price text-primary text-[15px] font-[600]">
+          <span className="price text-primary text-[13px] sm:text-[15px] font-[600]">
             ₹{props?.data?.price.toLocaleString("en-IN")}
           </span>
         </div>
         {isAddedToCart ? (
-          <div className="flex items-center justify-center mt-3">
+          <div className="flex items-center justify-center mt-2 sm:mt-3">
             <QtyBox
               quantity={quantity}
               setQuantity={setQuantity}
@@ -378,9 +385,9 @@ export const ProductItem = (props) => {
         ) : (
           <Button
             onClick={() => addToCart(props?.data, quantity)}
-            className="!px-4 w-full !py-2 !bg-primary !text-white !transition hover:!bg-gray-900 flex items-center gap-1 !mt-3"
+            className="!px-2 sm:!px-4 w-full !py-1 sm:!py-2 !bg-primary !text-white !transition hover:!bg-gray-900 flex items-center gap-1 !mt-2 sm:!mt-3 text-xs sm:text-base"
           >
-            <FaOpencart className="text-xl" /> Add To Cart
+            <FaOpencart className="text-lg sm:text-xl" /> Add To Cart
           </Button>
         )}
       </div>

@@ -132,7 +132,8 @@ export const Sidebar = (props) => {
     }));
   }, [price]);
   return (
-    <aside className="sidebar border border-[#dadada] p-5 rounded-md">
+    <aside className="sidebar border border-[#dadada] p-4 sm:p-5 rounded-md w-full lg:w-[100%]">
+      {/* Categories */}
       <div className="box">
         <h3 className="mb-3 text-[18px] font-[500] flex items-center w-full pr-5">
           CATEGORIES
@@ -144,7 +145,7 @@ export const Sidebar = (props) => {
           </Button>
         </h3>
         <Collapse isOpened={isCatOpen}>
-          <div className="scroll px-5 relative -left-[10px]">
+          <div className="scroll px-2 sm:px-5 relative -left-[5px] max-h-[300px] sm:max-h-[400px] overflow-y-auto">
             {catData?.length !== 0 &&
               catData?.map((cat) => (
                 <FormControlLabel
@@ -160,36 +161,8 @@ export const Sidebar = (props) => {
           </div>
         </Collapse>
       </div>
-      {/* <div className="box mt-3">
-        <h3 className="mb-3 text-[18px] font-[500] flex items-center w-full pr-5">
-          Availability
-          <Button
-            className="w-[30px] h-[30px] !ml-auto !min-w-[30px] !rounded-full !text-black !transition duration-300"
-            onClick={() => setIsAvaOpen(!isAvaOpen)}
-          >
-            {isAvaOpen ? <IoIosArrowUp /> : <IoIosArrowDown />}
-          </Button>
-        </h3>
-        <Collapse isOpened={isAvaOpen}>
-          <div className="scroll px-5 relative -left-[10px]">
-            <FormControlLabel
-              control={<Checkbox size="small" />}
-              label="Available (17)"
-              className="w-full"
-            />
-            <FormControlLabel
-              control={<Checkbox size="small" />}
-              label="In Stock (17)"
-              className="w-full"
-            />
-            <FormControlLabel
-              control={<Checkbox size="small" />}
-              label="Not Available (17)"
-              className="w-full"
-            />
-          </div>
-        </Collapse>
-      </div> */}
+
+      {/* Filter By Size */}
       <div className="box mt-4">
         <h3 className="mb-3 text-[18px] font-[500] flex items-center w-full pr-5">
           Filter By Size
@@ -201,122 +174,41 @@ export const Sidebar = (props) => {
           max={60000}
           step={5}
         />
-        <div className="flex pt-4 pb-2 priceRange">
+        <div className="flex flex-col sm:flex-row pt-4 pb-2 priceRange gap-2">
           <span className="text-[13px]">
             From: <strong className="text-black">Rs: {price[0]}</strong>
           </span>
-          <span className="ml-auto text-[13px]">
-            From: <strong className="text-black">Rs: {price[1]}</strong>
+          <span className="text-[13px] ml-auto sm:ml-0">
+            To: <strong className="text-black">Rs: {price[1]}</strong>
           </span>
         </div>
       </div>
+
+      {/* Rating */}
       <div className="box mt-4">
         <h3 className="mb-3 text-[18px] font-[500] flex items-center w-full pr-5">
           Rating
         </h3>
-        <div className="box w-full">
-          <FormControlLabel
-            control={<Checkbox size="small" />}
-            value={5}
-            checked={filters?.rating?.includes(5)}
-            onChange={() => handleCheckboxChange("rating", 5)}
-            label={
-              <Rating
-                name="size-small"
-                defaultValue={5}
-                readOnly
-                size="small"
-              />
-            }
-            className="w-full"
-          />
-        </div>
-        <div className="box w-full">
-          <FormControlLabel
-            control={<Checkbox size="small" />}
-            value={4.5}
-            checked={filters?.rating?.includes(4.5)}
-            onChange={() => handleCheckboxChange("rating", 4.5)}
-            label={
-              <Rating
-                name="size-small"
-                defaultValue={4.5}
-                precision={0.5}
-                readOnly
-                size="small"
-              />
-            }
-            className="w-full"
-          />
-        </div>
-        <div className="box w-full">
-          <FormControlLabel
-            control={<Checkbox size="small" />}
-            value={4}
-            checked={filters?.rating?.includes(4)}
-            onChange={() => handleCheckboxChange("rating", 4)}
-            label={
-              <Rating
-                name="size-small"
-                defaultValue={4}
-                readOnly
-                size="small"
-              />
-            }
-            className="w-full"
-          />
-        </div>
-        <div className="box w-full">
-          <FormControlLabel
-            control={<Checkbox size="small" />}
-            value={3}
-            checked={filters?.rating?.includes(3)}
-            onChange={() => handleCheckboxChange("rating", 3)}
-            label={
-              <Rating
-                name="size-small"
-                defaultValue={3}
-                readOnly
-                size="small"
-              />
-            }
-            className="w-full"
-          />
-        </div>
-        <div className="box w-full">
-          <FormControlLabel
-            control={<Checkbox size="small" />}
-            value={2}
-            checked={filters?.rating?.includes(2)}
-            onChange={() => handleCheckboxChange("rating", 2)}
-            label={
-              <Rating
-                name="size-small"
-                defaultValue={2}
-                readOnly
-                size="small"
-              />
-            }
-            className="w-full"
-          />
-        </div>
-        <div className="box w-full">
-          <FormControlLabel
-            control={<Checkbox size="small" />}
-            value={1}
-            checked={filters?.rating?.includes(1)}
-            onChange={() => handleCheckboxChange("rating", 1)}
-            label={
-              <Rating
-                name="size-small"
-                defaultValue={1}
-                readOnly
-                size="small"
-              />
-            }
-            className="w-full"
-          />
-        </div>
+        {[5, 4.5, 4, 3, 2, 1].map((r) => (
+          <div className="box w-full" key={r}>
+            <FormControlLabel
+              control={<Checkbox size="small" />}
+              value={r}
+              checked={filters?.rating?.includes(r)}
+              onChange={() => handleCheckboxChange("rating", r)}
+              label={
+                <Rating
+                  name="size-small"
+                  defaultValue={r}
+                  precision={r % 1 === 0.5 ? 0.5 : 1}
+                  readOnly
+                  size="small"
+                />
+              }
+              className="w-full"
+            />
+          </div>
+        ))}
       </div>
     </aside>
   );

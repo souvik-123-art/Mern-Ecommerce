@@ -79,28 +79,26 @@ export const AccountSidebar = () => {
     });
   };
   return (
-    <div className="card sticky top-[150px] bg-white shadow-md rounded-md overflow-hidden ">
-      <div className="w-full py-3 flex items-center justify-center flex-col">
-        <div className="mb-4 group w-[110px] h-[110px] rounded-full overflow-hidden relative flex items-center justify-center bg-gray-200">
+    <div className="card sticky top-[100px] sm:top-[120px] md:top-[150px] bg-white shadow-md rounded-md overflow-hidden w-full sm:w-[80%] md:w-[100%] lg:w-[300px] mx-auto md:mx-0">
+      <div className="w-full py-3 flex items-center justify-center flex-col px-2 sm:px-4">
+        <div className="mb-4 group w-[90px] h-[90px] sm:w-[110px] sm:h-[110px] rounded-full overflow-hidden relative flex items-center justify-center bg-gray-200">
           {uploading ? (
             <CircularProgress className="!w-[25px] !h-[25px]" color="inherit" />
           ) : (
             <>
               {previews?.length !== 0 ? (
-                previews?.map((img) => {
-                  return (
-                    <img
-                      src={img}
-                      key={img}
-                      alt=""
-                      className="w-full h-full object-cover"
-                    />
-                  );
-                })
+                previews?.map((img) => (
+                  <img
+                    src={img}
+                    key={img}
+                    alt=""
+                    className="w-full h-full object-cover"
+                  />
+                ))
               ) : (
                 <img
                   src="https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1095249842.jpg"
-                  alt=""
+                  alt="avatar"
                   className="w-full h-full object-cover"
                 />
               )}
@@ -113,59 +111,42 @@ export const AccountSidebar = () => {
               type="file"
               name="avatar"
               accept="image/*"
-              className="absolute inset-0 opacity-0  cursor-pointer"
+              className="absolute inset-0 opacity-0 cursor-pointer"
               onChange={(e) => onChangeFile(e, "/api/user/user-avatar")}
             />
           </div>
         </div>
-        <h4 className="text-2xl font-semibold">{userDetails?.name}</h4>
-        <p className="text-sm">{userDetails?.email}</p>
+
+        <h4 className="text-xl sm:text-2xl font-semibold truncate text-center">
+          {userDetails?.name}
+        </h4>
+        <p className="text-xs sm:text-sm text-center truncate">
+          {userDetails?.email}
+        </p>
       </div>
-      <ul className=" pb-4 bg-[#f1f1f1] myAccount">
-        <li className="w-full">
-          <NavLink
-            to="/my-account"
-            className={({ isActive }) => (isActive ? "active" : "")}
-          >
-            <Button className="!w-full !py-3 !px-5 !flex !items-center !gap-3 !justify-start !text-md !text-black/80">
-              <FaRegUser className="text-xl" /> My Profile
-            </Button>
-          </NavLink>
-        </li>
-        <li className="w-full">
-          <NavLink
-            to="/my-orders"
-            className={({ isActive }) => (isActive ? "active" : "")}
-          >
-            <Button className="!w-full !py-3 !px-5 !flex !items-center !gap-3 !justify-start !text-md !text-black/80">
-              <LuBox className="text-xl" /> My Orders
-            </Button>
-          </NavLink>
-        </li>
-        <li className="w-full">
-          <NavLink
-            to="/my-list"
-            className={({ isActive }) => (isActive ? "active" : "")}
-          >
-            <Button className="!w-full !py-3 !px-5 !flex !items-center !gap-3 !justify-start !text-md !text-black/80">
-              <FaRegHeart className="text-xl" /> My List
-            </Button>
-          </NavLink>
-        </li>
-        <li className="w-full">
-          <NavLink
-            to="/address"
-            className={({ isActive }) => (isActive ? "active" : "")}
-          >
-            <Button className="!w-full !py-3 !px-5 !flex !items-center !gap-3 !justify-start !text-md !text-black/80">
-              <MdOutlineMapsHomeWork className="text-[22px]" /> Address
-            </Button>
-          </NavLink>
-        </li>
+
+      <ul className="pb-4 bg-[#f1f1f1] myAccount">
+        {[
+          { to: "/my-account", icon: <FaRegUser />, label: "My Profile" },
+          { to: "/my-orders", icon: <LuBox />, label: "My Orders" },
+          { to: "/my-list", icon: <FaRegHeart />, label: "My List" },
+          { to: "/address", icon: <MdOutlineMapsHomeWork />, label: "Address" },
+        ].map((item, idx) => (
+          <li className="w-full" key={idx}>
+            <NavLink
+              to={item.to}
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              <Button className="!w-full !py-3 !px-5 !flex !items-center !gap-3 !justify-start !text-sm sm:!text-md !text-black/80">
+                {item.icon} {item.label}
+              </Button>
+            </NavLink>
+          </li>
+        ))}
         <li className="w-full">
           <Button
             onClick={logout}
-            className="!w-full !py-3 !px-5 !flex !items-center !gap-3 !justify-start !text-md !text-black/80"
+            className="!w-full !py-3 !px-5 !flex !items-center !gap-3 !justify-start !text-sm sm:!text-md !text-black/80"
           >
             <FiLogOut className="text-xl" /> Logout
           </Button>

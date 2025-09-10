@@ -79,10 +79,10 @@ const AddHomeSlide = () => {
     });
   };
   return (
-    <section className="p-5 bg-gray-50 h-[100vh]">
-      <form className="form p-8 py-3" onSubmit={handleSubmit}>
-        <div className="scroll max-h-[70vh] overflow-y-scroll pr-4 pt-4">
-          <div className="grid grid-cols-7 gap-4">
+    <section className="p-5 bg-gray-50 min-h-[100vh]">
+      <form className="form p-5 sm:p-8 py-3" onSubmit={handleSubmit}>
+        <div className="scroll max-h-[70vh] overflow-y-scroll pr-2 sm:pr-4 pt-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4">
             {previews?.length !== 0 &&
               previews?.map((image, index) => (
                 <div key={image} className="uploadImageWrapper relative">
@@ -98,7 +98,6 @@ const AddHomeSlide = () => {
                       className="w-full h-full object-cover"
                       effect="blur"
                       wrapperProps={{
-                        // If you need to, you can tweak the effect transition using the wrapper style.
                         style: { transitionDelay: "1s" },
                       }}
                       alt={"image"}
@@ -118,11 +117,13 @@ const AddHomeSlide = () => {
             />
           </div>
         </div>
-        <Button type="submit" className=" !p-3 btn-blue w-full !mt-8">
+
+        <Button type="submit" className="!p-3 btn-blue w-full !mt-8">
           <BsCloudUpload className="mr-2 text-xl" />
           Publish & View
         </Button>
       </form>
+
       <div
         className={`absolute inset-0 bg-white/40 ${
           isLoading ? "flex" : "hidden"

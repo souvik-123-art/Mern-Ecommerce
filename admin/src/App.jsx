@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   createBrowserRouter,
   RouterProvider,
-  useNavigate,
+  Navigate,
 } from "react-router-dom";
 import { Dashboard } from "./Pages/Dashboard";
 import { Header } from "./Components/Header";
@@ -68,7 +68,7 @@ function App() {
   const router = createBrowserRouter([
     {
       path: "/products",
-      exact: true,
+
       element: (
         <ProtectedRoute>
           <section className="main">
@@ -95,7 +95,7 @@ function App() {
     },
     {
       path: "/subCategory/list",
-      exact: true,
+
       element: (
         <ProtectedRoute>
           <section className="main">
@@ -122,7 +122,7 @@ function App() {
     },
     {
       path: "/category/list",
-      exact: true,
+
       element: (
         <ProtectedRoute>
           <section className="main">
@@ -149,7 +149,7 @@ function App() {
     },
     {
       path: "/homeSlider/list",
-      exact: true,
+
       element: (
         <ProtectedRoute>
           <section className="main">
@@ -176,7 +176,7 @@ function App() {
     },
     {
       path: "/bannerV1List",
-      exact: true,
+
       element: (
         <ProtectedRoute>
           <section className="main">
@@ -203,7 +203,7 @@ function App() {
     },
     {
       path: "/blogList",
-      exact: true,
+
       element: (
         <ProtectedRoute>
           <section className="main">
@@ -230,7 +230,7 @@ function App() {
     },
     {
       path: "/users",
-      exact: true,
+
       element: (
         <ProtectedRoute>
           <section className="main">
@@ -257,7 +257,7 @@ function App() {
     },
     {
       path: "/product/addSize",
-      exact: true,
+
       element: (
         <ProtectedRoute>
           <section className="main">
@@ -284,7 +284,7 @@ function App() {
     },
     {
       path: "/product/addWeight",
-      exact: true,
+
       element: (
         <ProtectedRoute>
           <section className="main">
@@ -311,7 +311,7 @@ function App() {
     },
     {
       path: "/product/addRams",
-      exact: true,
+
       element: (
         <ProtectedRoute>
           <section className="main">
@@ -338,7 +338,7 @@ function App() {
     },
     {
       path: "/product/:id",
-      exact: true,
+
       element: (
         <ProtectedRoute>
           <section className="main">
@@ -365,7 +365,7 @@ function App() {
     },
     {
       path: "/profile",
-      exact: true,
+
       element: (
         <ProtectedRoute>
           <section className="main">
@@ -392,7 +392,7 @@ function App() {
     },
     {
       path: "/Orders",
-      exact: true,
+
       element: (
         <ProtectedRoute>
           <section className="main">
@@ -419,7 +419,7 @@ function App() {
     },
     {
       path: "/",
-      exact: true,
+
       element: (
         <ProtectedRoute>
           <section className="main">
@@ -446,28 +446,32 @@ function App() {
     },
     {
       path: "/signin",
-      exact: true,
+
       element: <Login />,
     },
     {
       path: "/signup",
-      exact: true,
+
       element: <SignUp />,
     },
     {
       path: "/forgot-password",
-      exact: true,
+
       element: <ForgotPassword />,
     },
     {
       path: "/verify-email",
-      exact: true,
+
       element: <VerifyOTP />,
     },
     {
       path: "/reset-password/:token",
-      exact: true,
+
       element: <ResetPassword />,
+    },
+    {
+      path: "*",
+      element: <Navigate to="/" replace />,
     },
   ]);
   return (

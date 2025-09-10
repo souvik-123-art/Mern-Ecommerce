@@ -135,117 +135,130 @@ const AddSubCategory = () => {
     );
   };
   return (
-    <section className="p-5 bg-gray-50 h-[100vh] grid grid-cols-1 md:grid-cols-2">
-      <form className="form p-8 py-3" onSubmit={handleSubmit}>
-        <h4 className="font-bold text-xl text-primary">Add Sub Category</h4>
-        <div className="scroll max-h-[70vh] overflow-y-scroll pr-4 pt-4">
-          <div className="col mb-5">
-            <h3 className="text-lg font-[500] mb-3">Parent Category</h3>
-            <div>
-              <FormControl className="w-[35%]">
-                <InputLabel id="parentCat-label">
-                  Select Parent Category
-                </InputLabel>
-                <Select
-                  className="focus:!outline-black/50"
-                  labelId="parentCat-label"
-                  size="medium"
-                  id="parentCat"
-                  value={parentCat}
-                  label="Select Parent Category"
-                  onChange={handleChangeParentCat}
-                >
-                  {catData?.length !== 0 &&
-                    catData.map((item) => (
-                      <MenuItem
-                        key={item.name}
-                        onClick={() => selectedCatFun(item.name)}
-                        value={item?._id}
-                      >
-                        {item.name}
-                      </MenuItem>
-                    ))}
-                </Select>
-              </FormControl>
-            </div>
+    <section className="p-5 bg-gray-50 min-h-[100vh] grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Add Sub Category Form */}
+      <form
+        className="form p-6 bg-white rounded-md shadow-md"
+        onSubmit={handleSubmit}
+      >
+        <h4 className="font-bold text-xl text-primary mb-4">
+          Add Sub Category
+        </h4>
+
+        <div className="scroll max-h-[60vh] overflow-y-auto pr-4 pt-2 space-y-5">
+          <div>
+            <h3 className="text-lg font-[500] mb-2">Parent Category</h3>
+            <FormControl fullWidth className="max-w-xs">
+              <InputLabel id="parentCat-label">
+                Select Parent Category
+              </InputLabel>
+              <Select
+                className="focus:!outline-black/50"
+                labelId="parentCat-label"
+                size="medium"
+                id="parentCat"
+                value={parentCat}
+                label="Select Parent Category"
+                onChange={handleChangeParentCat}
+              >
+                {catData?.length !== 0 &&
+                  catData.map((item) => (
+                    <MenuItem
+                      key={item._id}
+                      onClick={() => selectedCatFun(item.name)}
+                      value={item._id}
+                    >
+                      {item.name}
+                    </MenuItem>
+                  ))}
+              </Select>
+            </FormControl>
           </div>
 
-          <div className="col">
-            <h3 className="text-lg font-[500] mb-3">Add Sub Category</h3>
+          <div>
+            <h3 className="text-lg font-[500] mb-2">Sub Category Name</h3>
             <input
               type="text"
               name="name"
               onChange={onChangeInput}
               value={formFields.name}
-              className="w-[30%] h-[50px] border border-black/30 outline-none focus:border-black/50 rounded-md p-3 text-sm"
+              className="w-full max-w-xs h-[50px] border border-black/30 outline-none focus:border-black/50 rounded-md p-3 text-sm"
             />
           </div>
         </div>
-        <Button type="submit" className=" !p-3 btn-blue w-full !mt-8">
+
+        <Button type="submit" className="!p-3 btn-blue w-full mt-6">
           <BsCloudUpload className="mr-2 text-xl" />
           Publish & View
         </Button>
       </form>
-      <form className="form p-8 py-3" onSubmit={handleSubmit2}>
-        <h4 className="font-bold text-xl text-primary">
+
+      {/* Add Third Sub Category Form */}
+      <form
+        className="form p-6 bg-white rounded-md shadow-md"
+        onSubmit={handleSubmit2}
+      >
+        <h4 className="font-bold text-xl text-primary mb-4">
           Add Third Sub Category
         </h4>
-        <div className="scroll max-h-[70vh] overflow-y-scroll pr-4 pt-4">
-          <div className="col mb-5">
-            <h3 className="text-lg font-[500] mb-3">Parent Sub Category</h3>
-            <div>
-              <FormControl className="w-[35%]">
-                <InputLabel id="parentCat-label">
-                  Select Parent Sub Category
-                </InputLabel>
-                <Select
-                  className="focus:!outline-black/50"
-                  labelId="parentCat-label"
-                  size="medium"
-                  id="parentCat"
-                  value={parentCat2}
-                  label="Select Parent Category"
-                  onChange={handleChangeParentCat2}
-                >
-                  {catData?.length !== 0 &&
-                    catData.map(
-                      (item) =>
-                        item?.children.length !== 0 &&
-                        item?.children.map((item2) => (
-                          <MenuItem
-                            key={item2.name}
-                            onClick={() => selectedCatFun2(item2.name)}
-                            value={item2?._id}
-                          >
-                            {item2.name}
-                          </MenuItem>
-                        ))
-                    )}
-                </Select>
-              </FormControl>
-            </div>
+
+        <div className="scroll max-h-[60vh] overflow-y-auto pr-4 pt-2 space-y-5">
+          <div>
+            <h3 className="text-lg font-[500] mb-2">Parent Sub Category</h3>
+            <FormControl fullWidth className="max-w-xs">
+              <InputLabel id="parentCat2-label">
+                Select Parent Sub Category
+              </InputLabel>
+              <Select
+                className="focus:!outline-black/50"
+                labelId="parentCat2-label"
+                size="medium"
+                id="parentCat2"
+                value={parentCat2}
+                label="Select Parent Sub Category"
+                onChange={handleChangeParentCat2}
+              >
+                {catData?.length !== 0 &&
+                  catData.map(
+                    (item) =>
+                      item?.children.length !== 0 &&
+                      item?.children.map((item2) => (
+                        <MenuItem
+                          key={item2._id}
+                          onClick={() => selectedCatFun2(item2.name)}
+                          value={item2._id}
+                        >
+                          {item2.name}
+                        </MenuItem>
+                      ))
+                  )}
+              </Select>
+            </FormControl>
           </div>
 
-          <div className="col">
-            <h3 className="text-lg font-[500] mb-3">Add Third Sub Category</h3>
+          <div>
+            <h3 className="text-lg font-[500] mb-2">Third Sub Category Name</h3>
             <input
               type="text"
               name="name"
               onChange={onChangeInput2}
               value={formFields2.name}
-              className="w-[30%] h-[50px] border border-black/30 outline-none focus:border-black/50 rounded-md p-3 text-sm"
+              className="w-full max-w-xs h-[50px] border border-black/30 outline-none focus:border-black/50 rounded-md p-3 text-sm"
             />
           </div>
         </div>
-        <Button type="submit" className=" !p-3 btn-blue w-full !mt-8">
+
+        <Button type="submit" className="!p-3 btn-blue w-full mt-6">
           <BsCloudUpload className="mr-2 text-xl" />
           Publish & View
         </Button>
       </form>
+
+      {/* Loading Overlay */}
       <div
         className={`absolute inset-0 bg-black/40 ${
           isLoading ? "flex" : "hidden"
-        } justify-center items-center z-50 left-0 top-0`}
+        } justify-center items-center z-50`}
       >
         <CircularProgress className="!text-white" />
       </div>

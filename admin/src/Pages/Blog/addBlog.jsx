@@ -124,33 +124,35 @@ const AddBlog = () => {
     });
   };
   return (
-    <section className="p-5 bg-gray-50 h-screen relative">
-      <form className="form p-8 py-3" onSubmit={handleSubmit}>
-        <div className="scroll max-h-[70vh] overflow-y-scroll pr-4 pt-4">
-          <div className="grid grid-cols-1 mb-5 gap-4">
-            <div className="col-span-1 mb-3">
-              <h3 className="text-lg font-[500] mb-2">Blog Title</h3>
+    <section className="p-4 sm:p-5 bg-gray-50 min-h-screen relative">
+      <form className="form p-4 sm:p-8 py-3" onSubmit={handleSubmit}>
+        <div className="scroll max-h-[70vh] overflow-y-scroll pr-2 sm:pr-4 pt-4">
+          <div className="grid grid-cols-1 gap-4 mb-5">
+            <div>
+              <h3 className="text-lg font-medium mb-2">Blog Title</h3>
               <input
                 type="text"
                 name="title"
                 value={formFields.title}
                 onChange={onChangeInput}
-                className="h-[55px] w-full border border-black/30 outline-none focus:border-black/50 rounded-sm p-3 text-sm"
+                className="h-[50px] w-full border border-black/30 rounded-sm p-3 text-sm focus:outline-none focus:border-black/50"
               />
             </div>
-            <div className="col-span-1 mb-3">
-              <h3 className="text-lg font-[500] mb-2">Blog Description</h3>
+
+            <div>
+              <h3 className="text-lg font-medium mb-2">Blog Description</h3>
               <textarea
                 name="description"
                 value={formFields.description}
                 onChange={onChangeInput}
                 rows={10}
-                className=" w-full border border-black/30 outline-none focus:border-black/50 rounded-sm p-3 text-sm"
+                className="w-full border border-black/30 rounded-sm p-3 text-sm focus:outline-none focus:border-black/50"
               />
             </div>
           </div>
-          <h3 className="text-lg font-[500] mb-2">Banner Image</h3>
-          <div className="grid grid-cols-7 gap-4">
+
+          <h3 className="text-lg font-medium mb-2">Banner Image</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
             {previews?.length !== 0 &&
               previews?.map((image, index) => (
                 <div key={image} className="uploadImageWrapper relative">
@@ -158,18 +160,15 @@ const AddBlog = () => {
                     className="cursor-pointer"
                     onClick={() => removeImg(image, index)}
                   >
-                    <IoClose className="absolute text-white bg-red-500 p-1 rounded-full -right-1 -top-1 text-2xl z-20" />
+                    <IoClose className="absolute text-white bg-red-500 p-1 rounded-full -right-1 -top-1 text-xl z-20" />
                   </span>
 
-                  <div className="lazyload w-full rounded-md overflow-hidden border border-dashed border-black/30 h-[150px] bg-gray-100 hover:bg-gray-200 text-gray-500 relative">
+                  <div className="w-full rounded-md overflow-hidden border border-dashed border-black/30 h-[120px] bg-gray-100 hover:bg-gray-200 relative">
                     <LazyLoadImage
                       className="w-full h-full object-cover"
                       effect="blur"
-                      wrapperProps={{
-                        // If you need to, you can tweak the effect transition using the wrapper style.
-                        style: { transitionDelay: "1s" },
-                      }}
-                      alt={"image"}
+                      wrapperProps={{ style: { transitionDelay: "1s" } }}
+                      alt="banner"
                       src={image}
                     />
                   </div>
@@ -186,15 +185,17 @@ const AddBlog = () => {
             />
           </div>
         </div>
-        <Button type="submit" className=" !p-3 btn-blue w-full !mt-8">
+
+        <Button type="submit" className="!p-3 btn-blue w-full mt-6">
           <BsCloudUpload className="mr-2 text-xl" />
           Publish & View
         </Button>
       </form>
+
       <div
         className={`absolute inset-0 bg-black/40 ${
           isLoading ? "flex" : "hidden"
-        } justify-center items-center z-50 left-0 top-0`}
+        } justify-center items-center z-50`}
       >
         <CircularProgress className="!text-white" />
       </div>

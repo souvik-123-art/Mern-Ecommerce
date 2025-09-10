@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import Header from "./components/Header";
 import { Home } from "./pages/Home";
 import { ProductListing } from "./pages/ProductListing";
@@ -41,34 +41,50 @@ import { setMyListData } from "./redux/Slices/myListSlice";
 import { setAddress } from "./redux/slices/userAddressSlice";
 import { setOrderData } from "./redux/Slices/orderSlice";
 import { SearchPage } from "./pages/SearchPage";
+import { CircularProgress } from "@mui/material";
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
+
+const RedirectAuthenticatedUser = ({ children }) => {
+  const isLogin = useSelector((state) => state.auth.isLogin);
+  const userDetails = useSelector((state) => state.UserDetails.userDetails);
+  if (isLogin && userDetails?.isVerified) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+};
 function App() {
   const dispatch = useDispatch();
   const isOpenFullScreenPanel = useSelector(
     (state) => state.fullScreenPanel.isOpenFullScreenPanel
   );
+  const [loading, setLoading] = React.useState(true);
   const isLogin = useSelector((state) => state.auth.isLogin);
   useEffect(() => {
     const token = localStorage.getItem("accesstoken");
-    if (token !== undefined && token !== null && token !== "") {
-      fetchDataFromApi(`/api/user/user-details`).then((res) => {
-        if (res?.response?.data?.message === "jwt expired") {
-          localStorage.removeItem("accesstoken");
-          localStorage.removeItem("removetoken");
-          toast.error("your session is expired. Login again");
-          dispatch(setUserDetails([]));
-          dispatch(setIsLogin(false));
-        }
-        dispatch(setUserDetails(res.data));
-        dispatch(setIsLogin(true));
-      });
+    if (token) {
+      fetchDataFromApi(`/api/user/user-details`)
+        .then((res) => {
+          if (res?.response?.data?.message === "jwt expired") {
+            localStorage.removeItem("accesstoken");
+            localStorage.removeItem("removetoken");
+            toast.error("your session is expired. Login again");
+            dispatch(setUserDetails([]));
+            dispatch(setIsLogin(false));
+          } else {
+            dispatch(setUserDetails(res.data));
+            dispatch(setIsLogin(true));
+          }
+        })
+        .finally(() => setLoading(false));
     } else {
       dispatch(setUserDetails([]));
       dispatch(setIsLogin(false));
+      setLoading(false);
     }
-  }, [isLogin]);
+  }, [dispatch, isLogin]);
 
   useEffect(() => {
     Promise.all([
@@ -108,11 +124,19 @@ function App() {
       dispatch(setMyListData([]));
     }
   }, [dispatch, isLogin]);
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <CircularProgress className="!text-primary" />
+      </div>
+    );
+  }
   return (
     <>
       <BrowserRouter>
         <ScrollToTop />
         <Header />
+        <CartPanel />
         <Routes>
           <Route path="/" exact={true} element={<Home />} />
           <Route
@@ -126,28 +150,61 @@ function App() {
             exact={true}
             element={<ProductDetails />}
           />
-          <Route path="/login" exact={true} element={<Login />} />
-          <Route path="/register" exact={true} element={<SignUp />} />
-          <Route path="/cart" exact={true} element={<Cart />} />
+          <Route
+            path="/login"
+            exact={true}
+            element={
+              <RedirectAuthenticatedUser>
+                <Login />
+              </RedirectAuthenticatedUser>
+            }
+          />
+          <Route
+            path="/register"
+            exact={true}
+            element={
+              <RedirectAuthenticatedUser>
+                <SignUp />
+              </RedirectAuthenticatedUser>
+            }
+          />
+
           <Route
             path="/forgot-password"
             exact={true}
-            element={<ForgotPassword />}
+            element={
+              <RedirectAuthenticatedUser>
+                <ForgotPassword />
+              </RedirectAuthenticatedUser>
+            }
           />
-          <Route path="/verify-email" exact={true} element={<VerifyOTP />} />
+          <Route
+            path="/verify-email"
+            exact={true}
+            element={
+              <RedirectAuthenticatedUser>
+                <VerifyOTP />
+              </RedirectAuthenticatedUser>
+            }
+          />
           <Route
             path="/reset-password/:token"
             exact={true}
-            element={<ResetPassword />}
+            element={
+              <RedirectAuthenticatedUser>
+                <ResetPassword />
+              </RedirectAuthenticatedUser>
+            }
           />
+          <Route path="/cart" exact={true} element={<Cart />} />
           <Route path="/checkout" exact={true} element={<Checkout />} />
           <Route path="/my-account" exact={true} element={<MyAccount />} />
           <Route path="/my-list" exact={true} element={<MyList />} />
           <Route path="/my-orders" exact={true} element={<Orders />} />
           <Route path="/address" exact={true} element={<Address />} />
+          <Route path="*" element={<Navigate to={"/"} replace />} />
         </Routes>
         <ProductModal />
-        <CartPanel />
         <Footer />
         <Dialog
           fullScreen

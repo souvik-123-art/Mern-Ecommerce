@@ -7,7 +7,7 @@ import { TfiAngleDown } from "react-icons/tfi";
 import { FiEdit2 } from "react-icons/fi";
 import { FiEye } from "react-icons/fi";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import TooltipMUI from "@mui/material/Tooltip";
+import Tooltip from "@mui/material/Tooltip";
 import Progress from "../../Components/ProgressBar";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -41,7 +41,6 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip,
   Legend,
   ResponsiveContainer,
   BarChart,
@@ -92,11 +91,12 @@ export const Dashboard = () => {
   const [chartData, setChartData] = useState([]);
   const [year, setYear] = useState(new Date().getFullYear());
   const [isOpenOrderProduct, setIsOpenOrderProduct] = useState(null);
-  const [searchQuery, setSearchQuery] = useState("");
   const [orderCount, setOrderCount] = useState(null);
   const [proCount, setProCount] = useState(null);
   const [usersCount, setUsersCount] = useState(null);
   const [categoryFilterVal, setCategoryFilterVal] = useState("");
+  const [allProd, setAllProd] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   // Helper function to initialize product data with 'checked' property
   const initializeProductsWithChecked = (products) => {
     return (
@@ -375,6 +375,7 @@ export const Dashboard = () => {
           dispatch(
             setProData(initializeProductsWithChecked(productsRes?.data))
           );
+          setAllProd(initializeProductsWithChecked(productsRes?.data));
           setProCount(productsRes?.totalPosts);
         } else {
           toast.error("Failed to fetch initial products.");
@@ -411,26 +412,42 @@ export const Dashboard = () => {
 
     setTotalSales(total);
   }, [orders]);
+
+  useEffect(() => {
+    if (searchQuery !== "") {
+      const filteredProds = allProd.filter(
+        (pro) =>
+          pro?._id?.toLowerCase().includes(searchQuery?.toLowerCase()) ||
+          pro?.name.toLowerCase().includes(searchQuery?.toLowerCase()) ||
+          pro?.brand.toLowerCase().includes(searchQuery?.toLowerCase()) ||
+          pro?.catName.toLowerCase().includes(searchQuery?.toLowerCase()) ||
+          pro?.subCat.toLowerCase().includes(searchQuery?.toLowerCase()) ||
+          pro?.thirdSubCat.toLowerCase().includes(searchQuery?.toLowerCase()) ||
+          pro?.createdAt.includes(searchQuery)
+      );
+      dispatch(setProData(filteredProds));
+    } else {
+      dispatch(setProData(allProd));
+    }
+  }, [searchQuery, allProd]);
   return (
     <>
-      <div className="w-full py-5 px-8 border border-gray-200 flex items-center justify-between gap-8 mb-5 rounded-md bg-[#f1faff]">
-        <div className="info">
-          <h1 className="text-[35px] font-bold">Good Morning,</h1>
-          <span className="text-[35px] mb-3 font-bold flex items-center gap-5">
-            {" "}
-            Souvik <GiHand className="text-5xl text-yellow-400" />
+      <div className="w-full py-5 px-4 sm:px-8 border border-gray-200 flex flex-col md:flex-row items-center justify-between gap-5 mb-5 rounded-md bg-[#f1faff]">
+        <div className="info text-center md:text-left">
+          <h1 className="text-2xl sm:text-3xl md:text-[35px] font-bold">
+            Good Morning,
+          </h1>
+          <span className="text-2xl sm:text-3xl md:text-[35px] mb-3 font-bold flex flex-col sm:flex-row items-center gap-3 sm:gap-5">
+            Souvik <GiHand className="text-4xl sm:text-5xl text-yellow-400" />
           </span>
-          <p className="text-lg mb-8 text-black/60">
+          <p className="text-sm sm:text-base md:text-lg mb-5 text-black/60">
             Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eaque,
             temporibus!
           </p>
           <Button
             onClick={() =>
               dispatch(
-                setIsOpenFullScreenPanel({
-                  open: true,
-                  model: "Add Product",
-                })
+                setIsOpenFullScreenPanel({ open: true, model: "Add Product" })
               )
             }
             className="btn-blue !mb-3 !px-4 !flex !gap-3 !py-2 !capitalize"
@@ -438,482 +455,27 @@ export const Dashboard = () => {
             <FaPlus /> Add Product
           </Button>
         </div>
-        <img src="/shop-illustration.png" className="w-[350px]" alt="" />
+
+        <img
+          src="/shop-illustration.png"
+          className="w-full max-w-xs sm:max-w-sm md:w-[350px] mx-auto"
+          alt="Illustration"
+        />
       </div>
+
       <DashboardBoxes
         sales={totalSales}
         usersCount={usersCount}
         proCount={proCount}
       />
-      <div className="card my-4 mt-5 shadow-md sm:rounded-lg bg-white overflow-hidden">
-        <div className="flex items-center justify-between p-5">
-          <h2 className="text-xl font-bold">Recent Orders</h2>
-          <div className="w-[40%]">
-            <SearchBox />
-          </div>
-        </div>
-        <div className="relative overflow-x-auto mt-1 pb-5">
-          <table className="w-full text-sm text-left rtl:text-right text-gray-500">
-            <thead className="text-xs text-gray-600 uppercase bg-gray-100 border border-gray-100">
-              <tr>
-                <th scope="col" className="px-6 py-3">
-                  &nbsp;
-                </th>
-                <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                  Order Id
-                </th>
-                <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                  Payment Id
-                </th>
-                <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                  Name
-                </th>
-                <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                  Phone Number
-                </th>
-                <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                  Address
-                </th>
-                <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                  Pincode
-                </th>
-                <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                  Total Amount
-                </th>
-                <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                  Email
-                </th>
-                <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                  User Id
-                </th>
-                <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                  Order Status
-                </th>
-                <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                  Date
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="bg-white border border-gray-200">
-                <th
-                  scope="row"
-                  className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
-                >
-                  <Button
-                    onClick={() => isShowOrderProduct(0)}
-                    className={`!w-[35px] !h-[35px] !min-w-[35px] !duration-300 !rounded-full !bg-[#f1f1f1] !text-black !transition-all ${
-                      isOpenOrderProduct === 0 ? "-rotate-180" : ""
-                    }`}
-                  >
-                    <TfiAngleDown className="text-[14px]" />
-                  </Button>
-                </th>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="text-primary">6464654646546</span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="text-primary">6464654646546</span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">Souvik Sarkar</td>
-                <td className="px-6 py-4 whitespace-nowrap">7000494543</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  sdfsdfisdifshdifhsidhfsdhfsdifisdhfisdifisdfsdifisdfidsifisd
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">700049</td>
-                <td className="px-6 py-4 whitespace-nowrap">2499/-</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  Souvik@gmail.com
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">sda344dfsdsdf</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <Badge status="pending" />
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">23.01.2025</td>
-              </tr>
-              {isOpenOrderProduct === 0 && (
-                <tr>
-                  <td colSpan={6} className="pl-20">
-                    <div className="relative overflow-x-scroll">
-                      <table className="w-full text-sm text-left rtl:text-right text-gray-500">
-                        <thead className="text-xs text-gray-600 uppercase bg-gray-100 border border-gray-100">
-                          <tr>
-                            <th
-                              scope="col"
-                              className="px-6 py-3 whitespace-nowrap"
-                            >
-                              Product Id
-                            </th>
-                            <th
-                              scope="col"
-                              className="px-6 py-3 whitespace-nowrap"
-                            >
-                              Product Title
-                            </th>
-                            <th
-                              scope="col"
-                              className="px-6 py-3 whitespace-nowrap"
-                            >
-                              Image
-                            </th>
-                            <th
-                              scope="col"
-                              className="px-6 py-3 whitespace-nowrap"
-                            >
-                              Quantity
-                            </th>
-                            <th
-                              scope="col"
-                              className="px-6 py-3 whitespace-nowrap"
-                            >
-                              Price
-                            </th>
-                            <th
-                              scope="col"
-                              className="px-6 py-3 whitespace-nowrap"
-                            >
-                              Subtotal
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr className=" bg-white border border-gray-200">
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <span className="text-gray-700">
-                                6464654646546
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <span className="text-gray-700">
-                                A-Line Kurti With Sharara & Dupatta
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <img
-                                src="https://serviceapi.spicezgold.com/download/1742463096960_hbhb3.jpg"
-                                className="w-[40px] h-[40px] object-cover rounded-md"
-                                alt=""
-                              />
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">2</td>
-                            <td className="px-6 py-4 whitespace-nowrap">$25</td>
-                            <td className="px-6 py-4 whitespace-nowrap">$25</td>
-                          </tr>
-                          <tr className=" bg-white border border-gray-200">
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <span className="text-gray-700">
-                                6464654646546
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <span className="text-gray-700">
-                                A-Line Kurti With Sharara & Dupatta
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <img
-                                src="https://serviceapi.spicezgold.com/download/1742463096960_hbhb3.jpg"
-                                className="w-[40px] h-[40px] object-cover rounded-md"
-                                alt=""
-                              />
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">2</td>
-                            <td className="px-6 py-4 whitespace-nowrap">$25</td>
-                            <td className="px-6 py-4 whitespace-nowrap">$25</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </td>
-                </tr>
-              )}
-              <tr className="bg-white border border-gray-200">
-                <th
-                  scope="row"
-                  className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
-                >
-                  <Button
-                    onClick={() => isShowOrderProduct(1)}
-                    className={`!w-[35px] !h-[35px] !min-w-[35px] !duration-300 !rounded-full !bg-[#f1f1f1] !text-black !transition-all ${
-                      isOpenOrderProduct === 1 ? "-rotate-180" : ""
-                    }`}
-                  >
-                    <TfiAngleDown className="text-[14px]" />
-                  </Button>
-                </th>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="text-primary">6464654646546</span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="text-primary">6464654646546</span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">Souvik Sarkar</td>
-                <td className="px-6 py-4 whitespace-nowrap">7000494543</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  sdfsdfisdifshdifhsidhfsdhfsdifisdhfisdifisdfsdifisdfidsifisd
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">700049</td>
-                <td className="px-6 py-4 whitespace-nowrap">2499/-</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  Souvik@gmail.com
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">sda344dfsdsdf</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <Badge status="delivered" />
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">23.01.2025</td>
-              </tr>
-              {isOpenOrderProduct === 1 && (
-                <tr>
-                  <td colSpan={6} className="pl-20">
-                    <div className="relative overflow-x-scroll">
-                      <table className="w-full text-sm text-left rtl:text-right text-gray-500">
-                        <thead className="text-xs text-gray-600 uppercase bg-gray-100 border border-gray-100">
-                          <tr>
-                            <th
-                              scope="col"
-                              className="px-6 py-3 whitespace-nowrap"
-                            >
-                              Product Id
-                            </th>
-                            <th
-                              scope="col"
-                              className="px-6 py-3 whitespace-nowrap"
-                            >
-                              Product Title
-                            </th>
-                            <th
-                              scope="col"
-                              className="px-6 py-3 whitespace-nowrap"
-                            >
-                              Image
-                            </th>
-                            <th
-                              scope="col"
-                              className="px-6 py-3 whitespace-nowrap"
-                            >
-                              Quantity
-                            </th>
-                            <th
-                              scope="col"
-                              className="px-6 py-3 whitespace-nowrap"
-                            >
-                              Price
-                            </th>
-                            <th
-                              scope="col"
-                              className="px-6 py-3 whitespace-nowrap"
-                            >
-                              Subtotal
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr className=" bg-white border border-gray-200">
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <span className="text-gray-700">
-                                6464654646546
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <span className="text-gray-700">
-                                A-Line Kurti With Sharara & Dupatta
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <img
-                                src="https://serviceapi.spicezgold.com/download/1742463096960_hbhb3.jpg"
-                                className="w-[40px] h-[40px] object-cover rounded-md"
-                                alt=""
-                              />
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">2</td>
-                            <td className="px-6 py-4 whitespace-nowrap">$25</td>
-                            <td className="px-6 py-4 whitespace-nowrap">$25</td>
-                          </tr>
-                          <tr className=" bg-white border border-gray-200">
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <span className="text-gray-700">
-                                6464654646546
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <span className="text-gray-700">
-                                A-Line Kurti With Sharara & Dupatta
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <img
-                                src="https://serviceapi.spicezgold.com/download/1742463096960_hbhb3.jpg"
-                                className="w-[40px] h-[40px] object-cover rounded-md"
-                                alt=""
-                              />
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">2</td>
-                            <td className="px-6 py-4 whitespace-nowrap">$25</td>
-                            <td className="px-6 py-4 whitespace-nowrap">$25</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-      {/* <div className="card my-4 mt-5 shadow-md sm:rounded-lg bg-white overflow-hidden">
-        <div className="flex items-center justify-between p-5">
-          <h2 className="text-xl font-bold">Products</h2>
-        </div>
-        <div className="flex items-center w-full p-5 justify-between pr-5">
-          <div className="col w-[25%]">
-            <h4 className="text-xl font-semibold mb-3">Category By</h4>
-            <FormControl fullWidth size="small">
-              <Select
-                value={categoryFilterVal}
-                onChange={handleChangeCatFilter}
-                displayEmpty
-                renderValue={(selected) => {
-                  if (selected === "") {
-                    return <em>Select Category</em>; // placeholder text
-                  }
-                  if (selected === 10) return "Men";
-                  if (selected === 20) return "Women";
-                  if (selected === 30) return "Kids";
-                  return selected;
-                }}
-              >
-                <MenuItem value="">
-                  <em>Select Category</em>
-                </MenuItem>
-                <MenuItem value={10}>Men</MenuItem>
-                <MenuItem value={20}>Women</MenuItem>
-                <MenuItem value={30}>Kids</MenuItem>
-              </Select>
-            </FormControl>
-          </div>
-          <div className="col w-[75%] ml-auto flex justify-end items-center gap-3">
-            <Button className="btn !bg-green-600 !text-white hover:!bg-green-400">
-              Export
-            </Button>
-            <Button
-              className="btn-blue btn"
-              onClick={() =>
-                dispatch(
-                  setIsOpenFullScreenPanel({
-                    open: true,
-                    model: "Add Product",
-                  })
-                )
-              }
-            >
-              Add Product
-            </Button>
-          </div>
-        </div>
-        <div className="relative overflow-x-auto mt-1 pb-5">
-          <table className="w-full text-sm text-left rtl:text-right text-gray-500">
-            <thead className="text-xs text-gray-600 uppercase bg-gray-100 border border-gray-100">
-              <tr>
-                <th scope="col" className="px-6 py-2">
-                  <div className="w-[60px]">
-                    <Checkbox {...label} size="small" />
-                  </div>
-                </th>
-                <th scope="col" className="px-6 py-2 whitespace-nowrap">
-                  Product
-                </th>
-                <th scope="col" className="px-6 py-2 whitespace-nowrap">
-                  Category
-                </th>
-                <th scope="col" className="px-6 py-2 whitespace-nowrap">
-                  Sub-Category
-                </th>
-                <th scope="col" className="px-6 py-2 whitespace-nowrap">
-                  Price
-                </th>
-                <th scope="col" className="px-6 py-2 whitespace-nowrap">
-                  Sales
-                </th>
-                <th scope="col" className="px-6 py-2 whitespace-nowrap">
-                  Action
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="bg-white border border-gray-200">
-                <td className="px-6 py-2 whitespace-nowrap">
-                  <div className="w-[60px]">
-                    <Checkbox {...label} size="small" />
-                  </div>
-                </td>
-                <td className="px-6 py-2 whitespace-nowrap">
-                  <div className="flex items-center gap-4">
-                    <div className="img w-[55px] h-[55px] rounded-md overflow-hidden">
-                      <img
-                        src="https://isomorphic-furyroad.s3.amazonaws.com/public/products/modern/6.webp"
-                        className="w-full"
-                        alt=""
-                      />
-                    </div>
-                    <div className="info">
-                      <h3 className="font-bold text-sm link">
-                        <Link to="/product/56465">
-                          Practical Steel Keyboard
-                        </Link>
-                      </h3>
-                      <span className="text-[12px]">Books</span>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-6 py-2 whitespace-nowrap">Electronics</td>
-                <td className="px-6 py-2 whitespace-nowrap">Women</td>
-                <td className="px-6 py-2 whitespace-nowrap">
-                  <div className="flex gap-2 text-[16px]">
-                    <span className="line-through text-gray-500">$24</span>
-                    <span className="text-primary">$24</span>
-                  </div>
-                </td>
-                <td className="px-6 py-2 whitespace-nowrap">
-                  <span className="text-sm">
-                    <span className="font-semibold mr-2">234</span>Sales
-                  </span>
-                  <Progress value={50} />
-                </td>
-                <td className="px-6 py-2 whitespace-nowrap">
-                  <TooltipMUI title="Edit Product" placement="top">
-                    <Button className="!w-8 !bg-green-500 !mr-2 !h-8 !min-w-8 !text-[#f1f1f1] !rounded-full">
-                      <FiEdit2 className="text-lg" />
-                    </Button>
-                  </TooltipMUI>
-                  <TooltipMUI title="View Product Details" placement="top">
-                    <Button className="!w-8 !bg-blue-500 !mr-2 !h-8 !min-w-8 !text-[#f1f1f1] !rounded-full">
-                      <FiEye className="text-lg" />
-                    </Button>
-                  </TooltipMUI>
-                  <TooltipMUI title="Delete Product" placement="top">
-                    <Button className="!w-8 !bg-red-500 !text-lg !mr-2 !h-8 !min-w-8 !text-[#f1f1f1] !rounded-full">
-                      <RiDeleteBin6Line />
-                    </Button>
-                  </TooltipMUI>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div className="flex justify-end items-center my-6">
-          <Pagination count={10} color="primary" />
-        </div>
-      </div> */}
-      <div className="card p-5 shadow-md sm:rounded-lg bg-white overflow-hidden">
-        <div className="px-5 py-5 flex items-center">
-          <h2 className="text-3xl font-bold">Products</h2>
-          <div className="col ml-auto flex items-center gap-3">
+
+      <div className="card p-5 mt-5 shadow-md sm:rounded-lg bg-white overflow-hidden">
+        <div className="flex flex-col md:flex-row items-start md:items-center mb-4">
+          <h2 className="text-2xl md:text-3xl font-bold">Products</h2>
+
+          <div className="flex flex-wrap gap-3 mt-3 md:mt-0 ml-auto">
             {sortedIds?.length !== 0 && (
               <Button
-                onClick={deleteMultipleProduct}
                 variant="contained"
                 size="small"
                 color="error"
@@ -922,9 +484,7 @@ export const Dashboard = () => {
                 Delete Selected ({sortedIds.length})
               </Button>
             )}
-            <Button className="btn !bg-green-600 !text-white hover:!bg-green-400">
-              Export
-            </Button>
+            
             <Button
               className="btn-blue btn !flex !items-center !gap-1"
               onClick={() =>
@@ -936,21 +496,19 @@ export const Dashboard = () => {
                 )
               }
             >
-              <FaPlus />
-              Add Product
+              <FaPlus /> Add Product
             </Button>
           </div>
         </div>
-        <div className="flex items-center w-full mb-4">
-          {/* Main Category Filter */}
-          <div className="col w-[15%]">
-            <h4 className="text-lg font-semibold mb-3">Category By</h4>
+
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-4">
+          <div className="w-full sm:w-[15%]">
+            <h4 className="text-lg font-semibold mb-2">Category By</h4>
             {catData?.length > 0 && (
               <FormControl fullWidth size="small">
                 <InputLabel id="proCat-label">Select Category</InputLabel>
                 <Select
                   style={{ zoom: "80%" }}
-                  className="focus:!outline-black/50"
                   labelId="proCat-label"
                   size="medium"
                   id="proCat"
@@ -969,11 +527,10 @@ export const Dashboard = () => {
             )}
           </div>
 
-          {/* Sub Category Filter - Conditionally rendered */}
-          <div className="col w-[15%] ml-3">
+          <div className="w-full sm:w-[15%]">
             <h4
-              className={`text-lg font-semibold mb-3 ${
-                !selectedCatObject?.children?.length && "hidden" // Fix: Correct hidden logic
+              className={`text-lg font-semibold mb-2 ${
+                !selectedCatObject?.children?.length && "hidden"
               }`}
             >
               Sub Category By
@@ -985,7 +542,6 @@ export const Dashboard = () => {
                 </InputLabel>
                 <Select
                   style={{ zoom: "80%" }}
-                  className="focus:!outline-black/50"
                   labelId="proSubCat-label"
                   size="medium"
                   id="proSubCat"
@@ -1003,11 +559,10 @@ export const Dashboard = () => {
             )}
           </div>
 
-          {/* Third Level Sub Category Filter - Conditionally rendered */}
-          <div className="col w-[20%] ml-3">
+          <div className="w-full sm:w-[20%]">
             <h4
-              className={`text-lg font-semibold mb-3 ${
-                !selectedSubCatObject?.children?.length && "hidden" // Fix: Correct hidden logic
+              className={`text-lg font-semibold mb-2 ${
+                !selectedSubCatObject?.children?.length && "hidden"
               }`}
             >
               Third Sub Category By
@@ -1019,7 +574,6 @@ export const Dashboard = () => {
                 </InputLabel>
                 <Select
                   style={{ zoom: "80%" }}
-                  className="focus:!outline-black/50"
                   labelId="proTSubCat-label"
                   size="medium"
                   id="proTSubCat"
@@ -1036,21 +590,24 @@ export const Dashboard = () => {
               </FormControl>
             )}
           </div>
-          <div className="col w-[25%] ml-auto">
-            <SearchBox />
+
+          <div className="w-full sm:w-[25%]">
+            <SearchBox
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+            />
           </div>
         </div>
-        {/* Loading overlay for the table */}
+
         <div className="relative min-h-[400px]">
-          {" "}
-          {/* min-h for consistent space */}
           <div
             className={`absolute inset-0 bg-white/40 ${
               isLoading ? "flex" : "hidden"
-            } justify-center items-center z-50 left-0 top-0`}
+            } justify-center items-center z-50`}
           >
             <CircularProgress className="!text-primary" />
           </div>
+
           {proData.length !== 0 ? (
             <>
               <TableContainer sx={{ maxHeight: 440 }}>
@@ -1061,11 +618,7 @@ export const Dashboard = () => {
                         <Checkbox
                           size="small"
                           onChange={handleSelectAll}
-                          checked={
-                            proData.length > 0
-                              ? proData.every((item) => item.checked)
-                              : false
-                          }
+                          checked={proData.every((item) => item.checked)}
                         />
                       </TableCell>
                       {columns.map((column) => (
@@ -1079,22 +632,24 @@ export const Dashboard = () => {
                       ))}
                     </TableRow>
                   </TableHead>
+
                   <TableBody>
                     {proData
-                      ?.slice(
+                      .slice(
                         page * rowsPerPage,
                         page * rowsPerPage + rowsPerPage
                       )
-                      ?.map((pro) => (
+                      .map((pro) => (
                         <TableRow key={pro._id}>
-                          <TableCell style={{ minWidth: columns.minWidth }}>
+                          <TableCell>
                             <Checkbox
                               size="small"
                               checked={pro.checked || false}
                               onChange={(e) => handleCheckboxChange(e, pro._id)}
                             />
                           </TableCell>
-                          <TableCell style={{ minWidth: columns.minWidth }}>
+
+                          <TableCell>
                             <div className="flex items-center gap-4">
                               <div className="img w-[55px] h-[55px] rounded-md overflow-hidden">
                                 <Link to={`/product/${pro._id}`}>
@@ -1117,13 +672,11 @@ export const Dashboard = () => {
                               </div>
                             </div>
                           </TableCell>
-                          <TableCell style={{ minWidth: columns.minWidth }}>
-                            {pro.catName}
-                          </TableCell>
-                          <TableCell style={{ minWidth: columns.minWidth }}>
-                            {pro.subCat}
-                          </TableCell>
-                          <TableCell style={{ minWidth: columns.minWidth }}>
+
+                          <TableCell>{pro.catName}</TableCell>
+                          <TableCell>{pro.subCat}</TableCell>
+
+                          <TableCell>
                             <div className="flex gap-2 text-[16px]">
                               <span className="line-through text-gray-500">
                                 ₹{pro.oldPrice.toLocaleString("en-IN")}
@@ -1133,61 +686,56 @@ export const Dashboard = () => {
                               </span>
                             </div>
                           </TableCell>
-                          <TableCell style={{ minWidth: columns.minWidth }}>
+
+                          <TableCell>
                             <span className="text-sm">
                               <span className="font-semibold mr-2">
                                 {pro.sale}
-                              </span>
+                              </span>{" "}
                               Sales
                             </span>
                             <Progress value={pro.sale} />
                           </TableCell>
-                          <TableCell style={{ minWidth: columns.minWidth }}>
-                            <TooltipMUI title="Edit Product" placement="top">
-                              <Button
-                                onClick={() =>
-                                  dispatch(
-                                    setIsOpenFullScreenPanel({
-                                      open: true,
-                                      model: "Edit Product",
-                                      id: pro._id,
-                                    })
-                                  )
-                                }
-                                className="!w-8 !bg-green-500 !mr-2 !h-8 !min-w-8 !text-[#f1f1f1] !rounded-full"
-                              >
-                                <FiEdit2 className="text-lg" />
-                              </Button>
-                            </TooltipMUI>
-                            <TooltipMUI
-                              title="View Product Details"
-                              placement="top"
+
+                          <TableCell className="flex gap-2">
+                            <Button
+                              onClick={() =>
+                                dispatch(
+                                  setIsOpenFullScreenPanel({
+                                    open: true,
+                                    model: "Edit Product",
+                                    id: pro._id,
+                                  })
+                                )
+                              }
+                              className="!w-8 !h-8 !min-w-8 !bg-green-500 !text-white !rounded-full"
                             >
-                              {" "}
-                              <Link to={`/product/${pro._id}`}>
-                                <Button className="!w-8 !bg-blue-500 !mr-2 !h-8 !min-w-8 !text-[#f1f1f1] !rounded-full">
-                                  <FiEye className="text-lg" />
-                                </Button>
-                              </Link>
-                            </TooltipMUI>
-                            <TooltipMUI title="Delete Product" placement="top">
-                              <Button
-                                onClick={() => removeProduct(pro._id)}
-                                className="!w-8 !bg-red-500 !text-lg !mr-2 !h-8 !min-w-8 !text-[#f1f1f1] !rounded-full"
-                              >
-                                <RiDeleteBin6Line />
+                              <FiEdit2 />
+                            </Button>
+
+                            <Link to={`/product/${pro._id}`}>
+                              <Button className="!w-8 !h-8 !min-w-8 !bg-blue-500 !text-white !rounded-full">
+                                <FiEye />
                               </Button>
-                            </TooltipMUI>
+                            </Link>
+
+                            <Button
+                              onClick={() => removeProduct(pro._id)}
+                              className="!w-8 !h-8 !min-w-8 !bg-red-500 !text-white !rounded-full"
+                            >
+                              <RiDeleteBin6Line />
+                            </Button>
                           </TableCell>
                         </TableRow>
                       ))}
                   </TableBody>
                 </Table>
               </TableContainer>
+
               <TablePagination
                 rowsPerPageOptions={[10, 25, 100]}
                 component="div"
-                count={proData?.length}
+                count={proData.length}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}
@@ -1195,58 +743,55 @@ export const Dashboard = () => {
               />
             </>
           ) : (
-            <div className="w-full h-full flex items-center justify-center">
+            <div className="w-full h-[300px] flex items-center justify-center text-center">
               <span className="text-xl font-light text-black/60">
                 No Products Available
               </span>
             </div>
           )}
         </div>
-      </div>
 
-      <div className="card my-4 mt-5 shadow-md sm:rounded-lg bg-white p-5">
-        <h2 className="text-2xl font-semibold mb-3">
-          Total Users & Total Sales
-        </h2>
-        <div className="indicator flex items-center gap-5 mb-8">
-          <span
-            onClick={getTotalUsersByYear}
-            className="flex cursor-pointer items-center gap-2 text-sm text-green-700"
-          >
-            <span className="block w-2 h-2 rounded-full bg-green-500"></span>{" "}
-            Total Users
-          </span>
-          <span
-            onClick={getTotalSalesByYear}
-            className="flex cursor-pointer items-center gap-2 text-sm text-blue-700"
-          >
-            <span className="block w-2 h-2 rounded-full bg-blue-500"></span>{" "}
-            Total Sales
-          </span>
-        </div>
-        <div className="graph overflow-x-scroll overflow-y-hidden">
-          {chartData?.length !== 0 && (
-            <BarChart
-              width={1200}
-              height={500}
-              data={chartData}
-              margin={{
-                top: 5,
-                right: 30,
-                left: 20,
-                bottom: 5,
-              }}
+        <div className="card my-4 mt-5 shadow-md sm:rounded-lg bg-white p-5 overflow-x-auto">
+          <h2 className="text-2xl font-semibold mb-3">
+            Total Users & Total Sales
+          </h2>
+
+          <div className="indicator flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-5">
+            <span
+              onClick={getTotalUsersByYear}
+              className="flex items-center gap-2 text-sm text-green-700 cursor-pointer"
             >
-              <CartesianGrid strokeDasharray="3 3" stroke="none" />
-              <XAxis dataKey="name" tick={{ fontSize: 12 }} />{" "}
-              {/* Fixed here */}
-              <YAxis tick={{ fontSize: 12 }} />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="totalSales" fill="#8884d8" barSize={30} />
-              <Bar dataKey="totalUsers" fill="#82ca9d" barSize={30} />
-            </BarChart>
-          )}
+              <span className="w-2 h-2 rounded-full bg-green-500 block"></span>{" "}
+              Total Users
+            </span>
+
+            <span
+              onClick={getTotalSalesByYear}
+              className="flex items-center gap-2 text-sm text-blue-700 cursor-pointer"
+            >
+              <span className="w-2 h-2 rounded-full bg-blue-500 block"></span>{" "}
+              Total Sales
+            </span>
+          </div>
+
+          <div className="graph overflow-x-auto">
+            {chartData?.length !== 0 && (
+              <BarChart
+                width={1200}
+                height={500}
+                data={chartData}
+                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" stroke="none" />
+                <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+                <YAxis tick={{ fontSize: 12 }} />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="totalSales" fill="#8884d8" barSize={30} />
+                <Bar dataKey="totalUsers" fill="#82ca9d" barSize={30} />
+              </BarChart>
+            )}
+          </div>
         </div>
       </div>
     </>

@@ -29,28 +29,36 @@ export const QtyBox = ({
   };
 
   return (
-    <div className="qtybox flex items-center gap-1">
+    <div className="qtybox flex items-center gap-2 md:gap-4">
       <Button
         onClick={minusVal}
         disabled={quantity === 1}
-        className={`!w-[40px] !min-w-[40px] !rounded-full
-                    !text-primary !bg-gray-200
-                   !h-[40px] !text-lg ${quantity === 1 && "opacity-40"}`}
+        className={`!w-10 !h-10 !min-w-[40px] !rounded-full !text-primary !bg-gray-200 !text-lg 
+                ${
+                  quantity === 1
+                    ? "!opacity-40 !cursor-not-allowed"
+                    : "hover:!bg-gray-300"
+                }`}
       >
         -
       </Button>
+
       <input
-        className="outline-none bg-transparent w-14 text-center text-lg"
+        className="outline-none bg-transparent w-12 md:w-16 text-center text-lg"
         type="number"
         readOnly
         value={quantity}
       />
+
       <Button
         disabled={count === quantity}
         onClick={plusVal}
-        className={`!w-[40px] !min-w-[40px] !rounded-full
-                    !text-primary !bg-gray-200
-                   !h-[40px] !text-lg ${count === quantity && "opacity-40"}`}
+        className={`!w-10 !h-10 !min-w-[40px] !rounded-full !text-primary !bg-gray-200 !text-lg 
+                ${
+                  count === quantity
+                    ? "!opacity-40 !cursor-not-allowed"
+                    : "hover:!bg-gray-300"
+                }`}
       >
         +
       </Button>

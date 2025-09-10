@@ -41,13 +41,13 @@ const EditSubCat = (props) => {
     setSelectVal(e.target.value);
     formFields.parentId = e.target.value;
   };
-  const deleteCat = (id)=>{
-    deleteData(`/api/category/deleteCategory/${id}`).then((res)=>{
+  const deleteCat = (id) => {
+    deleteData(`/api/category/deleteCategory/${id}`).then((res) => {
       fetchDataFromApi("/api/category").then((res) => {
         dispatch(setCatData(res?.data));
       });
-    })
-  }
+    });
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -78,13 +78,13 @@ const EditSubCat = (props) => {
   };
   return (
     <form
-      className="w-full flex items-center gap-3 px-4"
+      className="w-full flex flex-col md:flex-row items-center gap-3 px-4"
       onSubmit={handleSubmit}
     >
-      {editMode && (
+      {editMode ? (
         <>
-          <div className="flex items-center justify-between py-2 gap-4">
-            <div className="w-[150px]">
+          <div className="flex flex-col md:flex-row items-center gap-3 w-full">
+            <div className="w-full md:w-[150px]">
               <Select
                 style={{ zoom: "75%" }}
                 className="w-full"
@@ -95,7 +95,7 @@ const EditSubCat = (props) => {
                 inputProps={{ "aria-label": "Without label" }}
               >
                 {props?.catData?.length !== 0 &&
-                  props?.catData?.map((cat) => (
+                  props?.catData.map((cat) => (
                     <MenuItem
                       value={cat?._id}
                       key={cat.name}
@@ -108,13 +108,15 @@ const EditSubCat = (props) => {
                   ))}
               </Select>
             </div>
+
             <input
               type="text"
-              className="w-full h-[30px] border border-black/30 focus:outline-none focus:border-black/50 rounded-sm p-3 text-sm"
+              className="flex-1 h-[40px] border border-black/30 focus:outline-none focus:border-black/50 rounded-sm p-3 text-sm"
               name="name"
               value={formFields?.name}
               onChange={onChangeInput}
             />
+
             <div className="flex items-center gap-2">
               <Button
                 size="small"
@@ -123,7 +125,7 @@ const EditSubCat = (props) => {
                 type="submit"
               >
                 {isLoading ? (
-                  <CircularProgress size={20} color="inerhit" />
+                  <CircularProgress size={20} color="inherit" />
                 ) : (
                   "Edit"
                 )}
@@ -138,14 +140,13 @@ const EditSubCat = (props) => {
             </div>
           </div>
         </>
-      )}
-
-      {!editMode && (
+      ) : (
         <>
           <span className="font-[500] text-[16px]">{props.name}</span>
-          <div className="flex items-center ml-auto gap-2">
+
+          <div className="flex items-center ml-auto gap-2 mt-2 md:mt-0">
             <Button
-              className="!min-w-[35px] !w-[35px] !h-[35px] !rounded-full !text-black !text-lg !ml-auto"
+              className="!min-w-[35px] !w-[35px] !h-[35px] !rounded-full !text-black !text-lg"
               onClick={() => {
                 setEditMode(true);
                 setSelectVal(props.selectedCat);
@@ -153,8 +154,9 @@ const EditSubCat = (props) => {
             >
               <FiEdit2 />
             </Button>
+
             <Button
-              className="!min-w-[35px] !w-[35px] !h-[35px] !rounded-full !text-black !text-lg !ml-auto"
+              className="!min-w-[35px] !w-[35px] !h-[35px] !rounded-full !text-black !text-lg"
               onClick={() => deleteCat(props?.id)}
             >
               <RiDeleteBin6Line />

@@ -16,8 +16,9 @@ export const Cart = () => {
     }, [userDetails]);
   return (
     <section className="py-10 pb-10">
-      <div className="container mx-auto flex gap-5">
-        <div className="leftPart w-[70%]">
+      <div className="container mx-auto flex flex-col lg:flex-row gap-5">
+        {/* Left Part - Cart Items */}
+        <div className="leftPart w-full lg:w-[70%]">
           <div className="shadow-md bg-white rounded-md">
             <div className="py-2 px-3 text-center border-b border-gray-200">
               <h2 className="text-2xl font-bold text-black/70">Your Cart</h2>
@@ -29,6 +30,7 @@ export const Cart = () => {
                 Products in your cart
               </p>
             </div>
+
             {cartData?.length !== 0 ? (
               cartData?.map((item, idx) => (
                 <CartItems key={item._id} data={item} />
@@ -52,8 +54,10 @@ export const Cart = () => {
             )}
           </div>
         </div>
-        <div className="rightPart w-[30%]">
-          <div className="shadow-md bg-white rounded-md p-5 sticky top-[180px] z-[60]">
+
+        {/* Right Part - Cart Totals */}
+        <div className="rightPart w-full lg:w-[30%] mt-5 lg:mt-0">
+          <div className="shadow-md bg-white rounded-md p-5 sticky top-20 z-[60]">
             <h2 className="text-xl font-bold pb-3 text-black/70">
               Cart Totals
             </h2>

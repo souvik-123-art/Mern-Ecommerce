@@ -87,8 +87,6 @@ const AddAddress = () => {
           pincode: "",
           country: "",
           mobile: "",
-          status: status,
-          selected: false,
         });
         setIsLoading(false);
         dispatch(setIsOpenFullScreenPanel({ open: false }));
@@ -102,98 +100,99 @@ const AddAddress = () => {
     });
   };
   return (
-    <section className="p-5 bg-gray-50 h-[100vh]">
-      <form className="form p-8 py-3" onSubmit={handleSubmit}>
-        <div className="scroll max-h-[70vh] overflow-y-scroll pr-4 pt-4">
+    <section className="p-5 bg-gray-50 min-h-screen flex items-center justify-center">
+      <form
+        className="form p-6 sm:p-8 bg-white rounded-lg shadow-md w-full max-w-4xl"
+        onSubmit={handleSubmit}
+      >
+        <div className="scroll max-h-[70vh] overflow-y-auto pr-2 sm:pr-4 pt-2 sm:pt-4">
+          {/* Address Line */}
           <div className="grid grid-cols-1 mb-3">
-            <div className="col w-full">
-              <h3 className="text-lg font-[500] mb-1">Address Line</h3>
+            <div className="w-full">
+              <h3 className="text-base sm:text-lg font-medium mb-1">
+                Address Line
+              </h3>
               <input
                 type="text"
                 name="address_line"
-                className="w-full h-[40px] border border-black/30 outline-none focus:border-black/50 rounded-md p-3 text-sm"
+                className="w-full h-[40px] border border-black/30 outline-none focus:border-black/50 rounded-md px-3 text-sm"
                 onChange={onChangeInput}
                 value={formFields.address_line}
               />
             </div>
           </div>
-          <div className="grid grid-cols-4 mb-3 gap-4">
-            <div className="col w-full">
-              <h3 className="text-lg font-[500] mb-1">City</h3>
+
+          {/* City, State, Pincode, Country */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-3">
+            <div className="w-full">
+              <h3 className="text-base sm:text-lg font-medium mb-1">City</h3>
               <input
                 type="text"
                 name="city"
-                className="w-full h-[40px] border border-black/30 outline-none focus:border-black/50 rounded-md p-3 text-sm"
+                className="w-full h-[40px] border border-black/30 outline-none focus:border-black/50 rounded-md px-3 text-sm"
                 onChange={onChangeInput}
                 value={formFields.city}
               />
             </div>
-            <div className="col w-full">
-              <h3 className="text-lg font-[500] mb-1">State</h3>
+            <div className="w-full">
+              <h3 className="text-base sm:text-lg font-medium mb-1">State</h3>
               <input
                 type="text"
                 name="state"
-                className="w-full h-[40px] border border-black/30 outline-none focus:border-black/50 rounded-md p-3 text-sm"
+                className="w-full h-[40px] border border-black/30 outline-none focus:border-black/50 rounded-md px-3 text-sm"
                 onChange={onChangeInput}
                 value={formFields.state}
               />
             </div>
-            <div className="col w-full">
-              <h3 className="text-lg font-[500] mb-1">Pincode</h3>
+            <div className="w-full">
+              <h3 className="text-base sm:text-lg font-medium mb-1">Pincode</h3>
               <input
                 type="number"
                 name="pincode"
-                className="w-full h-[40px] border border-black/30 outline-none focus:border-black/50 rounded-md p-3 text-sm"
+                className="w-full h-[40px] border border-black/30 outline-none focus:border-black/50 rounded-md px-3 text-sm"
                 onChange={onChangeInput}
                 value={formFields.pincode}
               />
             </div>
-            <div className="col w-full">
-              <h3 className="text-lg font-[500] mb-1">Country</h3>
+            <div className="w-full">
+              <h3 className="text-base sm:text-lg font-medium mb-1">Country</h3>
               <input
                 type="text"
                 name="country"
-                className="w-full h-[40px] border border-black/30 outline-none focus:border-black/50 rounded-md p-3 text-sm"
+                className="w-full h-[40px] border border-black/30 outline-none focus:border-black/50 rounded-md px-3 text-sm"
                 onChange={onChangeInput}
                 value={formFields.country}
               />
             </div>
-            <div className="col w-full">
-              <h3 className="text-lg font-[500] mb-1">Mobile No.</h3>
+          </div>
+
+          {/* Mobile + Status */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
+            <div className="w-full">
+              <h3 className="text-base sm:text-lg font-medium mb-1">
+                Mobile No.
+              </h3>
               <PhoneInput
                 defaultCountry="in"
                 value={String(formFields.mobile)}
                 name="mobile"
-                disabled={isLoading ? true : false}
-                onChange={(phone) => {
+                disabled={isLoading}
+                onChange={(phone) =>
                   setFormFields({
                     ...formFields,
                     mobile: phone,
-                  });
-                }}
+                  })
+                }
               />
             </div>
-            <div className="col w-full">
-              <h3 className="text-lg font-[500] mb-1">Status</h3>
-              <Select
-                name="status"
-                className="focus:!outline-black/50 !w-full"
-                size="small"
-                id="status"
-                value={status}
-                onChange={handleChangeStatus}
-              >
-                <MenuItem value={true}>True</MenuItem>
-                <MenuItem value={false}>False</MenuItem>
-              </Select>
-            </div>
           </div>
-          {/* <h3 className="text-lg font-[500] mb-2">Category Image</h3>
-          <div className="grid grid-cols-7 gap-4">
-            
-          </div> */}
         </div>
-        <Button type="submit" className=" !p-3 btn-blue w-full !mt-8">
+
+        {/* Submit Button */}
+        <Button
+          type="submit"
+          className="!p-3 btn-blue w-full !mt-6 sm:!mt-8 flex items-center justify-center"
+        >
           <BsCloudUpload className="mr-2 text-xl" />
           Publish & View
         </Button>

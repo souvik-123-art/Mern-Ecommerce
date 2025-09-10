@@ -92,30 +92,34 @@ const Reviews = (props) => {
     }));
   }, [userDetails, props]);
   return (
-    <div className="shadow-md w-full py-5 px-8 rounded-md bg-white text-gray-900">
-      <div className="reviewForm">
-        <h2 className="text-lg font-semibold mb-3">Add a Review</h2>
+    <div className="shadow-md w-full py-5 px-4 md:px-8 rounded-md bg-white text-gray-900">
+      {/* Review Form */}
+      <div className="reviewForm mb-8">
+        <h2 className="text-lg md:text-xl font-semibold mb-4">Add a Review</h2>
         <form className="flex flex-col" onSubmit={handleSubmit}>
           <TextField
             id="outlined-basic"
-            label="write your review"
+            label="Write your review"
             name="review"
             value={review.review}
             onChange={onChangeInput}
             multiline
-            className="w-1/2 !mb-4 !font-['lexend']"
             rows={5}
             variant="outlined"
+            className="w-full md:w-2/3 mb-4 !font-['lexend']"
           />
+
           <Rating
             defaultValue={1}
             precision={0.5}
             onChange={onChangeRating}
             size="medium"
+            className="mb-4"
           />
+
           <Button
             type="submit"
-            className="!px-4 !mt-4 !mb-6 !self-start !py-2 !bg-primary !text-white !transition hover:!bg-gray-900"
+            className="!px-4 !py-2 !bg-primary !text-white !self-start !transition hover:!bg-gray-900"
           >
             {isLoading ? (
               <CircularProgress color="white" size={22} />
@@ -125,49 +129,56 @@ const Reviews = (props) => {
           </Button>
         </form>
       </div>
+
+      {/* Customer Reviews */}
       <div className="w-full proReviewContainer">
-        <h2 className="text-lg font-semibold mb-6">Customer Reviews</h2>
-        <div className="scroll w-full max-h-[300px] overflow-y-scroll overflow-x-hidden">
-          {proReview?.length !== 0
-            ? [...proReview].reverse().map((review) => (
-                <div key={review._id} className="review w-full mb-3">
-                  <article className="border border-gray-200 p-5 rounded-md">
-                    <div className="flex items-center mb-4">
-                      <img
-                        className="w-10 h-10 me-4 rounded-full"
-                        src={review?.image}
-                        alt=""
-                      />
-                      <div className="font-medium text-black/80">
-                        <p>{review?.userName}</p>
-                      </div>
+        <h2 className="text-lg md:text-xl font-semibold mb-4">
+          Customer Reviews
+        </h2>
+
+        <div className="scroll w-full max-h-[300px] overflow-y-auto overflow-x-hidden space-y-4">
+          {proReview?.length > 0 ? (
+            [...proReview].reverse().map((review) => (
+              <div key={review._id} className="review w-full">
+                <article className="border border-gray-200 p-4 rounded-md bg-gray-50">
+                  <div className="flex items-center mb-3">
+                    <img
+                      className="w-10 h-10 rounded-full object-cover me-3"
+                      src={review?.image}
+                      alt={review?.userName}
+                    />
+                    <div className="font-medium text-gray-800">
+                      <p>{review?.userName}</p>
                     </div>
-                    <div className="mb-3 text-sm text-gray-800">
-                      <p className="mb-2">
-                        <time dateTime={review.createdAt}>
-                          {new Date(review.createdAt).toLocaleDateString(
-                            "en-US",
-                            {
-                              year: "numeric",
-                              month: "long",
-                              day: "numeric",
-                            }
-                          )}
-                        </time>
-                      </p>
+                  </div>
+
+                  <div className="mb-3 text-sm text-gray-600">
+                    <time dateTime={review.createdAt}>
+                      {new Date(review.createdAt).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </time>
+
+                    <div className="mt-1">
                       <Rating
-                        name="size-small"
+                        name="read-only"
                         value={Number(review?.rating)}
                         readOnly
                         precision={0.5}
                         size="small"
                       />
                     </div>
-                    <p class="mb-2 text-gray-800">{review?.review}</p>
-                  </article>
-                </div>
-              ))
-            : "No Reviews "}
+                  </div>
+
+                  <p className="text-gray-800">{review?.review}</p>
+                </article>
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-600">No Reviews Yet.</p>
+          )}
         </div>
       </div>
     </div>

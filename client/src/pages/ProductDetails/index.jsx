@@ -219,7 +219,8 @@ export const ProductDetails = () => {
   }, [myListData, singleProData]);
   return (
     <section className="py-5">
-      <div className="container mx-auto">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Breadcrumbs */}
         <Breadcrumbs separator="|" aria-label="breadcrumb">
           <Link
             underline="hover"
@@ -230,7 +231,6 @@ export const ProductDetails = () => {
             Home
           </Link>
           <Link
-            separator="|"
             underline="hover"
             color="inherit"
             to={`/product-listing?catId=${singleProData?.catId}`}
@@ -238,33 +238,39 @@ export const ProductDetails = () => {
           >
             {singleProData?.catName}
           </Link>
-          <Link separator="|" underline="none" color="inherit" className="none">
+          <Link underline="none" color="inherit" className="none">
             {singleProData?.name}
           </Link>
         </Breadcrumbs>
       </div>
+
       <div className="bg-white py-5 mt-4 relative">
-        <div
-          className={`absolute inset-0 bg-[#f1f1f1] ${
-            isLoading ? "flex" : "hidden"
-          } justify-center items-center z-50 left-0 top-0`}
-        >
-          <CircularProgress className="!text-primary" />
-        </div>
-        <div className="container mx-auto flex gap-8">
-          <div className="productzoomcontainer w-[40%] overflow-hidden">
+        {/* Loader */}
+        {isLoading && (
+          <div className="absolute inset-0 bg-[#f1f1f1] flex justify-center items-center z-50">
+            <CircularProgress className="!text-primary" />
+          </div>
+        )}
+
+        {/* Product Details */}
+        <div className="container mx-auto flex flex-col lg:flex-row gap-6 px-4 sm:px-6 lg:px-8">
+          {/* Product Image */}
+          <div className="productzoomcontainer w-full lg:w-2/5 overflow-hidden">
             {singleProData?.images?.length !== 0 && (
               <ProductZoom data={singleProData?.images} />
             )}
           </div>
-          <div className="proCont w-[60%] flex flex-col  justify-center items-start px-10">
-            <h1 className="text-[22px] font-[600] text-[rgba(0,0,0,0.7)] mb-2">
+
+          {/* Product Info */}
+          <div className="proCont w-full lg:w-3/5 flex flex-col justify-center items-start px-0 lg:px-10">
+            <h1 className="text-lg sm:text-xl lg:text-2xl font-semibold text-[rgba(0,0,0,0.7)] mb-2">
               {singleProData?.name}
             </h1>
-            <div className="flex items-center gap-3">
+
+            <div className="flex flex-wrap items-center gap-3 text-sm sm:text-base">
               <span className="text-gray-400 flex gap-2">
-                Brands:
-                <span className="font-[500] text-[rgba(0,0,0,0.7)]">
+                Brands:{" "}
+                <span className="font-medium text-[rgba(0,0,0,0.7)]">
                   {singleProData?.brand}
                 </span>
               </span>
@@ -276,31 +282,35 @@ export const ProductDetails = () => {
                 size="small"
               />
               <span className="text-xs text-gray-600">
-                {proReview?.length !== 0 ? proReview.length : 0} Reviews
+                {proReview?.length || 0} Reviews
               </span>
             </div>
-            <div className="flex items-center gap-4 mt-4">
-              <span className="oldPrice line-through text-gray-500 text-[20px] font-[500]">
-                ₹{singleProData?.oldPrice.toLocaleString("en-IN")}
+
+            <div className="flex flex-wrap items-center gap-4 mt-4 text-sm sm:text-base">
+              <span className="oldPrice line-through text-gray-500 font-medium">
+                ₹{singleProData?.oldPrice?.toLocaleString("en-IN")}
               </span>
-              <span className="price text-primary text-[20px] font-[600]">
-                ₹{singleProData?.price.toLocaleString("en-IN")}
+              <span className="price text-primary font-semibold">
+                ₹{singleProData?.price?.toLocaleString("en-IN")}
               </span>
-              <span className="text-sm">
-                Available In Stock:&nbsp;&nbsp;
+              <span>
+                Available In Stock:{" "}
                 <span className="text-green-500 font-semibold">
                   {singleProData?.countInStock} Items
                 </span>
               </span>
             </div>
-            <p className="mt-4 text-gray-400 text-sm leading-loose">
-              ₹{singleProData?.description}
+
+            <p className="mt-4 text-gray-400 text-sm leading-relaxed">
+              {singleProData?.description}
             </p>
+
+            {/* Sizes */}
             {singleProData?.size?.length > 0 && (
-              <div className="flex items-center gap-3 mt-5">
+              <div className="flex flex-wrap items-center gap-3 mt-5">
                 <span className="text-sm font-medium">Size:</span>
-                <div className="flex gap-2">
-                  {singleProData?.size?.map((size, idx) => (
+                <div className="flex gap-2 flex-wrap">
+                  {singleProData?.size.map((size, idx) => (
                     <Button
                       disabled={isAddedToCart}
                       key={size}
@@ -325,11 +335,12 @@ export const ProductDetails = () => {
               </div>
             )}
 
+            {/* RAM */}
             {singleProData?.productRam?.length > 0 && (
-              <div className="flex items-center gap-3 mt-5">
+              <div className="flex flex-wrap items-center gap-3 mt-5">
                 <span className="text-sm font-medium">Ram:</span>
-                <div className="flex gap-2">
-                  {singleProData?.productRam?.map((ram, idx) => (
+                <div className="flex gap-2 flex-wrap">
+                  {singleProData?.productRam.map((ram, idx) => (
                     <Button
                       disabled={isAddedToCart}
                       key={ram}
@@ -352,11 +363,12 @@ export const ProductDetails = () => {
               </div>
             )}
 
+            {/* Weight */}
             {singleProData?.productWeight?.length > 0 && (
-              <div className="flex items-center gap-3 mt-5">
+              <div className="flex flex-wrap items-center gap-3 mt-5">
                 <span className="text-sm font-medium">Weight:</span>
-                <div className="flex gap-2">
-                  {singleProData?.productWeight?.map((wgt, idx) => (
+                <div className="flex gap-2 flex-wrap">
+                  {singleProData?.productWeight.map((wgt, idx) => (
                     <Button
                       key={wgt}
                       disabled={isAddedToCart}
@@ -384,29 +396,29 @@ export const ProductDetails = () => {
             <p className="text-sm mt-4 mb-2 text-gray-600">
               Free Shipping (Est. Delivery Time 2-3 Days)
             </p>
+
             <div className="flex items-center mt-2 mb-8">
-              <div className="qtyboxWrapper">
-                {!isAddedToCart && (
-                  <QtyBox
-                    count={singleProData?.countInStock}
-                    quantity={quantity}
-                    setQuantity={setQuantity}
-                    component={"proDetails"}
-                  />
-                )}
-              </div>
+              {!isAddedToCart && (
+                <QtyBox
+                  count={singleProData?.countInStock}
+                  quantity={quantity}
+                  setQuantity={setQuantity}
+                  component={"proDetails"}
+                />
+              )}
             </div>
+
+            {/* Add to Cart Buttons */}
             {isAddedToCart ? (
-              <div className="flex items-center gap-4">
-                <Link to={"/cart"}>
-                  <Button className="!px-4 !ml-1 !mb-6 !py-2 !bg-green-500 !text-white !transition hover:!bg-gray-900 flex items-center gap-1">
+              <div className="flex flex-wrap gap-4">
+                <Link to="/cart">
+                  <Button className="!px-4 !py-2 !bg-green-500 !text-white flex items-center gap-1">
                     <BsBag className="text-xl" /> View In Cart
                   </Button>
                 </Link>
-
                 <Button
                   onClick={deleteCartItem}
-                  className="!px-4 !ml-1 !mb-6 !py-2 !bg-red-500 !text-white !transition hover:!opacity-80 flex items-center gap-1"
+                  className="!px-4 !py-2 !bg-red-500 !text-white flex items-center gap-1"
                 >
                   <MdDeleteOutline className="text-xl" /> Remove From Cart
                 </Button>
@@ -414,13 +426,14 @@ export const ProductDetails = () => {
             ) : (
               <Button
                 onClick={() => addToCart(singleProData, quantity)}
-                className="!px-4 !ml-1 !mb-6 !py-2 !bg-primary !text-white !transition hover:!bg-gray-900 flex items-center gap-1"
+                className="!px-4 !py-2 !bg-primary !text-white flex items-center gap-1"
               >
                 <FaOpencart className="text-xl" /> Add To Cart
               </Button>
             )}
 
-            <div className="flex items-center gap-4">
+            {/* Wishlist & Compare */}
+            <div className="flex flex-wrap items-center gap-4 mt-4">
               {!isAddedToList ? (
                 <span
                   onClick={() => handleAddToMyList(singleProData)}
@@ -437,7 +450,6 @@ export const ProductDetails = () => {
                   Wishlist
                 </span>
               )}
-
               <span className="flex link transition cursor-pointer gap-2 items-center">
                 <GoGitCompare className="text-lg" /> Add To Compare
               </span>
@@ -445,42 +457,48 @@ export const ProductDetails = () => {
           </div>
         </div>
       </div>
-      <div className="container mx-auto pt-10">
-        <div className="flex items-center gap-8 mb-4">
+
+      {/* Tabs */}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-10">
+        <div className="flex flex-wrap gap-6 mb-4">
           <span
             onClick={() => setActiveTab(0)}
-            className={`link transition ${
-              activeTab === 0 && "text-red-500"
-            } cursor-pointer text-lg font-semibold`}
+            className={`link transition cursor-pointer text-lg font-semibold ${
+              activeTab === 0 ? "text-red-500" : ""
+            }`}
           >
             Description
           </span>
           <span
             onClick={() => setActiveTab(1)}
-            className={`link transition ${
-              activeTab === 1 && "text-red-500"
-            } cursor-pointer text-lg font-semibold`}
+            className={`link transition cursor-pointer text-lg font-semibold ${
+              activeTab === 1 ? "text-red-500" : ""
+            }`}
           >
-            Reviews ({proReview?.length !== 0 ? proReview.length : 0})
+            Reviews ({proReview?.length || 0})
           </span>
         </div>
+
         {activeTab === 0 && (
-          <div className="shadow-md w-full py-5 px-8 rounded-md bg-white text-gray-500">
+          <div className="shadow-md w-full py-5 px-4 sm:px-8 rounded-md bg-white text-gray-500">
             {singleProData?.description}
           </div>
         )}
         {activeTab === 1 && <Reviews productId={id} />}
       </div>
-      <div className="container mx-auto mt-12">
-        <h3 className="text-3xl font-semibold mb-2">Related Products</h3>
+
+      {/* Related Products */}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 mt-12">
+        <h3 className="text-2xl sm:text-3xl font-semibold mb-2">
+          Related Products
+        </h3>
         {relatedProds.length !== 0 ? (
-          <div className="bg-white px-8 mt-8 rounded-md shadow-md">
+          <div className="bg-white px-4 sm:px-8 mt-4 rounded-md shadow-md">
             <ProductSlider items={6} data={relatedProds} />
           </div>
         ) : (
           <div className="w-full flex items-center justify-center h-[200px]">
             <p className="text-xl text-black/40">
-              {" "}
               Related Products Not Available For This Product
             </p>
           </div>
