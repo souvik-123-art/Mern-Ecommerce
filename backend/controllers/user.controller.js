@@ -467,7 +467,7 @@ export const removeImageFromCloudinary = async (req, res) => {
 export const updateUserDetails = async (req, res) => {
   try {
     const userId = req.userId;
-    const { name, email, mobile } = req.body;
+    const { name, email, mobile, avatar } = req.body;
     const userExist = await UserModel.findById(userId);
     if (!userExist) {
       return res.status(400).json({
@@ -486,6 +486,7 @@ export const updateUserDetails = async (req, res) => {
         name,
         mobile,
         email,
+        avatar,
         isVerified: email !== userExist.email ? false : true,
         verifyCode: verifyCode !== "" ? verifyCode : null,
         verifyCodeExpires: verifyCode !== "" ? Date.now() + 600000 : "",
