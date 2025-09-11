@@ -15,7 +15,7 @@ import Products from "./Pages/Products";
 import HomeSliderBanners from "./Pages/HomeSliderBanners";
 import BannerV1List from "./Pages/Banners";
 import CategoryList from "./Pages/Category";
-import SubCategoryList from "./Pages/Category/SubCatList";
+import SubCategoryList from "./Pages/Category/SubCatList.jsx";
 import Users from "./Pages/Users";
 import Orders from "./Pages/Orders";
 import { ForgotPassword } from "./Pages/ForgotPasswordPage";
