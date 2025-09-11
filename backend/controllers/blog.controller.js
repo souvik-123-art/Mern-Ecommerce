@@ -139,57 +139,107 @@ export const getBlog = async (req, res) => {
     });
   }
 };
-export const removeImageFromCloudinary = async (req, res) => {
-  const userId = req.userId;
-  const imgUrl = req.query.img;
-  const urlArr = imgUrl.split("/");
-  const image = urlArr[urlArr.length - 1];
-  const user = await UserModel.findOne({ _id: userId });
-  if (!user) {
-    return res.status(400).json({
-      message: "you nedd to login",
-      error: true,
-      success: false,
-    });
-  }
-
-  const imageName = image.split(".")[0];
-
-  if (imageName) {
-    const result = await cloudinary.uploader.destroy(imageName);
-    if (result) {
-      return res.status(200).send(result);
+const getPublicIdFromUrl = (imgUrl) => {
+  try {
+    const urlParts = imgUrl.split("/upload/");
+    if (urlParts.length < 2) {
+      return null;
     }
+    const publicIdWithExtension = urlParts[1].split("/").slice(1).join("/");
+    const publicId = publicIdWithExtension.substring(
+      0,
+      publicIdWithExtension.lastIndexOf(".")
+    );
+    return publicId;
+  } catch (error) {
+    console.error("Error parsing Cloudinary public ID:", error);
+    return null;
   }
 };
 
-export const deleteBlog = async (req, res) => {
+// --- Updated removeImageFromCloudinary function ---
+export const removeImageFromCloudinary = async (req, res) => {
   try {
-    const blog = await blogModel.findById(req.params.id);
-    const images = blog.images;
-    for (let img of images) {
-      const imgUrl = img;
-      const urlArr = imgUrl.split("/");
-      const image = urlArr[urlArr.length - 1];
-      const imageName = image.split(".")[0];
-      if (imageName) {
-        const result = await cloudinary.uploader.destroy(imageName);
-      }
-    }
-    const deleteBlog = await blogModel.findByIdAndDelete(req.params.id);
-    if (!deleteBlog) {
-      res.status(404).json({
-        message: "blog not found!",
+    const userId = req.userId;
+    const imgUrl = req.query.img;
+
+    const user = await UserModel.findOne({ _id: userId });
+    if (!user) {
+      return res.status(400).json({
+        message: "You need to log in.",
         error: true,
         success: false,
       });
     }
+
+    const publicId = getPublicIdFromUrl(imgUrl);
+
+    if (publicId) {
+      const result = await cloudinary.uploader.destroy(publicId);
+      if (result.result === "ok") {
+        user.avatar = undefined;
+        await user.save();
+        return res.status(200).json(result);
+      } else {
+        return res.status(500).json({
+          message: "Failed to delete image from Cloudinary.",
+          error: true,
+          success: false,
+        });
+      }
+    } else {
+      return res.status(400).json({
+        message: "Invalid image URL.",
+        error: true,
+        success: false,
+      });
+    }
+  } catch (error) {
+    console.error("Error removing image:", error);
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+
+// --- Updated deleteBlog function ---
+export const deleteBlog = async (req, res) => {
+  try {
+    const blog = await blogModel.findById(req.params.id);
+    if (!blog) {
+      return res.status(404).json({
+        message: "Blog not found!",
+        error: true,
+        success: false,
+      });
+    }
+
+    const images = blog.images;
+    for (const imgUrl of images) {
+      const publicId = getPublicIdFromUrl(imgUrl);
+      if (publicId) {
+        await cloudinary.uploader.destroy(publicId);
+      }
+    }
+
+    const deleteBlogResult = await blogModel.findByIdAndDelete(req.params.id);
+    if (!deleteBlogResult) {
+      return res.status(404).json({
+        message: "Blog not found!",
+        error: true,
+        success: false,
+      });
+    }
+
     res.status(200).json({
-      message: "Categblogory deleted",
+      message: "Blog deleted",
       error: false,
       success: true,
     });
   } catch (error) {
+    console.error("Error deleting blog:", error);
     return res.status(500).json({
       message: error.message || error,
       error: true,

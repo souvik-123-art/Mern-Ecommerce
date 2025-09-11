@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import dotenv from "dotenv";
+import streamifier from "streamifier";
 dotenv.config();
 import {
   resetSuccessEmail,
@@ -336,58 +337,58 @@ export const logoutController = async (req, res) => {
 };
 
 //image upload
-let imagesArr = [];
+
 export const userAvatarController = async (req, res) => {
   try {
-    imagesArr = [];
-    const userId = req.userId;
-    const image = req.files;
+    const imagesArr = [];
+    const files = req.files;
 
-    const user = await UserModel.findOne({ _id: userId });
-    if (!user) {
+    // Check if files exist to avoid errors
+    if (!files || files.length === 0) {
       return res.status(400).json({
-        message: "you nedd to login",
+        message: "No files uploaded.",
         error: true,
         success: false,
       });
     }
-    const imgUrl = user.avatar;
-    const urlArr = imgUrl.split("/");
-    const avatarImage = urlArr[urlArr.length - 1];
 
-    const imageName = avatarImage.split(".")[0];
+    // Loop through each file uploaded by multer
+    for (const file of files) {
+      // Create a readable stream from the file's in-memory buffer
+      const stream = streamifier.createReadStream(file.buffer);
 
-    if (imageName) {
-      const result = await cloudinary.uploader.destroy(imageName);
+      // Wrap the upload process in a Promise to use async/await
+      const result = await new Promise((resolve, reject) => {
+        // Use Cloudinary's upload_stream method to handle the upload
+        const cloudinaryStream = cloudinary.uploader.upload_stream(
+          {
+            folder: "mern-ecommerce", // Optional: Organize uploads in a specific folder
+          },
+          (error, result) => {
+            if (error) {
+              return reject(error);
+            }
+            resolve(result);
+          }
+        );
+
+        // Pipe the stream from memory directly to Cloudinary
+        stream.pipe(cloudinaryStream);
+      });
+
+      // Push the secure URL of the uploaded image to the array
+      imagesArr.push(result.secure_url);
     }
 
-    const options = {
-      use_filename: true,
-      unique_filename: false,
-      overwrite: false,
-    };
-    for (let i = 0; i < req?.files?.length; i++) {
-      const img = await cloudinary.uploader.upload(
-        image[i].path,
-        options,
-        (error, result) => {
-          console.log(result);
-          imagesArr.push(result.secure_url);
-          fs.unlinkSync(`backend/uploads/${req.files[i].filename}`);
-          console.log(req.files[i].filename);
-        }
-      );
-    }
-
-    user.avatar = imagesArr[0];
-    await user.save();
     return res.status(200).json({
-      _id: userId,
-      avatar: imagesArr[0],
+      images: imagesArr,
+      success: true,
     });
   } catch (error) {
+    console.error("Cloudinary upload error:", error);
+
     return res.status(500).json({
-      message: error.message || error,
+      message: error.message || "An error occurred during the upload process.",
       error: true,
       success: false,
     });

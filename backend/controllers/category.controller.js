@@ -11,7 +11,23 @@ cloudinary.config({
   api_secret: process.env.cloudinary_Config_api_secret,
   secure: true,
 });
+const getPublicIdFromUrl = (imgUrl) => {
+  // Split the URL to get the part after /upload/
+  const urlParts = imgUrl.split("/upload/");
+  if (urlParts.length < 2) {
+    return null;
+  }
+  // The path after /upload/ can contain version numbers, folders, and the file name.
+  // We need to slice off the version (if present) and the file extension.
+  const publicIdWithExtension = urlParts[1].split("/").slice(1).join("/");
+  // The public ID is the part of the string before the last dot (the file extension).
+  const publicId = publicIdWithExtension.substring(
+    0,
+    publicIdWithExtension.lastIndexOf(".")
+  );
 
+  return publicId;
+};
 //image upload
 export const categoryImageController = async (req, res) => {
   try {
@@ -197,68 +213,93 @@ export const getCategory = async (req, res) => {
 export const removeImageFromCloudinary = async (req, res) => {
   const userId = req.userId;
   const imgUrl = req.query.img;
-  const urlArr = imgUrl.split("/");
-  const image = urlArr[urlArr.length - 1];
+
   const user = await UserModel.findOne({ _id: userId });
   if (!user) {
     return res.status(400).json({
-      message: "you nedd to login",
+      message: "You need to log in.",
       error: true,
       success: false,
     });
   }
 
-  const imageName = image.split(".")[0];
+  const publicId = getPublicIdFromUrl(imgUrl);
 
-  if (imageName) {
-    const result = await cloudinary.uploader.destroy(imageName);
-    if (result) {
+  if (publicId) {
+    const result = await cloudinary.uploader.destroy(publicId);
+    if (result.result === "ok") {
+      // If the image is successfully deleted, you might also want to remove the URL from the user document
+      user.avatar = undefined;
+      await user.save();
       return res.status(200).send(result);
+    } else {
+      return res.status(500).json({
+        message: "Failed to delete image from Cloudinary.",
+        error: true,
+        success: false,
+      });
     }
+  } else {
+    return res.status(400).json({
+      message: "Invalid image URL.",
+      error: true,
+      success: false,
+    });
   }
 };
 
+// --- Updated deleteCategory function ---
 export const deleteCategory = async (req, res) => {
   try {
     const category = await categoryModel.findById(req.params.id);
-    const images = category.images;
-    for (let img of images) {
-      const imgUrl = img;
-      const urlArr = imgUrl.split("/");
-      const image = urlArr[urlArr.length - 1];
-      const imageName = image.split(".")[0];
-      if (imageName) {
-        const result = await cloudinary.uploader.destroy(imageName);
-      }
-    }
-    const subCategory = await categoryModel.find({
-      parentId: req.params.id,
-    });
-
-    for (let i = 0; i < subCategory.length; i++) {
-      const thirdSubCategory = await categoryModel.find({
-        parentId: subCategory[i]._id,
-      });
-
-      for (let i = 0; i < thirdSubCategory.length; i++) {
-        const deleteThirdSubCat = await categoryModel.findByIdAndDelete(
-          thirdSubCategory[i]._id
-        );
-      }
-      const deleteSubCat = await categoryModel.findByIdAndDelete(
-        subCategory[i]._id
-      );
-    }
-    const deleteCat = await categoryModel.findByIdAndDelete(req.params.id);
-    if (!deleteCat) {
-      res.status(404).json({
+    if (!category) {
+      return res.status(404).json({
         message: "Category not found!",
         error: true,
         success: false,
       });
     }
+
+    // Delete images associated with the category
+    const images = category.images;
+    for (const imgUrl of images) {
+      const publicId = getPublicIdFromUrl(imgUrl);
+      if (publicId) {
+        // Asynchronously destroy the image on Cloudinary
+        await cloudinary.uploader.destroy(publicId);
+      }
+    }
+
+    // You have a deeply nested category structure, so deleting all children is complex.
+    // The following logic seems to be what you intended.
+    const subCategories = await categoryModel.find({ parentId: req.params.id });
+
+    for (const subCat of subCategories) {
+      // Find and delete third-level subcategories
+      const thirdSubCategories = await categoryModel.find({
+        parentId: subCat._id,
+      });
+      for (const thirdSubCat of thirdSubCategories) {
+        await categoryModel.findByIdAndDelete(thirdSubCat._id);
+      }
+      // Delete second-level subcategory
+      await categoryModel.findByIdAndDelete(subCat._id);
+    }
+
+    // Delete the main category
+    const deletedCategory = await categoryModel.findByIdAndDelete(
+      req.params.id
+    );
+    if (!deletedCategory) {
+      return res.status(404).json({
+        message: "Category not found!",
+        error: true,
+        success: false,
+      });
+    }
+
     res.status(200).json({
-      message: "Category deleted",
+      message: "Category deleted successfully.",
       error: false,
       success: true,
     });
