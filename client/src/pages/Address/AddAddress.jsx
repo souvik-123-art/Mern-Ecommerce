@@ -12,7 +12,7 @@ import { useDispatch } from "react-redux";
 import { setIsOpenFullScreenPanel } from "../../redux/Slices/fullScreenPanelSlice";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { setAddress } from "../../redux/slices/userAddressSlice";
+import { setAddress } from "../../redux/Slices/userAddressSlice";
 const AddAddress = () => {
   const dispatch = useDispatch();
   const [status, setStatus] = React.useState(false);
