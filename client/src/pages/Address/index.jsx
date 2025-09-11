@@ -5,7 +5,7 @@ import { setIsOpenFullScreenPanel } from "../../redux/Slices/fullScreenPanelSlic
 import { useDispatch, useSelector } from "react-redux";
 import { deleteData, fetchDataFromApi } from "../../utils/api";
 import toast from "react-hot-toast";
-import { setAddress } from "../../redux/slices/userAddressSlice";
+import { setAddress } from "../../redux/Slices/userAddressSlice";
 import { HiBuildingOffice } from "react-icons/hi2";
 
 import { IoIosCall, IoMdClose, IoMdHome } from "react-icons/io";
