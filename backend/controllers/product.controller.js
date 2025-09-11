@@ -16,7 +16,7 @@ cloudinary.config({
 var imagesArr = [];
 export const productImageController = async (req, res) => {
   try {
-    let imagesArr = [];
+    imagesArr = [];
     const image = req.files;
     const options = {
       use_filename: true,
@@ -49,7 +49,7 @@ export const productImageController = async (req, res) => {
 var bannerImage = [];
 export const bannerImageController = async (req, res) => {
   try {
-    let imagesArr = [];
+    bannerImage = [];
     const image = req.files;
     const options = {
       use_filename: true,
@@ -60,7 +60,7 @@ export const bannerImageController = async (req, res) => {
     for (let i = 0; i < image.length; i++) {
       const result = await cloudinary.uploader.upload(image[i].path, options);
 
-      imagesArr.push(result.secure_url);
+      bannerImage.push(result.secure_url);
 
       // Temporary file delete after successful upload
       fs.unlinkSync(`backend/uploads/${image[i].filename}`);

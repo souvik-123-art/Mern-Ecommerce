@@ -15,7 +15,7 @@ cloudinary.config({
 let imagesArr = [];
 export const categoryImageController = async (req, res) => {
   try {
-    let imagesArr = [];
+     imagesArr = [];
     const image = req.files;
     const options = {
       use_filename: true,
