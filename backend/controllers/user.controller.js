@@ -337,6 +337,23 @@ export const logoutController = async (req, res) => {
 };
 
 //image upload
+const getPublicIdFromUrl = (imgUrl) => {
+  try {
+    const urlParts = imgUrl.split("/upload/");
+    if (urlParts.length < 2) {
+      return null;
+    }
+    const publicIdWithExtension = urlParts[1].split("/").slice(1).join("/");
+    const publicId = publicIdWithExtension.substring(
+      0,
+      publicIdWithExtension.lastIndexOf(".")
+    );
+    return publicId;
+  } catch (error) {
+    console.error("Error parsing Cloudinary public ID:", error);
+    return null;
+  }
+};
 
 export const userAvatarController = async (req, res) => {
   try {
@@ -395,29 +412,55 @@ export const userAvatarController = async (req, res) => {
   }
 };
 
+// --- Corrected removeImageFromCloudinary function ---
 export const removeImageFromCloudinary = async (req, res) => {
-  const userId = req.userId;
-  const imgUrl = req.query.img;
-  const urlArr = imgUrl.split("/");
-  const image = urlArr[urlArr.length - 1];
-  const user = await UserModel.findOne({ _id: userId });
-  if (!user) {
-    return res.status(400).json({
-      message: "you nedd to login",
+  try {
+    const userId = req.userId;
+    const imgUrl = req.query.img;
+
+    const user = await UserModel.findOne({ _id: userId });
+    if (!user) {
+      return res.status(400).json({
+        message: "You need to log in.",
+        error: true,
+        success: false,
+      });
+    }
+
+    const publicId = getPublicIdFromUrl(imgUrl);
+
+    if (publicId) {
+      const result = await cloudinary.uploader.destroy(publicId);
+      if (result.result === "ok") {
+        user.avatar = undefined;
+        await user.save();
+        return res.status(200).json({
+          message: "Image successfully deleted from Cloudinary.",
+          error: false,
+          success: true,
+          result: result,
+        });
+      } else {
+        return res.status(500).json({
+          message: "Failed to delete image from Cloudinary.",
+          error: true,
+          success: false,
+        });
+      }
+    } else {
+      return res.status(400).json({
+        message: "Invalid image URL.",
+        error: true,
+        success: false,
+      });
+    }
+  } catch (error) {
+    console.error("Error removing image:", error);
+    return res.status(500).json({
+      message: error.message || "An error occurred while deleting the image.",
       error: true,
       success: false,
     });
-  }
-
-  const imageName = image.split(".")[0];
-
-  if (imageName) {
-    const result = await cloudinary.uploader.destroy(imageName);
-    if (result) {
-      user.avatar = undefined;
-      await user.save();
-      return res.status(200).send(result);
-    }
   }
 };
 
