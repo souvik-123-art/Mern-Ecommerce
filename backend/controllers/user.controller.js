@@ -336,18 +336,6 @@ export const logoutController = async (req, res) => {
   }
 };
 
-//image upload
-
-import { v2 as cloudinary } from "cloudinary";
-import streamifier from "streamifier";
-import UserModel from "../models/userModel";
-
-/**
- * Extracts the public ID of a Cloudinary image from its URL.
- * This is a robust way to handle URLs with folder paths.
- * @param {string} imgUrl The full Cloudinary URL.
- * @returns {string | null} The public ID or null if the URL is invalid.
- */
 const getPublicIdFromUrl = (imgUrl) => {
   try {
     const urlParts = imgUrl.split("/upload/");
