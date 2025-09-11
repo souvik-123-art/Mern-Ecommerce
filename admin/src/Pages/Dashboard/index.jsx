@@ -484,7 +484,7 @@ export const Dashboard = () => {
                 Delete Selected ({sortedIds.length})
               </Button>
             )}
-            
+
             <Button
               className="btn-blue btn !flex !items-center !gap-1"
               onClick={() =>
@@ -690,11 +690,11 @@ export const Dashboard = () => {
                           <TableCell>
                             <span className="text-sm">
                               <span className="font-semibold mr-2">
-                                {pro.sale}
+                                {pro.sale || 0}
                               </span>{" "}
                               Sales
                             </span>
-                            <Progress value={pro.sale} />
+                            <Progress value={pro.sale || 0} />
                           </TableCell>
 
                           <TableCell className="flex gap-2">

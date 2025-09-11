@@ -559,10 +559,10 @@ const Products = () => {
                           </TableCell>
                           <TableCell>
                             <span className="text-sm font-semibold mr-2">
-                              {pro.sale}
+                              {pro.sale || 0}
                             </span>
                             Sales
-                            <Progress value={pro.sale} />
+                            <Progress value={pro.sale || 0} />
                           </TableCell>
                           <TableCell>
                             <TooltipMUI title="Edit Product" placement="top">
