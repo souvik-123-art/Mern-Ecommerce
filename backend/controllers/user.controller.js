@@ -394,7 +394,8 @@ export const userAvatarController = async (req, res) => {
 
       // Push the secure URL of the uploaded image to the array
       imagesArr.push(result.secure_url);
-      user.avatar(result.secure_url);
+      user.avatar = result.secure_url;
+      await user.save();
     }
 
     return res.status(200).json({
