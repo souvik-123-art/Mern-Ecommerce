@@ -1,5 +1,0 @@
-[build]
-  base = "client"
-  command = "npm run build:vercel"
-  publish = "dist"
-  functions = "netlify/functions"
