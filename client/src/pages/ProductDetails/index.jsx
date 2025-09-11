@@ -11,7 +11,7 @@ import { GoGitCompare } from "react-icons/go";
 import { ProductSlider } from "../../components/ProductSlider";
 import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import { fetchDataFromApi } from "../../../../admin/src/utils/api";
+import { fetchDataFromApi } from "../../utils/api";
 import CircularProgress from "@mui/material/CircularProgress";
 import Reviews from "../../components/Reviews";
 import { useDispatch, useSelector } from "react-redux";
