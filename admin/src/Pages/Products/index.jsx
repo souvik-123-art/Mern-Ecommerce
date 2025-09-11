@@ -174,7 +174,7 @@ const Products = () => {
   const removeProduct = (id) => {
     setIsLoading(true);
     deleteData(`/api/product/${id}`, {
-      withCredentials: true,
+      credentials: true,
     })
       .then((res) => {
         try {
