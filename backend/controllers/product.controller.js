@@ -14,6 +14,21 @@ cloudinary.config({
   api_secret: process.env.cloudinary_Config_api_secret,
   secure: true,
 });
+
+export const uploadToCloudinary = (file) => {
+  return new Promise((resolve, reject) => {
+    const cloudinaryStream = cloudinary.uploader.upload_stream(
+      { folder: "mern-ecommerce" },
+      (error, result) => {
+        if (error) {
+          return reject(error);
+        }
+        resolve(result);
+      }
+    );
+    streamifier.createReadStream(file.buffer).pipe(cloudinaryStream);
+  });
+};
 const getPublicId = (url) => {
   try {
     const urlParts = url.split("/upload/");
