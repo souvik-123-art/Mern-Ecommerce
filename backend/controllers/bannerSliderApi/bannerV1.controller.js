@@ -1,7 +1,9 @@
 import bannerV1Model from "../../models/bannerSliderModel/bannerV1.model.js";
 import UserModel from "../../models/user.model.js";
 import { v2 as cloudinary } from "cloudinary";
+import dotenv from "dotenv";
 import fs from "fs";
+dotenv.config();
 cloudinary.config({
   cloud_name: process.env.cloudinary_Config_Cloud_Name,
   api_key: process.env.cloudinary_Config_api_key,

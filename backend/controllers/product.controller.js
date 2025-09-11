@@ -2,6 +2,8 @@ import ProductModel from "../models/product.model.js";
 import proRAMSModel from "../models/proRam.Model.js";
 import proSIZEModel from "../models/proSize.Model.js";
 import UserModel from "../models/user.model.js";
+import dotenv from "dotenv";
+dotenv.config();
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
 import proWGTModel from "../models/proWeight.Model.js";
@@ -1174,8 +1176,7 @@ export const searchProductController = async (req, res) => {
         { thirdSubCat: { $regex: query, $options: "i" } },
         { description: { $regex: `\\b${query}\\b`, $options: "i" } },
       ],
-    })
-      .populate("category")
+    }).populate("category");
 
     const total = await items?.length;
     return res.status(200).json({
