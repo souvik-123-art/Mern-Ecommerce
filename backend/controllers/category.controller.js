@@ -34,7 +34,6 @@ export const categoryImageController = async (req, res) => {
     const imagesArr = [];
     const files = req.files;
 
-    // Check if files exist to avoid errors
     if (!files || files.length === 0) {
       return res.status(400).json({
         message: "No files uploaded.",
@@ -43,18 +42,10 @@ export const categoryImageController = async (req, res) => {
       });
     }
 
-    // Loop through each file uploaded by multer
     for (const file of files) {
-      // Create a readable stream from the file's in-memory buffer
-      const stream = streamifier.createReadStream(file.buffer);
-
-      // Wrap the upload process in a Promise to use async/await
       const result = await new Promise((resolve, reject) => {
-        // Use Cloudinary's upload_stream method to handle the upload
         const cloudinaryStream = cloudinary.uploader.upload_stream(
-          {
-            folder: "mern-ecommerce", // Optional: Organize uploads in a specific folder
-          },
+          { folder: "mern-ecommerce" },
           (error, result) => {
             if (error) {
               return reject(error);
@@ -62,12 +53,8 @@ export const categoryImageController = async (req, res) => {
             resolve(result);
           }
         );
-
-        // Pipe the stream from memory directly to Cloudinary
-        stream.pipe(cloudinaryStream);
+        streamifier.createReadStream(file.buffer).pipe(cloudinaryStream);
       });
-
-      // Push the secure URL of the uploaded image to the array
       imagesArr.push(result.secure_url);
     }
 
@@ -77,7 +64,6 @@ export const categoryImageController = async (req, res) => {
     });
   } catch (error) {
     console.error("Cloudinary upload error:", error);
-
     return res.status(500).json({
       message: error.message || "An error occurred during the upload process.",
       error: true,
@@ -86,30 +72,193 @@ export const categoryImageController = async (req, res) => {
   }
 };
 
+// --- Corrected createCategory function ---
 export const createCategory = async (req, res) => {
   try {
+    // The images are now expected to be in the request body,
+    // as they were sent by the client after a successful upload.
+    const { name, images, parentId, parentCatName } = req.body;
+
     let category = new categoryModel({
-      name: req.body.name,
-      images: req.body.images,
-      parentId: req.body.parentId,
-      parentCatName: req.body.parentCatName,
+      name,
+      images,
+      parentId,
+      parentCatName,
     });
+
+    category = await category.save();
+
     if (!category) {
       return res.status(500).json({
-        message: error.message || error,
+        message: "Category not created.",
         error: true,
         success: false,
       });
     }
-    category = await category.save();
-    imagesArr = [];
+
     return res.status(200).json({
-      message: "category created",
+      message: "Category created successfully.",
       error: false,
       success: true,
       category,
     });
   } catch (error) {
+    console.error("Category creation error:", error);
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+
+// --- Corrected removeImageFromCloudinary function ---
+export const removeImageFromCloudinary = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const imgUrl = req.query.img;
+
+    const user = await UserModel.findOne({ _id: userId });
+    if (!user) {
+      return res.status(400).json({
+        message: "You need to log in.",
+        error: true,
+        success: false,
+      });
+    }
+
+    const publicId = getPublicIdFromUrl(imgUrl);
+
+    if (publicId) {
+      const result = await cloudinary.uploader.destroy(publicId);
+      if (result.result === "ok") {
+        user.avatar = undefined;
+        await user.save();
+        return res.status(200).send(result);
+      } else {
+        return res.status(500).json({
+          message: "Failed to delete image from Cloudinary.",
+          error: true,
+          success: false,
+        });
+      }
+    } else {
+      return res.status(400).json({
+        message: "Invalid image URL.",
+        error: true,
+        success: false,
+      });
+    }
+  } catch (error) {
+    console.error("Error removing image:", error);
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+
+// --- Corrected deleteCategory function ---
+export const deleteCategory = async (req, res) => {
+  try {
+    const category = await categoryModel.findById(req.params.id);
+    if (!category) {
+      return res.status(404).json({
+        message: "Category not found!",
+        error: true,
+        success: false,
+      });
+    }
+
+    const images = category.images;
+    for (const imgUrl of images) {
+      const publicId = getPublicIdFromUrl(imgUrl);
+      if (publicId) {
+        await cloudinary.uploader.destroy(publicId);
+      }
+    }
+
+    const subCategories = await categoryModel.find({ parentId: req.params.id });
+    for (const subCat of subCategories) {
+      const thirdSubCategories = await categoryModel.find({
+        parentId: subCat._id,
+      });
+      for (const thirdSubCat of thirdSubCategories) {
+        await categoryModel.findByIdAndDelete(thirdSubCat._id);
+      }
+      await categoryModel.findByIdAndDelete(subCat._id);
+    }
+
+    const deletedCategory = await categoryModel.findByIdAndDelete(
+      req.params.id
+    );
+    if (!deletedCategory) {
+      return res.status(404).json({
+        message: "Category not found!",
+        error: true,
+        success: false,
+      });
+    }
+
+    res.status(200).json({
+      message: "Category deleted successfully.",
+      error: false,
+      success: true,
+    });
+  } catch (error) {
+    console.error("Error deleting category:", error);
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+
+// --- Corrected updateCategory function ---
+export const updateCategory = async (req, res) => {
+  try {
+    // The images array is received directly from the request body.
+    const { name, images, parentId, parentCatName } = req.body;
+
+    const updatedCategory = await categoryModel.findByIdAndUpdate(
+      req.params.id,
+      {
+        name,
+        images, // Use the images from the request body
+        parentId,
+        parentCatName,
+      },
+      { new: true }
+    );
+    if (!updatedCategory) {
+      return res.status(500).json({
+        message: "Category cannot be updated.",
+        error: true,
+        success: false,
+      });
+    }
+
+    const children = await categoryModel.find({
+      parentId: updatedCategory._id,
+    });
+    for (let child of children) {
+      await categoryModel.findByIdAndUpdate(
+        child._id,
+        { parentCatName: updatedCategory.name },
+        { new: true }
+      );
+    }
+
+    res.status(200).json({
+      message: "Category updated successfully",
+      error: false,
+      success: true,
+      updatedCategory, // It's good practice to send back the updated document
+    });
+  } catch (error) {
+    console.error("Category update error:", error);
     return res.status(500).json({
       message: error.message || error,
       error: true,
@@ -201,149 +350,6 @@ export const getCategory = async (req, res) => {
 
     res.send({
       category,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      message: error.message || error,
-      error: true,
-      success: false,
-    });
-  }
-};
-export const removeImageFromCloudinary = async (req, res) => {
-  const userId = req.userId;
-  const imgUrl = req.query.img;
-
-  const user = await UserModel.findOne({ _id: userId });
-  if (!user) {
-    return res.status(400).json({
-      message: "You need to log in.",
-      error: true,
-      success: false,
-    });
-  }
-
-  const publicId = getPublicIdFromUrl(imgUrl);
-
-  if (publicId) {
-    const result = await cloudinary.uploader.destroy(publicId);
-    if (result.result === "ok") {
-      // If the image is successfully deleted, you might also want to remove the URL from the user document
-      user.avatar = undefined;
-      await user.save();
-      return res.status(200).send(result);
-    } else {
-      return res.status(500).json({
-        message: "Failed to delete image from Cloudinary.",
-        error: true,
-        success: false,
-      });
-    }
-  } else {
-    return res.status(400).json({
-      message: "Invalid image URL.",
-      error: true,
-      success: false,
-    });
-  }
-};
-
-// --- Updated deleteCategory function ---
-export const deleteCategory = async (req, res) => {
-  try {
-    const category = await categoryModel.findById(req.params.id);
-    if (!category) {
-      return res.status(404).json({
-        message: "Category not found!",
-        error: true,
-        success: false,
-      });
-    }
-
-    // Delete images associated with the category
-    const images = category.images;
-    for (const imgUrl of images) {
-      const publicId = getPublicIdFromUrl(imgUrl);
-      if (publicId) {
-        // Asynchronously destroy the image on Cloudinary
-        await cloudinary.uploader.destroy(publicId);
-      }
-    }
-
-    // You have a deeply nested category structure, so deleting all children is complex.
-    // The following logic seems to be what you intended.
-    const subCategories = await categoryModel.find({ parentId: req.params.id });
-
-    for (const subCat of subCategories) {
-      // Find and delete third-level subcategories
-      const thirdSubCategories = await categoryModel.find({
-        parentId: subCat._id,
-      });
-      for (const thirdSubCat of thirdSubCategories) {
-        await categoryModel.findByIdAndDelete(thirdSubCat._id);
-      }
-      // Delete second-level subcategory
-      await categoryModel.findByIdAndDelete(subCat._id);
-    }
-
-    // Delete the main category
-    const deletedCategory = await categoryModel.findByIdAndDelete(
-      req.params.id
-    );
-    if (!deletedCategory) {
-      return res.status(404).json({
-        message: "Category not found!",
-        error: true,
-        success: false,
-      });
-    }
-
-    res.status(200).json({
-      message: "Category deleted successfully.",
-      error: false,
-      success: true,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      message: error.message || error,
-      error: true,
-      success: false,
-    });
-  }
-};
-export const updateCategory = async (req, res) => {
-  try {
-    const category = await categoryModel.findByIdAndUpdate(
-      req.params.id,
-      {
-        name: req.body.name,
-        images: imagesArr.length > 0 ? imagesArr[0] : req.body.images,
-        parentId: req.body.parentId,
-        parentCatName: req.body.parentCatName,
-      },
-      { new: true }
-    );
-    if (!category) {
-      return res.status(500).json({
-        message: "category cannot be updated",
-        error: true,
-        success: false,
-      });
-    }
-    const children = await categoryModel.find({ parentId: category._id });
-
-    for (let child of children) {
-      await categoryModel.findByIdAndUpdate(
-        child._id,
-        { parentCatName: category.name },
-        { new: true }
-      );
-    }
-    imagesArr = [];
-    res.status(200).json({
-      message: "Category updated",
-      error: false,
-      success: true,
     });
   } catch (error) {
     return res.status(500).json({

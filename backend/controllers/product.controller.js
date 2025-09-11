@@ -35,10 +35,8 @@ const getPublicId = (url) => {
 };
 export const productImageController = async (req, res) => {
   try {
-    const imagesArr = [];
     const files = req.files;
 
-    // Check if files exist to avoid errors
     if (!files || files.length === 0) {
       return res.status(400).json({
         message: "No files uploaded.",
@@ -47,31 +45,9 @@ export const productImageController = async (req, res) => {
       });
     }
 
-    // Loop through each file uploaded by multer
+    const imagesArr = [];
     for (const file of files) {
-      // Create a readable stream from the file's in-memory buffer
-      const stream = streamifier.createReadStream(file.buffer);
-
-      // Wrap the upload process in a Promise to use async/await
-      const result = await new Promise((resolve, reject) => {
-        // Use Cloudinary's upload_stream method to handle the upload
-        const cloudinaryStream = cloudinary.uploader.upload_stream(
-          {
-            folder: "mern-ecommerce", // Optional: Organize uploads in a specific folder
-          },
-          (error, result) => {
-            if (error) {
-              return reject(error);
-            }
-            resolve(result);
-          }
-        );
-
-        // Pipe the stream from memory directly to Cloudinary
-        stream.pipe(cloudinaryStream);
-      });
-
-      // Push the secure URL of the uploaded image to the array
+      const result = await uploadToCloudinary(file);
       imagesArr.push(result.secure_url);
     }
 
@@ -81,7 +57,6 @@ export const productImageController = async (req, res) => {
     });
   } catch (error) {
     console.error("Cloudinary upload error:", error);
-
     return res.status(500).json({
       message: error.message || "An error occurred during the upload process.",
       error: true,
@@ -89,89 +64,116 @@ export const productImageController = async (req, res) => {
     });
   }
 };
-var bannerImage = [];
+
+// --- Updated bannerImageController ---
 export const bannerImageController = async (req, res) => {
   try {
-    bannerImage = [];
-    const image = req.files;
-    const options = {
-      use_filename: true,
-      unique_filename: false,
-      overwrite: false,
-    };
+    const files = req.files;
 
-    for (let i = 0; i < image.length; i++) {
-      const result = await cloudinary.uploader.upload(image[i].path, options);
+    if (!files || files.length === 0) {
+      return res.status(400).json({
+        message: "No banner images uploaded.",
+        error: true,
+        success: false,
+      });
+    }
 
-      bannerImage.push(result.secure_url);
-
-      // Temporary file delete after successful upload
-      fs.unlinkSync(`backend/uploads/${image[i].filename}`);
+    const bannerImageArr = [];
+    for (const file of files) {
+      const result = await uploadToCloudinary(file);
+      bannerImageArr.push(result.secure_url);
     }
 
     return res.status(200).json({
-      images: bannerImage,
+      images: bannerImageArr,
+      success: true,
     });
   } catch (error) {
-    console.error("Cloudinary upload error:", error);
-
+    console.error("Cloudinary banner upload error:", error);
     return res.status(500).json({
-      message: error.message || error,
+      message: error.message || "An error occurred during the upload process.",
       error: true,
       success: false,
     });
   }
 };
 
-//create product
-
+// --- Corrected createProduct function ---
 export const createProduct = async (req, res) => {
   try {
+    // The images and bannerImages should be sent from the frontend after a successful upload
+    const {
+      name,
+      bannerTitleName,
+      description,
+      images, // These are the URLs sent by the client
+      bannerImages, // These are the URLs sent by the client
+      isDisplayOnHomeBanner,
+      brand,
+      price,
+      oldPrice,
+      catName,
+      catId,
+      subCatId,
+      subCat,
+      thirdSubCat,
+      thirdSubCatId,
+      category,
+      countInStock,
+      rating,
+      isFeatured,
+      discount,
+      productRam,
+      size,
+      productWeight,
+    } = req.body;
+
     let product = new ProductModel({
-      name: req.body.name,
-      bannerTitleName: req.body.bannerTitleName,
-      description: req.body.description,
-      images: req.body.images,
-      bannerImages: req.body.bannerImages,
-      isDisplayOnHomeBanner: req.body.isDisplayOnHomeBanner,
-      brand: req.body.brand,
-      price: req.body.price,
-      oldPrice: req.body.oldPrice,
-      catName: req.body.catName,
-      catId: req.body.catId,
-      subCatId: req.body.subCatId,
-      subCat: req.body.subCat,
-      thirdSubCat: req.body.thirdSubCat,
-      thirdSubCatId: req.body.thirdSubCatId,
-      category: req.body.category,
-      countInStock: req.body.countInStock,
-      rating: req.body.rating,
-      isFeatured: req.body.isFeatured,
-      discount: req.body.discount,
-      productRam: req.body.productRam,
-      size: req.body.size,
-      productWeight: req.body.productWeight,
+      name,
+      bannerTitleName,
+      description,
+      images,
+      bannerImages,
+      isDisplayOnHomeBanner,
+      brand,
+      price,
+      oldPrice,
+      catName,
+      catId,
+      subCatId,
+      subCat,
+      thirdSubCat,
+      thirdSubCatId,
+      category,
+      countInStock,
+      rating,
+      isFeatured,
+      discount,
+      productRam,
+      size,
+      productWeight,
     });
 
     product = await product.save();
 
     if (!product) {
-      res.status(500).json({
-        message: "product not created",
+      return res.status(500).json({
+        message: "Product not created.",
         error: true,
         success: false,
       });
     }
-    imagesArr = [];
+
     res.status(200).json({
-      message: "product created",
+      message: "Product created successfully.",
       error: false,
       success: true,
       product,
     });
   } catch (error) {
+    console.error("Product creation error:", error);
     return res.status(500).json({
-      message: error.message || error,
+      message: error.message || "An error occurred during product creation.",
       error: true,
       success: false,
     });
@@ -784,7 +786,7 @@ export const updateProduct = async (req, res) => {
         name: req.body.name,
         bannerTitleName: req.body.bannerTitleName,
         description: req.body.description,
-        images: req.body.images,
+        images: req.body.images, // Images and banner images are passed directly from the client
         bannerImages: req.body.bannerImages,
         isDisplayOnHomeBanner: req.body.isDisplayOnHomeBanner,
         brand: req.body.brand,
@@ -805,25 +807,27 @@ export const updateProduct = async (req, res) => {
         size: req.body.size,
         productWeight: req.body.productWeight,
       },
-      { new: true }
+      { new: true } // This option returns the updated document
     );
+
     if (!product) {
       return res.status(404).json({
-        message: "the product can not be updates!",
-        error: false,
-        success: true,
+        message: "The product cannot be updated!",
+        error: true, // `error` should be true on a 404 response
+        success: false,
       });
     }
-    imagesArr = [];
 
     return res.status(200).json({
       error: false,
       success: true,
-      message: "product successfully updated",
+      message: "Product successfully updated",
+      product, // It's good practice to send back the updated document
     });
   } catch (error) {
+    console.error("Product update error:", error);
     return res.status(500).json({
-      message: error.message || error,
+      message: error.message || "An unexpected error occurred.",
       error: true,
       success: false,
     });
