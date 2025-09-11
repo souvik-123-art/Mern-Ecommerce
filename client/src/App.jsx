@@ -38,7 +38,7 @@ import { setBlogData } from "./redux/Slices/blogSlice";
 import ScrollToTop from "./utils/windowScroll";
 import { setCartData } from "./redux/Slices/cartSlice";
 import { setMyListData } from "./redux/Slices/myListSlice";
-import { setAddress } from "./redux/slices/userAddressSlice";
+import { setAddress } from "./redux/Slices/userAddressSlice";
 import { setOrderData } from "./redux/Slices/orderSlice";
 import { SearchPage } from "./pages/SearchPage";
 import { CircularProgress } from "@mui/material";
