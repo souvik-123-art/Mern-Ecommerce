@@ -1,5 +1,5 @@
 [build]
-  base = "." # Set base to the root directory
-  command = "npm install --prefix ./admin && npm run build --prefix ./client"
-  publish = "client/dist"
-  functions = "client/netlify/functions"
+  base = "client"
+  command = "npm install && npm run build"
+  publish = "dist"
+  functions = "netlify/functions"
