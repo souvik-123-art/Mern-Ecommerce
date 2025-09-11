@@ -16,30 +16,29 @@ cloudinary.config({
 var imagesArr = [];
 export const productImageController = async (req, res) => {
   try {
-    imagesArr = [];
+    let imagesArr = [];
     const image = req.files;
     const options = {
       use_filename: true,
       unique_filename: false,
       overwrite: false,
     };
-    for (let i = 0; i < req?.files?.length; i++) {
-      const img = await cloudinary.uploader.upload(
-        image[i].path,
-        options,
-        (error, result) => {
-          console.log(result);
-          imagesArr.push(result.secure_url);
-          fs.unlinkSync(`backend/uploads/${req.files[i].filename}`);
-          console.log(req.files[i].filename);
-        }
-      );
+
+    for (let i = 0; i < image.length; i++) {
+      const result = await cloudinary.uploader.upload(image[i].path, options);
+
+      imagesArr.push(result.secure_url);
+
+      // Temporary file delete after successful upload
+      fs.unlinkSync(`backend/uploads/${image[i].filename}`);
     }
 
     return res.status(200).json({
       images: imagesArr,
     });
   } catch (error) {
+    console.error("Cloudinary upload error:", error);
+
     return res.status(500).json({
       message: error.message || error,
       error: true,
@@ -50,30 +49,29 @@ export const productImageController = async (req, res) => {
 var bannerImage = [];
 export const bannerImageController = async (req, res) => {
   try {
-    bannerImage = [];
+    let imagesArr = [];
     const image = req.files;
     const options = {
       use_filename: true,
       unique_filename: false,
       overwrite: false,
     };
-    for (let i = 0; i < req?.files?.length; i++) {
-      const img = await cloudinary.uploader.upload(
-        image[i].path,
-        options,
-        (error, result) => {
-          console.log(result);
-          bannerImage.push(result.secure_url);
-          fs.unlinkSync(`backend/uploads/${req.files[i].filename}`);
-          console.log(req.files[i].filename);
-        }
-      );
+
+    for (let i = 0; i < image.length; i++) {
+      const result = await cloudinary.uploader.upload(image[i].path, options);
+
+      imagesArr.push(result.secure_url);
+
+      // Temporary file delete after successful upload
+      fs.unlinkSync(`backend/uploads/${image[i].filename}`);
     }
 
     return res.status(200).json({
       images: bannerImage,
     });
   } catch (error) {
+    console.error("Cloudinary upload error:", error);
+
     return res.status(500).json({
       message: error.message || error,
       error: true,
