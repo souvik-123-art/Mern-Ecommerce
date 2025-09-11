@@ -32,10 +32,10 @@ userRouter.post("/loginWithGoogle", loginWithGoogle);
 userRouter.get("/logout", auth, logoutController);
 // Remove the old userAvatarController and use this instead
 userRouter.put(
-  "/user-details",
+  "/user-avatar",
   auth,
-  upload.single("avatar"),
-  updateUserDetails
+  upload.single("avatar"), // Use upload.single() for a single file
+  userAvatarController // Use the avatar-only controller
 );
 userRouter.delete("/deleteImage", auth, removeImageFromCloudinary);
 userRouter.put("/:id", auth, updateUserDetails);
