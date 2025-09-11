@@ -30,12 +30,11 @@ userRouter.post("/verify-email", verifyEmailController);
 userRouter.post("/login", loginUserController);
 userRouter.post("/loginWithGoogle", loginWithGoogle);
 userRouter.get("/logout", auth, logoutController);
-// Remove the old userAvatarController and use this instead
 userRouter.put(
   "/user-avatar",
   auth,
-  upload.single("avatar"), // Use upload.single() for a single file
-  userAvatarController // Use the avatar-only controller
+  upload.array("avatar"),
+  userAvatarController
 );
 userRouter.delete("/deleteImage", auth, removeImageFromCloudinary);
 userRouter.put("/:id", auth, updateUserDetails);
