@@ -358,7 +358,14 @@ export const userAvatarController = async (req, res) => {
   try {
     const imagesArr = [];
     const files = req.files;
-    const user = UserModel.findById(req.userId);
+    const user = await UserModel.findById(req.userId);
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found.",
+        error: true,
+        success: false,
+      });
+    }
     // Check if files exist to avoid errors
     if (!files || files.length === 0) {
       return res.status(400).json({
