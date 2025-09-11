@@ -6,13 +6,13 @@ import userDetailsSlicereducer from "../redux/Slices/userDetailsSlice";
 import userImageSlicereducer from "../redux/Slices/userImage";
 import fullScreenPanelSliceReducer from "../redux/Slices/fullScreenPanelSlice";
 import userAddressSlicereducer from "../redux/Slices/userAddressSlice";
-import catDataSliceReducer from "../redux/slices/categoryDataSlice";
-import cartDataSliceReducer from "../redux/slices/cartSlice";
-import homeBannerSliceReducer from "../redux/slices/HomeBannerSlice";
-import proDataSliceReducer from "../redux/slices/productsDataSlice";
-import blogSliceReducer from "../redux/slices/blogSlice";
-import myListDataSliceReducer from "../redux/slices/myListSlice";
-import orderDataSliceReducer from "../redux/slices/orderSlice";
+import catDataSliceReducer from "../redux/Slices/categoryDataSlice";
+import cartDataSliceReducer from "../redux/Slices/cartSlice";
+import homeBannerSliceReducer from "../redux/Slices/HomeBannerSlice";
+import proDataSliceReducer from "../redux/Slices/productsDataSlice";
+import blogSliceReducer from "../redux/Slices/blogSlice";
+import myListDataSliceReducer from "../redux/Slices/myListSlice";
+import orderDataSliceReducer from "../redux/Slices/orderSlice";
 export const store = configureStore({
   reducer: {
     proModal: productModalSlicereducer,
