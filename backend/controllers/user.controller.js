@@ -467,51 +467,93 @@ export const removeImageFromCloudinary = async (req, res) => {
 export const updateUserDetails = async (req, res) => {
   try {
     const userId = req.userId;
-    const { name, email, mobile, avatar } = req.body;
+    const { name, email, mobile } = req.body;
+    const files = req.files; // Get files from multer middleware
+
     const userExist = await UserModel.findById(userId);
     if (!userExist) {
       return res.status(400).json({
-        message: "you nedd to login",
+        message: "You need to log in to update your profile.",
         error: true,
         success: false,
       });
     }
-    let verifyCode = "";
-    if (email !== userExist.email) {
-      verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+    let updatedAvatarUrl = userExist.avatar;
+
+    // Handle avatar upload if a file is present
+    if (files && files.length > 0) {
+      // Delete old avatar from Cloudinary if one exists
+      if (userExist.avatar) {
+        const oldPublicId = getPublicIdFromUrl(userExist.avatar);
+        if (oldPublicId) {
+          await cloudinary.uploader.destroy(oldPublicId);
+        }
+      }
+
+      // Upload the new avatar
+      const file = files[0];
+      const stream = streamifier.createReadStream(file.buffer);
+      const uploadResult = await new Promise((resolve, reject) => {
+        const cloudinaryStream = cloudinary.uploader.upload_stream(
+          { folder: "mern-ecommerce/avatars" },
+          (error, result) => {
+            if (error) return reject(error);
+            resolve(result);
+          }
+        );
+        stream.pipe(cloudinaryStream);
+      });
+      updatedAvatarUrl = uploadResult.secure_url;
     }
-    const updateUser = await UserModel.findByIdAndUpdate(
-      userId,
-      {
-        name,
-        mobile,
-        email,
-        avatar,
-        isVerified: email !== userExist.email ? false : true,
-        verifyCode: verifyCode !== "" ? verifyCode : null,
-        verifyCodeExpires: verifyCode !== "" ? Date.now() + 600000 : "",
-      },
-      { new: true }
-    );
-    if (email !== userExist.email) {
+
+    let verifyCode = null;
+    let isVerified = userExist.isVerified;
+    let verifyCodeExpires = userExist.verifyCodeExpires;
+
+    // Check if the email has changed and require re-verification
+    if (email && email !== userExist.email) {
+      verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
+      verifyCodeExpires = Date.now() + 600000;
+      isVerified = false;
       await sendVerificationEmail(email, verifyCode);
     }
+
+    // Create the update object with only the fields that were provided
+    const updateFields = {
+      name,
+      mobile,
+      email,
+      avatar: updatedAvatarUrl,
+      isVerified,
+      verifyCode,
+      verifyCodeExpires,
+    };
+
+    const updatedUser = await UserModel.findByIdAndUpdate(
+      userId,
+      updateFields,
+      { new: true }
+    ).select("-password -refresh_token");
+
+    if (!updatedUser) {
+      return res.status(500).json({
+        message: "Failed to update user details.",
+        error: true,
+        success: false,
+      });
+    }
+
     return res.status(200).json({
-      message: "user updated successfully",
+      message: "User updated successfully.",
       error: false,
       success: true,
-      user: {
-        name: updateUser?.name,
-        _id: updateUser?._id,
-        email: updateUser?.email,
-        mobile: updateUser?.mobile,
-        avatar: updateUser?.avatar,
-        isVerified: updateUser?.isVerified,
-      },
+      user: updatedUser,
     });
   } catch (error) {
+    console.error("User update error:", error);
     return res.status(500).json({
-      message: error.message || error,
+      message: error.message || "An error occurred during the update process.",
       error: true,
       success: false,
     });
