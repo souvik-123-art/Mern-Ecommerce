@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
+import streamifier from "streamifier";
 import proWGTModel from "../models/proWeight.Model.js";
 cloudinary.config({
   cloud_name: process.env.cloudinary_Config_Cloud_Name,
@@ -13,34 +14,58 @@ cloudinary.config({
   api_secret: process.env.cloudinary_Config_api_secret,
   secure: true,
 });
-var imagesArr = [];
+
 export const productImageController = async (req, res) => {
   try {
-    imagesArr = [];
-    const image = req.files;
-    const options = {
-      use_filename: true,
-      unique_filename: false,
-      overwrite: false,
-    };
+    const imagesArr = [];
+    const files = req.files;
 
-    for (let i = 0; i < image.length; i++) {
-      const result = await cloudinary.uploader.upload(image[i].path, options);
+    // Check if files exist to avoid errors
+    if (!files || files.length === 0) {
+      return res.status(400).json({
+        message: "No files uploaded.",
+        error: true,
+        success: false,
+      });
+    }
 
+    // Loop through each file uploaded by multer
+    for (const file of files) {
+      // Create a readable stream from the file's in-memory buffer
+      const stream = streamifier.createReadStream(file.buffer);
+
+      // Wrap the upload process in a Promise to use async/await
+      const result = await new Promise((resolve, reject) => {
+        // Use Cloudinary's upload_stream method to handle the upload
+        const cloudinaryStream = cloudinary.uploader.upload_stream(
+          {
+            folder: "mern-ecommerce", // Optional: Organize uploads in a specific folder
+          },
+          (error, result) => {
+            if (error) {
+              return reject(error);
+            }
+            resolve(result);
+          }
+        );
+
+        // Pipe the stream from memory directly to Cloudinary
+        stream.pipe(cloudinaryStream);
+      });
+
+      // Push the secure URL of the uploaded image to the array
       imagesArr.push(result.secure_url);
-
-      // Temporary file delete after successful upload
-      fs.unlinkSync(`backend/uploads/${image[i].filename}`);
     }
 
     return res.status(200).json({
       images: imagesArr,
+      success: true,
     });
   } catch (error) {
     console.error("Cloudinary upload error:", error);
 
     return res.status(500).json({
-      message: error.message || error,
+      message: error.message || "An error occurred during the upload process.",
       error: true,
       success: false,
     });
