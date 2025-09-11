@@ -34,6 +34,16 @@ import AddWeight from "./Pages/Products/addWeight.jsx";
 import { setCatData } from "./redux/slices/categoryDataSlice.js";
 import BlogList from "./Pages/Blog/index.jsx";
 import { setOrderData, setOrdersCount } from "./redux/slices/orderSlice.js";
+
+const RedirectAuthenticatedUser = ({ children }) => {
+  const isLogin = useSelector((state) => state.auth.isLogin);
+  const userDetails = useSelector((state) => state.UserDetails.userDetails);
+  if (isLogin && userDetails?.isVerified) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+};
 function App() {
   const isLogin = useSelector((state) => state.auth.isLogin);
   const dispatch = useDispatch();
@@ -447,27 +457,47 @@ function App() {
     {
       path: "/signin",
 
-      element: <Login />,
+      element: (
+        <RedirectAuthenticatedUser>
+          <Login />
+        </RedirectAuthenticatedUser>
+      ),
     },
     {
       path: "/signup",
 
-      element: <SignUp />,
+      element: (
+        <RedirectAuthenticatedUser>
+          <SignUp />
+        </RedirectAuthenticatedUser>
+      ),
     },
     {
       path: "/forgot-password",
 
-      element: <ForgotPassword />,
+      element: (
+        <RedirectAuthenticatedUser>
+          <ForgotPassword />
+        </RedirectAuthenticatedUser>
+      ),
     },
     {
       path: "/verify-email",
 
-      element: <VerifyOTP />,
+      element: (
+        <RedirectAuthenticatedUser>
+          <VerifyOTP />
+        </RedirectAuthenticatedUser>
+      ),
     },
     {
       path: "/reset-password/:token",
 
-      element: <ResetPassword />,
+      element: (
+        <RedirectAuthenticatedUser>
+          <ResetPassword />
+        </RedirectAuthenticatedUser>
+      ),
     },
     {
       path: "*",
