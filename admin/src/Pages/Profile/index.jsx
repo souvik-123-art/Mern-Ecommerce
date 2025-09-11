@@ -196,37 +196,45 @@ const Profile = () => {
   let uniqueArray = [];
   let selectedImages = [];
   const formData = new FormData();
-  const onChangeFile = async (e, apiEndPoint) => {
+  const handleFileChange = async (e, apiEndPoint) => {
     try {
-      setPreviews([]);
-      const files = e.target.files;
-      setUploading(true);
-      for (let i = 0; i < files.length; i++) {
-        if (
-          files[i] &&
-          (files[i].type === "image/jpeg" ||
-            files[i].type === "image/jpg" ||
-            files[i].type === "image/png" ||
-            files[i].type === "image/webp")
-        ) {
-          const file = files[i];
-          selectedImages.push(file);
-          formData.append(`avatar`, file);
-        } else {
-          toast.error("please upload JPG, PNG or WEBP image");
-          setUploading(false);
-          return false;
-        }
+      const file = e.target.files[0];
+      if (!file) {
+        toast.error("No file selected.");
+        return;
       }
-      uploadAvatar(apiEndPoint, formData).then((res) => {
-        console.log(res);
-        setUploading(false);
-        let avatar = [];
-        avatar.push(res?.data?.avatar);
-        dispatch(setPreviews(avatar));
-      });
+
+      // You can add validation here
+      const validImageTypes = [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/webp",
+      ];
+      if (!validImageTypes.includes(file.type)) {
+        toast.error("Please upload a JPG, PNG, or WEBP image.");
+        return;
+      }
+
+      // Create a new FormData object to send the file
+      const formData = new FormData();
+      formData.append("avatar", file); // The key 'avatar' must match your backend middleware
+
+      // This is the function you provided, assuming it handles the API call
+      const res = await uploadAvatar(apiEndPoint, formData);
+
+      // Check for success and update UI
+      if (res.data.success) {
+        console.log("Avatar uploaded successfully:", res.data.avatar);
+        // Update the state with the new avatar URL
+        dispatch(setPreviews([res.data.avatar]));
+        toast.success(res.data.message);
+      } else {
+        toast.error(res.data.message);
+      }
     } catch (error) {
-      console.log(error);
+      console.error("Upload error:", error);
+      toast.error("An error occurred during upload.");
     }
   };
   return (
@@ -282,7 +290,7 @@ const Profile = () => {
                 name="avatar"
                 accept="image/*"
                 className="absolute inset-0 opacity-0 cursor-pointer"
-                onChange={(e) => onChangeFile(e, "/api/user/user-avatar")}
+                onChange={(e) => handleFileChange(e, "/api/user/user-avatar")}
               />
             </div>
           </div>
